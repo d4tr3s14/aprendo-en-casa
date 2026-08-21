@@ -1,0 +1,395 @@
+<!DOCTYPE html>
+<html lang="es-CL">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Expedición Animal · Clasifica los animales</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Baloo+2:wght@600;800&family=Nunito:wght@600;800&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --selva:#0E3B2E;
+    --selva-claro:#17513E;
+    --sol:#FFC93C;
+    --coral:#FF6B5A;
+    --agua:#3FC1E0;
+    --crema:#FFF6E5;
+    --hoja:#7ED957;
+    --sombra: 0 8px 0 rgba(0,0,0,.18);
+  }
+  *{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
+  html,body{margin:0;padding:0}
+  body{
+    font-family:'Nunito',system-ui,sans-serif;
+    background:
+      radial-gradient(circle at 12% 12%, rgba(126,217,87,.22), transparent 45%),
+      radial-gradient(circle at 88% 78%, rgba(63,193,224,.22), transparent 45%),
+      var(--selva);
+    color:var(--crema);
+    min-height:100vh;
+    display:flex;align-items:center;justify-content:center;
+    padding:14px;
+  }
+  .marco{
+    width:min(760px,100%);
+    background:var(--selva-claro);
+    border:6px solid var(--sol);
+    border-radius:34px;
+    padding:20px 18px 26px;
+    box-shadow:0 18px 40px rgba(0,0,0,.35);
+    position:relative;
+    overflow:hidden;
+  }
+  h1,h2,h3,.btn,.opcion b,.puntaje{font-family:'Baloo 2',system-ui,sans-serif}
+
+  /* ---------- barra superior ---------- */
+  .barra{display:flex;align-items:center;justify-content:space-between;gap:10px;margin-bottom:14px}
+  .puntaje{font-size:1.35rem;letter-spacing:2px;color:var(--sol)}
+  .mini{
+    background:transparent;border:3px solid rgba(255,246,229,.35);color:var(--crema);
+    border-radius:999px;padding:6px 14px;font-size:.95rem;font-weight:800;cursor:pointer;
+    font-family:'Nunito',sans-serif;
+  }
+  .mini:hover{border-color:var(--sol)}
+
+  /* ---------- pantallas ---------- */
+  .pantalla{display:none;text-align:center}
+  .pantalla.activa{display:block;animation:entra .35s ease}
+  @keyframes entra{from{opacity:0;transform:translateY(14px)}to{opacity:1;transform:none}}
+
+  h1{font-size:clamp(2rem,7vw,3.1rem);margin:.2em 0 .1em;color:var(--sol);line-height:1}
+  h1 span{display:block;color:var(--crema);font-size:.42em;letter-spacing:1px}
+  .intro{font-size:1.1rem;max-width:44ch;margin:0 auto 18px;line-height:1.5}
+  .bichos{font-size:clamp(2.4rem,10vw,3.6rem);letter-spacing:.12em;margin:10px 0 4px}
+  .bichos span{display:inline-block;animation:flota 3s ease-in-out infinite}
+  .bichos span:nth-child(2){animation-delay:.4s}
+  .bichos span:nth-child(3){animation-delay:.8s}
+  .bichos span:nth-child(4){animation-delay:1.2s}
+  @keyframes flota{0%,100%{transform:translateY(0)}50%{transform:translateY(-12px)}}
+
+  .btn{
+    background:var(--coral);color:#fff;border:none;border-radius:999px;
+    padding:16px 34px;font-size:1.5rem;font-weight:800;cursor:pointer;
+    box-shadow:var(--sombra);transition:transform .12s;
+  }
+  .btn:active{transform:translateY(5px);box-shadow:0 3px 0 rgba(0,0,0,.18)}
+  .btn.sol{background:var(--sol);color:var(--selva)}
+
+  /* ---------- tarjeta del animal ---------- */
+  .pregunta{font-size:clamp(1.2rem,4.5vw,1.7rem);margin:0 0 12px;color:var(--sol);font-family:'Baloo 2',sans-serif}
+  .escenario{
+    background:var(--crema);
+    border-radius:26px;
+    padding:14px 10px 10px;
+    margin:0 auto 16px;
+    max-width:340px;
+    box-shadow:var(--sombra);
+  }
+  .animal{
+    font-size:clamp(5rem,22vw,7.5rem);
+    line-height:1;
+    display:block;
+    animation:saluda 2.4s ease-in-out infinite;
+  }
+  @keyframes saluda{0%,100%{transform:rotate(-4deg)}50%{transform:rotate(4deg)}}
+  .nombre{
+    color:var(--selva);font-family:'Baloo 2',sans-serif;
+    font-size:1.6rem;margin:2px 0 0;
+  }
+  .escenario.mal{animation:tiembla .4s}
+  @keyframes tiembla{0%,100%{transform:translateX(0)}25%{transform:translateX(-12px)}75%{transform:translateX(12px)}}
+  .escenario.bien{animation:brinca .5s}
+  @keyframes brinca{0%,100%{transform:scale(1)}45%{transform:scale(1.12)}}
+
+  /* ---------- opciones ---------- */
+  .opciones{display:grid;grid-template-columns:repeat(3,1fr);gap:10px}
+  .opciones.cuatro{grid-template-columns:repeat(2,1fr)}
+  .opcion{
+    background:var(--crema);color:var(--selva);
+    border:5px solid transparent;border-radius:22px;
+    padding:12px 6px;cursor:pointer;
+    display:flex;flex-direction:column;align-items:center;gap:4px;
+    box-shadow:var(--sombra);transition:transform .12s;
+    font-family:'Nunito',sans-serif;
+  }
+  .opcion i{font-size:2.4rem;font-style:normal;line-height:1}
+  .opcion b{font-size:1.15rem}
+  .opcion:hover{border-color:var(--agua)}
+  .opcion:active{transform:translateY(5px);box-shadow:0 3px 0 rgba(0,0,0,.18)}
+  .opcion:focus-visible{outline:4px solid var(--agua);outline-offset:3px}
+  .opcion.correcta{background:var(--hoja);border-color:#fff}
+  .opcion.incorrecta{background:#FFD7D2;border-color:var(--coral)}
+  .opcion[disabled]{cursor:default}
+
+  .aviso{
+    min-height:56px;margin-top:14px;font-size:1.12rem;font-weight:800;
+    display:flex;align-items:center;justify-content:center;padding:0 6px;line-height:1.35;
+  }
+  .aviso.ok{color:var(--hoja)}
+  .aviso.ups{color:var(--sol)}
+
+  /* ---------- álbum final ---------- */
+  .album{
+    background:var(--crema);border-radius:24px;padding:14px;margin:14px 0;
+    display:flex;flex-wrap:wrap;gap:8px;justify-content:center;
+  }
+  .album span{font-size:2.2rem;animation:aparece .4s ease both}
+  @keyframes aparece{from{transform:scale(0) rotate(-30deg)}to{transform:none}}
+  .trofeo{font-size:5rem;display:block;animation:flota 2.5s ease-in-out infinite}
+
+  /* ---------- confeti ---------- */
+  .confeti{position:absolute;top:-20px;font-size:1.6rem;pointer-events:none;animation:cae linear forwards}
+  @keyframes cae{to{transform:translateY(110vh) rotate(540deg);opacity:0}}
+
+  @media (max-width:420px){
+    .opcion b{font-size:1rem}
+    .opcion i{font-size:2rem}
+  }
+  @media (prefers-reduced-motion: reduce){
+    *{animation:none !important;transition:none !important}
+  }
+</style>
+</head>
+<body>
+<div class="marco">
+
+  <div class="barra">
+    <a class="mini" style="text-decoration:none" href="../../../index.html">🏠 Inicio</a>
+    <div class="puntaje" id="puntaje">⭐ 0</div>
+    <button class="mini" id="btnVoz" aria-pressed="true">🔊 Voz</button>
+  </div>
+
+  <!-- INICIO -->
+  <section class="pantalla activa" id="inicio">
+    <div class="bichos"><span>🦜</span><span>🐢</span><span>🐬</span><span>🦊</span></div>
+    <h1>Expedición Animal<span>Aprende a clasificar animales</span></h1>
+    <p class="intro">Vamos a observar animales y descubrir <b>cómo se mueven</b> y <b>cómo es su cuerpo</b>. Toca la respuesta que creas correcta. ¡Cada acierto te da una estrella!</p>
+    <button class="btn" id="btnEmpezar">¡Empezar la expedición!</button>
+  </section>
+
+  <!-- JUEGO -->
+  <section class="pantalla" id="juego">
+    <h2 class="pregunta" id="pregunta"></h2>
+    <div class="escenario" id="escenario">
+      <span class="animal" id="animal">🦜</span>
+      <p class="nombre" id="nombre">Loro</p>
+    </div>
+    <div class="opciones" id="opciones"></div>
+    <div class="aviso" id="aviso"></div>
+  </section>
+
+  <!-- FINAL -->
+  <section class="pantalla" id="final">
+    <span class="trofeo">🏆</span>
+    <h1 id="tituloFinal">¡Lo lograste!</h1>
+    <p class="intro" id="resumen"></p>
+    <div class="album" id="album"></div>
+    <button class="btn sol" id="btnOtraVez">Jugar de nuevo 🔁</button>
+  </section>
+
+</div>
+
+<script>
+/* ================== DATOS ================== */
+const MOV = [
+  {emoji:"🦅", nombre:"Águila",    r:"vuela",  dato:"El águila tiene alas grandes y vuela muy alto."},
+  {emoji:"🐟", nombre:"Pez",       r:"nada",   dato:"El pez usa sus aletas para nadar en el agua."},
+  {emoji:"🐕", nombre:"Perro",     r:"camina", dato:"El perro camina y corre con sus cuatro patas."},
+  {emoji:"🦋", nombre:"Mariposa",  r:"vuela",  dato:"La mariposa vuela con sus alas de colores."},
+  {emoji:"🐬", nombre:"Delfín",    r:"nada",   dato:"El delfín vive en el mar y nada muy rápido."},
+  {emoji:"🐴", nombre:"Caballo",   r:"camina", dato:"El caballo camina, trota y galopa."},
+  {emoji:"🐝", nombre:"Abeja",     r:"vuela",  dato:"La abeja vuela de flor en flor."},
+  {emoji:"🦈", nombre:"Tiburón",   r:"nada",   dato:"El tiburón nada en el mar con su cola."},
+  {emoji:"🐈", nombre:"Gato",      r:"camina", dato:"El gato camina despacito y salta."},
+  {emoji:"🐙", nombre:"Pulpo",     r:"nada",   dato:"El pulpo nada moviendo sus ocho brazos."},
+  {emoji:"🦜", nombre:"Loro",      r:"vuela",  dato:"El loro vuela y también habla."},
+  {emoji:"🐄", nombre:"Vaca",      r:"camina", dato:"La vaca camina por el campo comiendo pasto."}
+];
+const CUB = [
+  {emoji:"🐔", nombre:"Gallina",   r:"plumas",  dato:"La gallina está cubierta de plumas."},
+  {emoji:"🐍", nombre:"Serpiente", r:"escamas", dato:"La serpiente tiene el cuerpo cubierto de escamas."},
+  {emoji:"🦁", nombre:"León",      r:"pelos",   dato:"El león tiene pelos y una gran melena."},
+  {emoji:"🐸", nombre:"Rana",      r:"piel",    dato:"La rana tiene piel lisa y húmeda."},
+  {emoji:"🐧", nombre:"Pingüino",  r:"plumas",  dato:"¡Aunque nada, el pingüino tiene plumas!"},
+  {emoji:"🐠", nombre:"Pez",       r:"escamas", dato:"El pez tiene escamas brillantes."},
+  {emoji:"🐻", nombre:"Oso",       r:"pelos",   dato:"El oso tiene mucho pelo para el frío."},
+  {emoji:"🐬", nombre:"Delfín",    r:"piel",    dato:"El delfín tiene piel lisa, sin pelos ni escamas."},
+  {emoji:"🦅", nombre:"Águila",    r:"plumas",  dato:"Las plumas del águila la ayudan a volar."},
+  {emoji:"🐊", nombre:"Cocodrilo", r:"escamas", dato:"El cocodrilo tiene escamas duras."},
+  {emoji:"🐰", nombre:"Conejo",    r:"pelos",   dato:"El conejo tiene pelo suavecito."},
+  {emoji:"🐢", nombre:"Tortuga",   r:"escamas", dato:"La tortuga tiene escamas y un caparazón duro."}
+];
+const OPC_MOV = [
+  {id:"vuela",  icono:"🕊️", texto:"Vuela"},
+  {id:"nada",   icono:"🌊", texto:"Nada"},
+  {id:"camina", icono:"🐾", texto:"Camina"}
+];
+const OPC_CUB = [
+  {id:"plumas",  icono:"🪶", texto:"Plumas"},
+  {id:"escamas", icono:"🐍", texto:"Escamas"},
+  {id:"pelos",   icono:"🧸", texto:"Pelos"},
+  {id:"piel",    icono:"💧", texto:"Piel lisa"}
+];
+const APLAUSOS = ["¡Muy bien!","¡Excelente!","¡Lo lograste!","¡Eres una gran exploradora!","¡Perfecto!","¡Qué inteligente!"];
+
+/* ================== ESTADO ================== */
+let ronda = 1, indice = 0, estrellas = 0, lista = [], coleccion = [], vozOn = true;
+
+/* ================== UTILIDADES ================== */
+const $ = id => document.getElementById(id);
+const mezclar = a => a.map(v=>[Math.random(),v]).sort((x,y)=>x[0]-y[0]).map(v=>v[1]);
+
+function hablar(txt){
+  if(!vozOn || !window.speechSynthesis) return;
+  speechSynthesis.cancel();
+  const u = new SpeechSynthesisUtterance(txt);
+  u.lang = "es-ES"; u.rate = .92; u.pitch = 1.15;
+  const v = speechSynthesis.getVoices().find(v=>v.lang.startsWith("es"));
+  if(v) u.voice = v;
+  speechSynthesis.speak(u);
+}
+function pito(ok){
+  try{
+    const ctx = new (window.AudioContext||window.webkitAudioContext)();
+    const notas = ok ? [523,659,784] : [330,262];
+    notas.forEach((f,i)=>{
+      const o = ctx.createOscillator(), g = ctx.createGain();
+      o.type="triangle"; o.frequency.value=f;
+      g.gain.setValueAtTime(.001,ctx.currentTime);
+      g.gain.exponentialRampToValueAtTime(.18,ctx.currentTime+.02+i*.11);
+      g.gain.exponentialRampToValueAtTime(.001,ctx.currentTime+.20+i*.11);
+      o.connect(g); g.connect(ctx.destination);
+      o.start(ctx.currentTime+i*.11); o.stop(ctx.currentTime+.4+i*.11);
+    });
+  }catch(e){}
+}
+function pantalla(id){
+  document.querySelectorAll(".pantalla").forEach(p=>p.classList.remove("activa"));
+  $(id).classList.add("activa");
+}
+function confeti(){
+  const emojis = ["⭐","🎉","🌟","🍃","✨"];
+  for(let i=0;i<26;i++){
+    const c = document.createElement("div");
+    c.className = "confeti";
+    c.textContent = emojis[i%emojis.length];
+    c.style.left = Math.random()*100+"%";
+    c.style.animationDuration = (2+Math.random()*1.6)+"s";
+    c.style.animationDelay = (Math.random()*.6)+"s";
+    document.querySelector(".marco").appendChild(c);
+    setTimeout(()=>c.remove(),4200);
+  }
+}
+
+/* ================== JUEGO ================== */
+function iniciar(){
+  ronda = 1; estrellas = 0; coleccion = [];
+  $("puntaje").textContent = "⭐ 0";
+  armarRonda();
+  pantalla("juego");
+}
+function armarRonda(){
+  indice = 0;
+  lista = mezclar(ronda===1 ? MOV : CUB).slice(0,8);
+  mostrar();
+}
+function mostrar(){
+  const a = lista[indice];
+  const opciones = ronda===1 ? OPC_MOV : OPC_CUB;
+  const preg = ronda===1 ? "¿Cómo se mueve este animal?" : "¿Cómo es la cubierta de su cuerpo?";
+
+  $("pregunta").textContent = preg;
+  $("animal").textContent = a.emoji;
+  $("nombre").textContent = a.nombre;
+  $("escenario").className = "escenario";
+  $("aviso").textContent = "";
+  $("aviso").className = "aviso";
+
+  const cont = $("opciones");
+  cont.className = "opciones" + (ronda===2 ? " cuatro" : "");
+  cont.innerHTML = "";
+  opciones.forEach(o=>{
+    const b = document.createElement("button");
+    b.className = "opcion";
+    b.innerHTML = `<i>${o.icono}</i><b>${o.texto}</b>`;
+    b.onclick = ()=>responder(b, o.id, a);
+    cont.appendChild(b);
+  });
+
+  hablar(`${a.nombre}. ${preg}`);
+}
+function responder(boton, elegida, animal){
+  const botones = document.querySelectorAll(".opcion");
+  if(elegida === animal.r){
+    boton.classList.add("correcta");
+    botones.forEach(b=>b.disabled = true);
+    $("escenario").classList.add("bien");
+    estrellas++;
+    $("puntaje").textContent = "⭐ " + estrellas;
+    coleccion.push(animal.emoji);
+    const frase = APLAUSOS[Math.floor(Math.random()*APLAUSOS.length)];
+    $("aviso").textContent = `${frase} ${animal.dato}`;
+    $("aviso").className = "aviso ok";
+    pito(true);
+    hablar(`${frase} ${animal.dato}`);
+    setTimeout(siguiente, 3200);
+  }else{
+    boton.classList.add("incorrecta");
+    boton.disabled = true;
+    $("escenario").classList.remove("mal");
+    void $("escenario").offsetWidth;
+    $("escenario").classList.add("mal");
+    $("aviso").textContent = "Casi... 🤔 Observa bien al animal e inténtalo otra vez.";
+    $("aviso").className = "aviso ups";
+    pito(false);
+    hablar("Casi. Observa bien e inténtalo otra vez.");
+  }
+}
+function siguiente(){
+  indice++;
+  if(indice < lista.length){ mostrar(); return; }
+  if(ronda === 1){
+    ronda = 2;
+    pantalla("juego");
+    $("pregunta").textContent = "¡Nivel 2!";
+    $("animal").textContent = "🔎";
+    $("nombre").textContent = "Ahora miraremos el cuerpo";
+    $("opciones").innerHTML = "";
+    $("aviso").textContent = "Plumas, escamas, pelos o piel lisa. ¡Tú puedes!";
+    $("aviso").className = "aviso ok";
+    hablar("¡Muy bien! Nivel dos. Ahora vamos a mirar cómo es el cuerpo de cada animal.");
+    confeti();
+    setTimeout(armarRonda, 3800);
+    return;
+  }
+  terminar();
+}
+function terminar(){
+  $("resumen").textContent = `Clasificaste ${estrellas} animales según cómo se mueven y cómo es su cuerpo. ¡Ya eres una experta naturalista!`;
+  const al = $("album");
+  al.innerHTML = "";
+  coleccion.forEach((e,i)=>{
+    const s = document.createElement("span");
+    s.textContent = e;
+    s.style.animationDelay = (i*.07)+"s";
+    al.appendChild(s);
+  });
+  pantalla("final");
+  confeti();
+  hablar(`¡Felicitaciones! Clasificaste ${estrellas} animales. Eres una gran naturalista.`);
+}
+
+/* ================== EVENTOS ================== */
+$("btnEmpezar").onclick = iniciar;
+$("btnOtraVez").onclick = iniciar;
+$("btnVoz").onclick = function(){
+  vozOn = !vozOn;
+  this.textContent = vozOn ? "🔊 Voz" : "🔇 Voz";
+  this.setAttribute("aria-pressed", vozOn);
+  if(!vozOn && window.speechSynthesis) speechSynthesis.cancel();
+};
+if(window.speechSynthesis) speechSynthesis.onvoiceschanged = ()=>{};
+</script>
+</body>
+</html>

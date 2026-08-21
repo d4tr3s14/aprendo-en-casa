@@ -1,0 +1,261 @@
+<!DOCTYPE html>
+<html lang="es-CL">
+<!--
+  PLANTILLA BASE · Aprendo en casa
+  ---------------------------------
+  Copia este archivo a la carpeta que corresponda y renómbralo, por ejemplo:
+  1-basico/semestre-1/matematica/sumar-hasta-20.html
+
+  Solo tienes que tocar tres cosas:
+    1. El <title> y el texto de la pantalla de inicio.
+    2. El arreglo PREGUNTAS.
+    3. El texto de la pregunta que aparece arriba de cada tarjeta.
+
+  Todo lo demás (voz, sonidos, estrellas, celebración final) ya funciona.
+  Regla del proyecto: un solo archivo, sin dependencias externas.
+-->
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="theme-color" content="#0E3B2E">
+<title>Nueva actividad · Aprendo en casa</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Baloo+2:wght@600;800&family=Nunito:wght@600;800&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --selva:#0E3B2E; --selva-claro:#17513E; --crema:#FFF6E5;
+    --sol:#FFC93C; --coral:#FF6B5A; --agua:#3FC1E0; --hoja:#7ED957;
+    --sombra:0 8px 0 rgba(0,0,0,.18);
+  }
+  *{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
+  body{
+    margin:0;padding:14px;min-height:100vh;display:flex;align-items:center;justify-content:center;
+    font-family:'Nunito',system-ui,sans-serif;color:var(--crema);
+    background:
+      radial-gradient(circle at 12% 12%, rgba(126,217,87,.22), transparent 45%),
+      radial-gradient(circle at 88% 78%, rgba(63,193,224,.22), transparent 45%),
+      var(--selva);
+  }
+  .marco{
+    width:min(760px,100%);background:var(--selva-claro);
+    border:6px solid var(--sol);border-radius:34px;padding:20px 18px 26px;
+    box-shadow:0 18px 40px rgba(0,0,0,.35);position:relative;overflow:hidden;
+  }
+  h1,h2,.btn,.opcion b,.puntaje,.nombre,.pregunta{font-family:'Baloo 2',sans-serif}
+  .barra{display:flex;align-items:center;justify-content:space-between;gap:10px;margin-bottom:14px}
+  .puntaje{font-size:1.35rem;letter-spacing:2px;color:var(--sol)}
+  .mini{
+    background:transparent;border:3px solid rgba(255,246,229,.35);color:var(--crema);
+    border-radius:999px;padding:6px 14px;font-weight:800;cursor:pointer;font-family:'Nunito',sans-serif;
+  }
+  .volver{text-decoration:none}
+  .pantalla{display:none;text-align:center}
+  .pantalla.activa{display:block;animation:entra .35s ease}
+  @keyframes entra{from{opacity:0;transform:translateY(14px)}to{opacity:1;transform:none}}
+  h1{font-size:clamp(1.9rem,7vw,3rem);margin:.2em 0 .1em;color:var(--sol);line-height:1}
+  h1 span{display:block;color:var(--crema);font-size:.42em;letter-spacing:1px}
+  .intro{font-size:1.1rem;max-width:44ch;margin:0 auto 18px;line-height:1.5}
+  .btn{
+    background:var(--coral);color:#fff;border:none;border-radius:999px;padding:16px 34px;
+    font-size:1.5rem;font-weight:800;cursor:pointer;box-shadow:var(--sombra);transition:transform .12s;
+  }
+  .btn:active{transform:translateY(5px);box-shadow:0 3px 0 rgba(0,0,0,.18)}
+  .btn.sol{background:var(--sol);color:var(--selva)}
+  .pregunta{font-size:clamp(1.2rem,4.5vw,1.7rem);margin:0 0 12px;color:var(--sol)}
+  .escenario{background:var(--crema);border-radius:26px;padding:14px 10px 10px;margin:0 auto 16px;max-width:340px;box-shadow:var(--sombra)}
+  .figura{font-size:clamp(4.4rem,20vw,7rem);line-height:1;display:block;animation:saluda 2.4s ease-in-out infinite}
+  @keyframes saluda{0%,100%{transform:rotate(-4deg)}50%{transform:rotate(4deg)}}
+  .nombre{color:var(--selva);font-size:1.6rem;margin:2px 0 0}
+  .escenario.mal{animation:tiembla .4s}
+  @keyframes tiembla{0%,100%{transform:translateX(0)}25%{transform:translateX(-12px)}75%{transform:translateX(12px)}}
+  .escenario.bien{animation:brinca .5s}
+  @keyframes brinca{0%,100%{transform:scale(1)}45%{transform:scale(1.12)}}
+  .opciones{display:grid;grid-template-columns:repeat(auto-fit,minmax(120px,1fr));gap:10px}
+  .opcion{
+    background:var(--crema);color:var(--selva);border:5px solid transparent;border-radius:22px;
+    padding:12px 6px;cursor:pointer;display:flex;flex-direction:column;align-items:center;gap:4px;
+    box-shadow:var(--sombra);transition:transform .12s;font-family:'Nunito',sans-serif;
+  }
+  .opcion i{font-size:2.4rem;font-style:normal;line-height:1}
+  .opcion b{font-size:1.15rem}
+  .opcion:hover{border-color:var(--agua)}
+  .opcion:active{transform:translateY(5px);box-shadow:0 3px 0 rgba(0,0,0,.18)}
+  .opcion:focus-visible{outline:4px solid var(--agua);outline-offset:3px}
+  .opcion.correcta{background:var(--hoja);border-color:#fff}
+  .opcion.incorrecta{background:#FFD7D2;border-color:var(--coral)}
+  .aviso{min-height:56px;margin-top:14px;font-size:1.12rem;font-weight:800;display:flex;align-items:center;justify-content:center;padding:0 6px;line-height:1.35}
+  .aviso.ok{color:var(--hoja)}
+  .aviso.ups{color:var(--sol)}
+  .album{background:var(--crema);border-radius:24px;padding:14px;margin:14px 0;display:flex;flex-wrap:wrap;gap:8px;justify-content:center}
+  .album span{font-size:2.2rem}
+  .trofeo{font-size:5rem;display:block;animation:flota 2.5s ease-in-out infinite}
+  @keyframes flota{0%,100%{transform:translateY(0)}50%{transform:translateY(-12px)}}
+  .confeti{position:absolute;top:-20px;font-size:1.6rem;pointer-events:none;animation:cae linear forwards}
+  @keyframes cae{to{transform:translateY(110vh) rotate(540deg);opacity:0}}
+  @media (prefers-reduced-motion: reduce){*{animation:none !important;transition:none !important}}
+</style>
+</head>
+<body>
+<div class="marco">
+
+  <div class="barra">
+    <a class="mini volver" href="../../../index.html">🏠 Inicio</a>
+    <div class="puntaje" id="puntaje">⭐ 0</div>
+    <button class="mini" id="btnVoz" aria-pressed="true">🔊 Voz</button>
+  </div>
+
+  <section class="pantalla activa" id="inicio">
+    <h1>Título de la actividad<span>Subtítulo con el objetivo</span></h1>
+    <p class="intro">Explica en una frase corta qué hay que hacer. Toca la respuesta correcta.</p>
+    <button class="btn" id="btnEmpezar">¡Empezar!</button>
+  </section>
+
+  <section class="pantalla" id="juego">
+    <h2 class="pregunta" id="pregunta"></h2>
+    <div class="escenario" id="escenario">
+      <span class="figura" id="figura"></span>
+      <p class="nombre" id="nombre"></p>
+    </div>
+    <div class="opciones" id="opciones"></div>
+    <div class="aviso" id="aviso"></div>
+  </section>
+
+  <section class="pantalla" id="final">
+    <span class="trofeo">🏆</span>
+    <h1>¡Lo lograste!</h1>
+    <p class="intro" id="resumen"></p>
+    <div class="album" id="album"></div>
+    <button class="btn sol" id="btnOtraVez">Jugar de nuevo 🔁</button>
+  </section>
+
+</div>
+
+<script>
+/* ====== 1. EDITA AQUÍ: las preguntas ====== */
+const PREGUNTA_TEXTO = "¿Cuál es la respuesta correcta?";
+
+const PREGUNTAS = [
+  { figura:"🍎", nombre:"Manzana", r:"fruta", dato:"La manzana es una fruta." },
+  { figura:"🥕", nombre:"Zanahoria", r:"verdura", dato:"La zanahoria es una verdura." },
+  { figura:"🍌", nombre:"Plátano", r:"fruta", dato:"El plátano es una fruta." },
+  { figura:"🥦", nombre:"Brócoli", r:"verdura", dato:"El brócoli es una verdura." }
+];
+
+const OPCIONES = [
+  { id:"fruta",   icono:"🍓", texto:"Fruta" },
+  { id:"verdura", icono:"🥬", texto:"Verdura" }
+];
+/* ====== fin de la zona editable ====== */
+
+const APLAUSOS = ["¡Muy bien!","¡Excelente!","¡Lo lograste!","¡Eres una gran exploradora!","¡Perfecto!","¡Qué inteligente!"];
+let indice = 0, estrellas = 0, lista = [], coleccion = [], vozOn = true;
+
+const $ = id => document.getElementById(id);
+const mezclar = a => a.map(v=>[Math.random(),v]).sort((x,y)=>x[0]-y[0]).map(v=>v[1]);
+
+function hablar(txt){
+  if(!vozOn || !window.speechSynthesis) return;
+  speechSynthesis.cancel();
+  const u = new SpeechSynthesisUtterance(txt);
+  u.lang = "es-ES"; u.rate = .92; u.pitch = 1.15;
+  const v = speechSynthesis.getVoices().find(v => v.lang.startsWith("es"));
+  if(v) u.voice = v;
+  speechSynthesis.speak(u);
+}
+function pito(ok){
+  try{
+    const ctx = new (window.AudioContext||window.webkitAudioContext)();
+    (ok ? [523,659,784] : [330,262]).forEach((f,i)=>{
+      const o = ctx.createOscillator(), g = ctx.createGain();
+      o.type="triangle"; o.frequency.value=f;
+      g.gain.setValueAtTime(.001,ctx.currentTime);
+      g.gain.exponentialRampToValueAtTime(.18,ctx.currentTime+.02+i*.11);
+      g.gain.exponentialRampToValueAtTime(.001,ctx.currentTime+.20+i*.11);
+      o.connect(g); g.connect(ctx.destination);
+      o.start(ctx.currentTime+i*.11); o.stop(ctx.currentTime+.4+i*.11);
+    });
+  }catch(e){}
+}
+function pantalla(id){
+  document.querySelectorAll(".pantalla").forEach(p=>p.classList.remove("activa"));
+  $(id).classList.add("activa");
+}
+function confeti(){
+  const emojis = ["⭐","🎉","🌟","✨"];
+  for(let i=0;i<26;i++){
+    const c = document.createElement("div");
+    c.className="confeti"; c.textContent = emojis[i%emojis.length];
+    c.style.left = Math.random()*100+"%";
+    c.style.animationDuration = (2+Math.random()*1.6)+"s";
+    c.style.animationDelay = (Math.random()*.6)+"s";
+    document.querySelector(".marco").appendChild(c);
+    setTimeout(()=>c.remove(),4200);
+  }
+}
+function iniciar(){
+  estrellas = 0; indice = 0; coleccion = [];
+  $("puntaje").textContent = "⭐ 0";
+  lista = mezclar(PREGUNTAS).slice(0,10);
+  pantalla("juego");
+  mostrar();
+}
+function mostrar(){
+  const p = lista[indice];
+  $("pregunta").textContent = PREGUNTA_TEXTO;
+  $("figura").textContent = p.figura;
+  $("nombre").textContent = p.nombre;
+  $("escenario").className = "escenario";
+  $("aviso").textContent = ""; $("aviso").className = "aviso";
+  const cont = $("opciones");
+  cont.innerHTML = "";
+  OPCIONES.forEach(o=>{
+    const b = document.createElement("button");
+    b.className = "opcion";
+    b.innerHTML = '<i>'+o.icono+'</i><b>'+o.texto+'</b>';
+    b.onclick = ()=>responder(b, o.id, p);
+    cont.appendChild(b);
+  });
+  hablar(p.nombre + ". " + PREGUNTA_TEXTO);
+}
+function responder(boton, elegida, p){
+  if(elegida === p.r){
+    boton.classList.add("correcta");
+    document.querySelectorAll(".opcion").forEach(b=>b.disabled = true);
+    $("escenario").classList.add("bien");
+    estrellas++; $("puntaje").textContent = "⭐ " + estrellas;
+    coleccion.push(p.figura);
+    const frase = APLAUSOS[Math.floor(Math.random()*APLAUSOS.length)];
+    $("aviso").textContent = frase + " " + p.dato;
+    $("aviso").className = "aviso ok";
+    pito(true); hablar(frase + " " + p.dato);
+    setTimeout(siguiente, 3200);
+  }else{
+    boton.classList.add("incorrecta"); boton.disabled = true;
+    $("escenario").classList.remove("mal"); void $("escenario").offsetWidth;
+    $("escenario").classList.add("mal");
+    $("aviso").textContent = "Casi... 🤔 Observa bien e inténtalo otra vez.";
+    $("aviso").className = "aviso ups";
+    pito(false); hablar("Casi. Observa bien e inténtalo otra vez.");
+  }
+}
+function siguiente(){
+  indice++;
+  if(indice < lista.length){ mostrar(); return; }
+  $("resumen").textContent = "Respondiste " + estrellas + " preguntas correctamente. ¡Muy bien!";
+  const al = $("album"); al.innerHTML = "";
+  coleccion.forEach(e=>{ const s=document.createElement("span"); s.textContent=e; al.appendChild(s); });
+  pantalla("final"); confeti();
+  hablar("¡Felicitaciones! Respondiste " + estrellas + " preguntas correctamente.");
+}
+$("btnEmpezar").onclick = iniciar;
+$("btnOtraVez").onclick = iniciar;
+$("btnVoz").onclick = function(){
+  vozOn = !vozOn;
+  this.textContent = vozOn ? "🔊 Voz" : "🔇 Voz";
+  this.setAttribute("aria-pressed", vozOn);
+  if(!vozOn && window.speechSynthesis) speechSynthesis.cancel();
+};
+</script>
+</body>
+</html>

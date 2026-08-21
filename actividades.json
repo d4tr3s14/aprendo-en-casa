@@ -1,0 +1,28 @@
+{
+  "cursos": [
+    {
+      "id": "1-basico",
+      "nombre": "1° Básico",
+      "anio": 2026
+    }
+  ],
+  "asignaturas": [
+    { "id": "ciencias-naturales", "nombre": "Ciencias Naturales", "emoji": "🌱", "color": "#7ED957" },
+    { "id": "lenguaje",           "nombre": "Lenguaje",           "emoji": "📖", "color": "#FF6B5A" },
+    { "id": "matematica",         "nombre": "Matemática",         "emoji": "🔢", "color": "#3FC1E0" },
+    { "id": "historia",           "nombre": "Historia",           "emoji": "🏘️", "color": "#FFC93C" }
+  ],
+  "actividades": [
+    {
+      "id": "cn-clasificar-animales",
+      "titulo": "Expedición Animal",
+      "curso": "1-basico",
+      "semestre": 1,
+      "asignatura": "ciencias-naturales",
+      "objetivo": "Clasificar animales según cómo se mueven (vuelan, nadan, caminan) y su cubierta corporal.",
+      "archivo": "1-basico/semestre-1/ciencias-naturales/clasificar-animales.html",
+      "emoji": "🦜",
+      "fecha": "2026-08-21"
+    }
+  ]
+}
