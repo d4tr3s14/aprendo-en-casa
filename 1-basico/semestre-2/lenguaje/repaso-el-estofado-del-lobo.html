@@ -1,0 +1,587 @@
+<!DOCTYPE html>
+<html lang="es-CL">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="theme-color" content="#0E3B2E">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<title>El estofado del lobo · Repaso del libro</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Baloo+2:wght@600;800&family=Nunito:wght@600;800&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --selva:#0E3B2E;
+    --selva-claro:#17513E;
+    --sol:#FFC93C;
+    --coral:#FF6B5A;
+    --agua:#3FC1E0;
+    --crema:#FFF6E5;
+    --hoja:#7ED957;
+    --sombra: 0 8px 0 rgba(0,0,0,.18);
+  }
+  *{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
+  html,body{margin:0;padding:0}
+  body{
+    font-family:'Nunito',system-ui,sans-serif;
+    background:
+      radial-gradient(circle at 12% 12%, rgba(126,217,87,.22), transparent 45%),
+      radial-gradient(circle at 88% 78%, rgba(63,193,224,.22), transparent 45%),
+      var(--selva);
+    color:var(--crema);
+    min-height:100vh;
+    display:flex;align-items:center;justify-content:center;
+    padding:14px;
+  }
+  .marco{
+    width:min(760px,100%);
+    background:var(--selva-claro);
+    border:6px solid var(--sol);
+    border-radius:34px;
+    padding:20px 18px 26px;
+    box-shadow:0 18px 40px rgba(0,0,0,.35);
+    position:relative;
+    overflow:hidden;
+  }
+  h1,h2,h3,.btn,.opcion b,.puntaje,.nombre,.nivelChip{font-family:'Baloo 2',system-ui,sans-serif}
+
+  /* ---------- barra superior ---------- */
+  .barra{display:flex;align-items:center;justify-content:space-between;gap:10px;margin-bottom:14px}
+  .puntaje{font-size:1.35rem;letter-spacing:2px;color:var(--sol)}
+  .mini{
+    background:transparent;border:3px solid rgba(255,246,229,.35);color:var(--crema);
+    border-radius:999px;padding:6px 14px;font-size:.95rem;font-weight:800;cursor:pointer;
+    font-family:'Nunito',sans-serif;
+  }
+  .mini:hover{border-color:var(--sol)}
+  .mini:focus-visible{outline:4px solid var(--agua);outline-offset:3px}
+
+  /* ---------- pantallas ---------- */
+  .pantalla{display:none;text-align:center}
+  .pantalla.activa{display:block;animation:entra .35s ease}
+  @keyframes entra{from{opacity:0;transform:translateY(14px)}to{opacity:1;transform:none}}
+
+  h1{font-size:clamp(1.8rem,6.4vw,2.8rem);margin:.2em 0 .1em;color:var(--sol);line-height:1}
+  h1 span{display:block;color:var(--crema);font-size:.42em;letter-spacing:1px}
+  .intro{font-size:1.1rem;max-width:44ch;margin:0 auto 18px;line-height:1.5}
+  .bichos{font-size:clamp(2.4rem,10vw,3.6rem);letter-spacing:.12em;margin:10px 0 4px}
+  .bichos span{display:inline-block;animation:flota 3s ease-in-out infinite}
+  .bichos span:nth-child(2){animation-delay:.4s}
+  .bichos span:nth-child(3){animation-delay:.8s}
+  .bichos span:nth-child(4){animation-delay:1.2s}
+  @keyframes flota{0%,100%{transform:translateY(0)}50%{transform:translateY(-12px)}}
+
+  .btn{
+    background:var(--coral);color:#fff;border:none;border-radius:999px;
+    padding:16px 30px;font-size:1.35rem;font-weight:800;cursor:pointer;
+    box-shadow:var(--sombra);transition:transform .12s;
+    font-family:'Baloo 2',system-ui,sans-serif;
+    max-width:100%;
+  }
+  .btn:active{transform:translateY(5px);box-shadow:0 3px 0 rgba(0,0,0,.18)}
+  .btn:focus-visible{outline:4px solid var(--agua);outline-offset:3px}
+  .btn.sol{background:var(--sol);color:var(--selva)}
+  .btn.agua{background:var(--agua);color:var(--selva)}
+  .botonera{display:flex;flex-wrap:wrap;gap:10px;justify-content:center;margin-top:6px}
+
+  .autora{
+    display:inline-block;margin:0 auto 12px;font-size:.95rem;font-weight:800;
+    background:rgba(255,246,229,.12);border-radius:999px;padding:6px 16px;
+  }
+
+  /* ---------- cuento ---------- */
+  .nivelChip{
+    display:inline-block;background:var(--agua);color:var(--selva);
+    border-radius:999px;padding:5px 16px;font-size:1rem;margin-bottom:10px;
+  }
+  .escenaCuento{
+    background:var(--crema);color:var(--selva);
+    border-radius:26px;padding:16px 14px;margin:0 auto 14px;max-width:420px;
+    box-shadow:var(--sombra);
+  }
+  .escenaCuento .dibujo{font-size:clamp(3.6rem,17vw,5.4rem);line-height:1.15;display:block}
+  .escenaCuento p{margin:8px 0 0;font-size:1.08rem;line-height:1.45;font-weight:600}
+  .progreso{display:flex;gap:6px;justify-content:center;margin-bottom:12px}
+  .punto{width:11px;height:11px;border-radius:50%;background:rgba(255,246,229,.28)}
+  .punto.on{background:var(--sol)}
+
+  /* ---------- tarjeta de la pregunta ---------- */
+  .pregunta{font-size:clamp(1.15rem,4.3vw,1.6rem);margin:0 0 12px;color:var(--sol);font-family:'Baloo 2',sans-serif;line-height:1.2}
+  .escenario{
+    background:var(--crema);
+    border-radius:26px;
+    padding:14px 10px 10px;
+    margin:0 auto 16px;
+    max-width:340px;
+    box-shadow:var(--sombra);
+  }
+  .dibujoGrande{
+    font-size:clamp(4rem,18vw,6rem);
+    line-height:1.1;
+    display:block;
+    animation:saluda 2.4s ease-in-out infinite;
+  }
+  @keyframes saluda{0%,100%{transform:rotate(-4deg)}50%{transform:rotate(4deg)}}
+  .nombre{color:var(--selva);font-size:1.25rem;margin:2px 0 0;line-height:1.2}
+  .escenario.mal{animation:tiembla .4s}
+  @keyframes tiembla{0%,100%{transform:translateX(0)}25%{transform:translateX(-12px)}75%{transform:translateX(12px)}}
+  .escenario.bien{animation:brinca .5s}
+  @keyframes brinca{0%,100%{transform:scale(1)}45%{transform:scale(1.1)}}
+
+  /* ---------- opciones ---------- */
+  .opciones{display:grid;grid-template-columns:1fr;gap:10px}
+  .opcion{
+    background:var(--crema);color:var(--selva);
+    border:5px solid transparent;border-radius:22px;
+    padding:12px 10px;cursor:pointer;
+    display:flex;align-items:center;gap:10px;text-align:left;
+    box-shadow:var(--sombra);transition:transform .12s;
+    font-family:'Nunito',sans-serif;width:100%;
+  }
+  .opcion i{font-size:2.1rem;font-style:normal;line-height:1;flex:none}
+  .opcion b{font-size:1.1rem;line-height:1.25}
+  .opcion:hover{border-color:var(--agua)}
+  .opcion:active{transform:translateY(5px);box-shadow:0 3px 0 rgba(0,0,0,.18)}
+  .opcion:focus-visible{outline:4px solid var(--agua);outline-offset:3px}
+  .opcion.correcta{background:var(--hoja);border-color:#fff}
+  .opcion.incorrecta{background:#FFD7D2;border-color:var(--coral)}
+  .opcion[disabled]{cursor:default}
+
+  .aviso{
+    min-height:58px;margin-top:14px;font-size:1.1rem;font-weight:800;
+    display:flex;align-items:center;justify-content:center;padding:0 6px;line-height:1.35;
+  }
+  .aviso.ok{color:var(--hoja)}
+  .aviso.ups{color:var(--sol)}
+
+  /* ---------- álbum final ---------- */
+  .album{
+    background:var(--crema);border-radius:24px;padding:14px;margin:14px 0;
+    display:flex;flex-wrap:wrap;gap:8px;justify-content:center;min-height:60px;
+  }
+  .album span{font-size:2.1rem;animation:aparece .4s ease both}
+  @keyframes aparece{from{transform:scale(0) rotate(-30deg)}to{transform:none}}
+  .trofeo{font-size:4.6rem;display:block;animation:flota 2.5s ease-in-out infinite}
+
+  /* ---------- confeti ---------- */
+  .confeti{position:absolute;top:-20px;font-size:1.6rem;pointer-events:none;animation:cae linear forwards}
+  @keyframes cae{to{transform:translateY(110vh) rotate(540deg);opacity:0}}
+
+  @media (max-width:420px){
+    .opcion b{font-size:1rem}
+    .opcion i{font-size:1.9rem}
+    .btn{font-size:1.2rem;padding:14px 24px}
+  }
+  @media (prefers-reduced-motion: reduce){
+    *{animation:none !important;transition:none !important}
+  }
+</style>
+</head>
+<body>
+<div class="marco">
+
+  <div class="barra">
+    <a class="mini" style="text-decoration:none" href="../../../index.html">🏠 Inicio</a>
+    <div class="puntaje" id="puntaje">⭐ 0</div>
+    <button class="mini" id="btnVoz" aria-pressed="true">🔊 Voz</button>
+  </div>
+
+  <!-- INICIO -->
+  <section class="pantalla activa" id="inicio">
+    <div class="bichos"><span>🐺</span><span>🍲</span><span>🐔</span><span>🐥</span></div>
+    <h1>El estofado del lobo<span>Repaso del libro del mes</span></h1>
+    <p class="autora">✍️ Escrito por Keiko Kasza</p>
+    <p class="intro">Primero escuchamos el cuento y después jugamos. Toca la respuesta que creas correcta: si te equivocas no pasa nada, puedes intentarlo de nuevo. ¡Cada acierto te da una estrella!</p>
+    <div class="botonera">
+      <button class="btn" id="btnCuento">📖 Escuchar el cuento</button>
+      <button class="btn sol" id="btnDirecto">🎮 Ir al juego</button>
+    </div>
+  </section>
+
+  <!-- CUENTO -->
+  <section class="pantalla" id="cuento">
+    <span class="nivelChip" id="chipCuento">📖 El cuento</span>
+    <div class="progreso" id="progreso"></div>
+    <div class="escenaCuento">
+      <span class="dibujo" id="dibujoCuento">🐺</span>
+      <p id="textoCuento"></p>
+    </div>
+    <div class="botonera">
+      <button class="btn" id="btnSigue">Siguiente ▶</button>
+      <button class="mini" id="btnRepite">🔁 Repetir</button>
+      <button class="mini" id="btnSaltar">Ir al juego ⏭</button>
+    </div>
+  </section>
+
+  <!-- JUEGO -->
+  <section class="pantalla" id="juego">
+    <span class="nivelChip" id="chipNivel">Nivel 1</span>
+    <h2 class="pregunta" id="pregunta"></h2>
+    <div class="escenario" id="escenario">
+      <span class="dibujoGrande" id="dibujo">🐺</span>
+      <p class="nombre" id="nombre"></p>
+    </div>
+    <div class="opciones" id="opciones"></div>
+    <div class="aviso" id="aviso"></div>
+  </section>
+
+  <!-- PASO DE NIVEL -->
+  <section class="pantalla" id="pausa">
+    <span class="trofeo" id="dibujoPausa">🌟</span>
+    <h1 id="tituloPausa"></h1>
+    <p class="intro" id="textoPausa"></p>
+    <button class="btn sol" id="btnSigueNivel">¡Vamos! ▶</button>
+  </section>
+
+  <!-- FINAL -->
+  <section class="pantalla" id="final">
+    <span class="trofeo">🏆</span>
+    <h1 id="tituloFinal">¡Lo lograste!</h1>
+    <p class="intro" id="resumen"></p>
+    <div class="album" id="album"></div>
+    <p class="intro" id="paraContar"></p>
+    <div class="botonera">
+      <button class="btn sol" id="btnOtraVez">Jugar de nuevo 🔁</button>
+      <button class="mini" id="btnVolverCuento">📖 Escuchar el cuento</button>
+    </div>
+  </section>
+
+</div>
+
+<script>
+/* ================== EL CUENTO ================== */
+const CUENTO = [
+  {d:"🐺🍽️", t:"Había una vez un lobo al que le gustaba comer más que cualquier otra cosa en el mundo. Apenas terminaba una comida, ya estaba pensando en la próxima."},
+  {d:"🍲🌳", t:"Un día al lobo le dio antojo de estofado de pollo. Pasó todo el día en el bosque buscando un pollo apetitoso."},
+  {d:"🐔👀", t:"Por fin vio una gallina. «¡Ah! Es justo lo que necesito», pensó. El lobo la acechó despacito, pero cuando ya la iba a agarrar..."},
+  {d:"🐺💡", t:"...se le ocurrió otra idea: «si engordo un poco a esta ave, tendré más carne para comer». Así que corrió a su casa y se puso a cocinar."},
+  {d:"🥞🌙", t:"Primero hizo cien deliciosos panqueques y por la noche los dejó en la puerta de la gallina. «Come bien, gallinita querida. ¡Ponte gorda y sabrosa para mi estofado!»"},
+  {d:"🍩🌙", t:"La noche siguiente le llevó cien apetitosas rosquillas. «Come bien, gallinita mía. ¡Ponte gorda y sabrosa para mi estofado!»"},
+  {d:"🎂🌙", t:"Al día siguiente le llevó un pastel que pesaba más de cien kilos. «Come bien, gallinita linda. ¡Ponte gorda y sabrosa para mi estofado!»"},
+  {d:"🔥🍲", t:"Por fin llegó la noche que el lobo estaba esperando. Puso una olla enorme al fuego y salió muy contento a buscar su comida."},
+  {d:"🚪🐔", t:"Se asomó a espiar por el ojo de la cerradura, pero la puerta se abrió y la gallina cacareó: «¡Ah! ¡Así que era usted, señor lobo!»"},
+  {d:"🐥🐥🐥", t:"«¡Niños, niños! Los panqueques, las rosquillas y ese pastel los trajo el tío lobo». Cien pollitos saltaron sobre él y le dieron cien besitos: «¡Gracias, tío lobo! ¡Eres el mejor cocinero del mundo!»"},
+  {d:"🍪💛", t:"El tío lobo no comió estofado esa noche, pero volvió feliz a su casa pensando: «Tal vez mañana les prepare cien apetitosas galletitas»."}
+];
+
+/* ================== LOS NIVELES ================== */
+const NIVELES = [
+  {
+    nombre:"Nivel 1 · El cuento y sus personajes",
+    chip:"1️⃣ Personajes",
+    voz:"Nivel uno. Vamos a recordar quiénes son los personajes del cuento.",
+    dibujo:"📖",
+    preguntas:[
+      {p:"¿Quién escribió este cuento?", d:"📕", n:"El estofado del lobo",
+       o:[{i:"✍️",t:"Keiko Kasza",ok:true},{i:"🖊️",t:"Gabriela Mistral"},{i:"📝",t:"Marcela Paz"}],
+       dato:"La autora se llama Keiko Kasza. Ella escribió el cuento y también hizo los dibujos."},
+      {p:"¿Qué animal es el protagonista?", d:"❓", n:"El personaje principal",
+       o:[{i:"🐺",t:"El lobo",ok:true},{i:"🦊",t:"El zorro"},{i:"🐻",t:"El oso"}],
+       dato:"El protagonista es el lobo, un lobo que ama cocinar."},
+      {p:"¿A quién quería comerse el lobo?", d:"🐺", n:"El lobo tenía hambre",
+       o:[{i:"🐔",t:"A una gallina",ok:true},{i:"🐷",t:"A un chanchito"},{i:"🐰",t:"A un conejo"}],
+       dato:"El lobo quería comerse a una gallina que vio en el bosque."},
+      {p:"¿Qué era lo que más le gustaba al lobo?", d:"🐺", n:"¿Qué le gustaba?",
+       o:[{i:"🍽️",t:"Comer",ok:true},{i:"💤",t:"Dormir"},{i:"⚽",t:"Jugar a la pelota"}],
+       dato:"Al lobo le gustaba comer más que cualquier otra cosa en el mundo."},
+      {p:"¿Qué comida quería preparar el lobo?", d:"🍲", n:"En su olla enorme",
+       o:[{i:"🍲",t:"Estofado de pollo",ok:true},{i:"🍕",t:"Pizza"},{i:"🥗",t:"Ensalada"}],
+       dato:"Quería hacer un estofado de pollo. Por eso el libro se llama El estofado del lobo."}
+    ]
+  },
+  {
+    nombre:"Nivel 2 · ¿Qué pasó primero?",
+    chip:"2️⃣ El orden",
+    voz:"Nivel dos. Ahora vamos a recordar en qué orden pasaron las cosas.",
+    dibujo:"🕐",
+    preguntas:[
+      {p:"¿Qué le llevó el lobo la PRIMERA noche?", d:"🌙", n:"La primera noche",
+       o:[{i:"🥞",t:"Cien panqueques",ok:true},{i:"🍩",t:"Cien rosquillas"},{i:"🎂",t:"Un pastel gigante"}],
+       dato:"Primero le dejó cien deliciosos panqueques en la puerta."},
+      {p:"¿Y la SEGUNDA noche?", d:"🌙🌙", n:"La segunda noche",
+       o:[{i:"🍩",t:"Cien rosquillas",ok:true},{i:"🥞",t:"Cien panqueques"},{i:"🍪",t:"Cien galletitas"}],
+       dato:"Después le llevó cien apetitosas rosquillas."},
+      {p:"¿Qué le llevó el ÚLTIMO día?", d:"🌙🌙🌙", n:"El tercer día",
+       o:[{i:"🎂",t:"Un pastel de más de cien kilos",ok:true},{i:"🍞",t:"Un pan pequeñito"},{i:"🍎",t:"Una manzana"}],
+       dato:"Al final le llevó un pastel que pesaba más de cien kilos."},
+      {p:"¿Para qué le llevaba tanta comida?", d:"🤔", n:"El plan del lobo",
+       o:[{i:"⚖️",t:"Para engordarla y comer más",ok:true},{i:"🎁",t:"Porque era su cumpleaños"},{i:"🗑️",t:"Porque le sobraba comida"}],
+       dato:"El lobo pensó: si engordo a la gallina, tendré más carne para comer."},
+      {p:"Cuando se abrió la puerta, ¿qué encontró el lobo?", d:"🚪", n:"La gran sorpresa",
+       o:[{i:"🐥",t:"Cien pollitos agradecidos",ok:true},{i:"🍲",t:"Un estofado listo"},{i:"🕸️",t:"Una casa vacía"}],
+       dato:"¡Sorpresa! La gallina era mamá y los cien pollitos le dieron cien besitos."}
+    ]
+  },
+  {
+    nombre:"Nivel 3 · ¿Cómo es el lobo?",
+    chip:"3️⃣ El lobo",
+    voz:"Nivel tres. Ahora vamos a describir cómo es el lobo.",
+    dibujo:"🐺",
+    preguntas:[
+      {p:"Completa la frase que repetía el lobo: «Come bien, gallinita querida. ¡Ponte gorda y sabrosa para mi ___!»", d:"💬", n:"La frase del lobo",
+       o:[{i:"🍲",t:"...para mi estofado",ok:true},{i:"🎂",t:"...para mi pastel"},{i:"🎉",t:"...para mi fiesta"}],
+       dato:"La frase es: ¡Ponte gorda y sabrosa para mi estofado! La repite tres veces."},
+      {p:"Al PRINCIPIO del cuento, ¿cómo era el lobo?", d:"🐺", n:"Al principio",
+       o:[{i:"😋",t:"Hambriento y astuto",ok:true},{i:"😴",t:"Perezoso y dormilón"},{i:"😭",t:"Triste y llorón"}],
+       dato:"Al principio el lobo era hambriento y astuto: tenía un plan para comerse a la gallina."},
+      {p:"¿Qué sabía hacer muy bien el lobo?", d:"👨‍🍳", n:"Su gran talento",
+       o:[{i:"🥘",t:"Cocinar",ok:true},{i:"🎸",t:"Tocar la guitarra"},{i:"🏊",t:"Nadar"}],
+       dato:"El lobo era un gran cocinero: hacía panqueques, rosquillas y pasteles."},
+      {p:"¿Cómo se sintió el lobo con los cien besitos?", d:"🐥🐺", n:"Los pollitos lo abrazaron",
+       o:[{i:"🥰",t:"Contento y querido",ok:true},{i:"😡",t:"Enojado"},{i:"🥱",t:"Aburrido"}],
+       dato:"Se sintió querido. Por eso pensó en prepararles cien galletitas al día siguiente."},
+      {p:"Al FINAL del cuento, ¿cómo cambió el lobo?", d:"💛", n:"Al final",
+       o:[{i:"🤗",t:"Se volvió generoso y cariñoso",ok:true},{i:"😠",t:"Se puso más malo"},{i:"😶",t:"Siguió igual que antes"}],
+       dato:"El lobo cambió: pasó de querer comérselos a querer hacerlos felices."}
+    ]
+  },
+  {
+    nombre:"Nivel 4 · Palabras y enseñanza",
+    chip:"4️⃣ Palabras",
+    voz:"Nivel cuatro, el último. Vamos a descubrir qué significan algunas palabras del cuento.",
+    dibujo:"🔤",
+    preguntas:[
+      {p:"Un «estofado» es...", d:"🍲", n:"Estofado",
+       o:[{i:"🍲",t:"Una comida cocinada en una olla",ok:true},{i:"🧢",t:"Un sombrero"},{i:"🛏️",t:"Una cama blandita"}],
+       dato:"Un estofado es una comida que se cocina lento en una olla."},
+      {p:"«Acechar» significa...", d:"👀", n:"Acechar",
+       o:[{i:"🤫",t:"Espiar en silencio para atrapar",ok:true},{i:"🏃",t:"Correr muy rápido"},{i:"🎵",t:"Cantar bajito"}],
+       dato:"Acechar es vigilar escondido. El lobo acechó a la gallina detrás de un árbol."},
+      {p:"Una «rosquilla» es...", d:"🍩", n:"Rosquilla",
+       o:[{i:"🍩",t:"Una masa dulce con forma de rueda",ok:true},{i:"🥤",t:"Un jugo de fruta"},{i:"🧀",t:"Un pedazo de queso"}],
+       dato:"La rosquilla es un dulce redondo con un hoyito en el medio."},
+      {p:"«Le dio antojo» quiere decir que...", d:"😋", n:"Tener antojo",
+       o:[{i:"😋",t:"Le dieron muchas ganas de comer algo",ok:true},{i:"😢",t:"Se puso triste"},{i:"🤧",t:"Se resfrió"}],
+       dato:"Tener antojo es tener muchas ganas de comer algo especial."},
+      {p:"¿Qué nos enseña este cuento?", d:"💚", n:"La enseñanza",
+       o:[{i:"🤝",t:"Que ser generoso nos hace felices",ok:true},{i:"🍗",t:"Que hay que comer mucho"},{i:"🏃",t:"Que hay que correr rápido"}],
+       dato:"El lobo descubrió que dar y ayudar da más alegría que comer un estofado."}
+    ]
+  }
+];
+
+const ESTAMPILLAS = ["🐺","🍲","🐔","🥞","🍩","🎂","🌙","🔥","🚪","🐥","🍪","💛","📖","⭐","🏆","👨‍🍳","💬","🌳","👀","😋"];
+const APLAUSOS = [
+  "¡Muy bien!","¡Excelente!","¡Lo lograste!","¡Qué buena lectora eres!",
+  "¡Perfecto!","¡Qué memoria tan buena!","¡Correcto!","¡Bravo!"
+];
+const PISTAS = [
+  "Casi... 🤔 Piensa otra vez en el cuento.",
+  "Uy, esa no era. 🐺 Recuerda lo que hizo el lobo.",
+  "Casi lo tienes. 📖 Vuelve a escuchar la pregunta.",
+  "No pasa nada, inténtalo de nuevo. 💛"
+];
+
+/* ================== ESTADO ================== */
+let nivel = 0, indice = 0, estrellas = 0, coleccion = [], vozOn = true, escena = 0;
+
+/* ================== UTILIDADES ================== */
+const $ = id => document.getElementById(id);
+const mezclar = a => a.map(v=>[Math.random(),v]).sort((x,y)=>x[0]-y[0]).map(v=>v[1]);
+const alAzar = a => a[Math.floor(Math.random()*a.length)];
+
+function hablar(txt){
+  if(!vozOn || !window.speechSynthesis) return;
+  try{
+    speechSynthesis.cancel();
+    const u = new SpeechSynthesisUtterance(txt);
+    u.lang = "es-ES"; u.rate = .92; u.pitch = 1.12;
+    const v = speechSynthesis.getVoices().find(v=>v.lang.startsWith("es"));
+    if(v) u.voice = v;
+    speechSynthesis.speak(u);
+  }catch(e){}
+}
+function pito(ok){
+  try{
+    const ctx = new (window.AudioContext||window.webkitAudioContext)();
+    const notas = ok ? [523,659,784] : [330,262];
+    notas.forEach((f,i)=>{
+      const o = ctx.createOscillator(), g = ctx.createGain();
+      o.type="triangle"; o.frequency.value=f;
+      g.gain.setValueAtTime(.001,ctx.currentTime);
+      g.gain.exponentialRampToValueAtTime(.18,ctx.currentTime+.02+i*.11);
+      g.gain.exponentialRampToValueAtTime(.001,ctx.currentTime+.20+i*.11);
+      o.connect(g); g.connect(ctx.destination);
+      o.start(ctx.currentTime+i*.11); o.stop(ctx.currentTime+.4+i*.11);
+    });
+  }catch(e){}
+}
+function pantalla(id){
+  document.querySelectorAll(".pantalla").forEach(p=>p.classList.remove("activa"));
+  $(id).classList.add("activa");
+}
+function confeti(){
+  const emojis = ["⭐","🎉","🌟","🐥","✨","💛"];
+  for(let i=0;i<26;i++){
+    const c = document.createElement("div");
+    c.className = "confeti";
+    c.textContent = emojis[i%emojis.length];
+    c.style.left = Math.random()*100+"%";
+    c.style.animationDuration = (2+Math.random()*1.6)+"s";
+    c.style.animationDelay = (Math.random()*.6)+"s";
+    document.querySelector(".marco").appendChild(c);
+    setTimeout(()=>c.remove(),4200);
+  }
+}
+
+/* ================== CUENTO ================== */
+function abrirCuento(){
+  escena = 0;
+  pantalla("cuento");
+  pintarProgreso();
+  mostrarEscena();
+}
+function pintarProgreso(){
+  const c = $("progreso");
+  c.innerHTML = "";
+  CUENTO.forEach((_,i)=>{
+    const p = document.createElement("div");
+    p.className = "punto" + (i<=escena ? " on" : "");
+    c.appendChild(p);
+  });
+}
+function mostrarEscena(){
+  const e = CUENTO[escena];
+  $("dibujoCuento").textContent = e.d;
+  $("textoCuento").textContent = e.t;
+  $("chipCuento").textContent = "📖 Página " + (escena+1) + " de " + CUENTO.length;
+  $("btnSigue").textContent = (escena === CUENTO.length-1) ? "🎮 ¡A jugar!" : "Siguiente ▶";
+  pintarProgreso();
+  hablar(e.t);
+}
+function avanzarCuento(){
+  if(escena < CUENTO.length-1){
+    escena++;
+    mostrarEscena();
+  }else{
+    iniciarJuego();
+  }
+}
+
+/* ================== JUEGO ================== */
+function iniciarJuego(){
+  nivel = 0; indice = 0; estrellas = 0; coleccion = [];
+  $("puntaje").textContent = "⭐ 0";
+  presentarNivel();
+}
+function presentarNivel(){
+  const n = NIVELES[nivel];
+  $("dibujoPausa").textContent = n.dibujo;
+  $("tituloPausa").textContent = n.nombre;
+  $("textoPausa").textContent = nivel === 0
+    ? "Toca la respuesta correcta. Si te equivocas, puedes intentarlo otra vez."
+    : "¡Vas muy bien! Sigue así, ya llevas " + estrellas + " estrellas.";
+  $("btnSigueNivel").textContent = nivel === 0 ? "¡Empezar! ▶" : "¡Vamos! ▶";
+  pantalla("pausa");
+  hablar(n.voz);
+}
+function comenzarNivel(){
+  indice = 0;
+  pantalla("juego");
+  mostrarPregunta();
+}
+function mostrarPregunta(){
+  const n = NIVELES[nivel];
+  const q = n.preguntas[indice];
+
+  $("chipNivel").textContent = n.chip + " · Pregunta " + (indice+1) + " de " + n.preguntas.length;
+  $("pregunta").textContent = q.p;
+  $("dibujo").textContent = q.d;
+  $("nombre").textContent = q.n || "";
+  $("escenario").className = "escenario";
+  $("aviso").textContent = "";
+  $("aviso").className = "aviso";
+
+  const cont = $("opciones");
+  cont.innerHTML = "";
+  mezclar(q.o.slice()).forEach(o=>{
+    const b = document.createElement("button");
+    b.className = "opcion";
+    const ico = document.createElement("i");
+    ico.textContent = o.i;
+    const tex = document.createElement("b");
+    tex.textContent = o.t;
+    b.appendChild(ico); b.appendChild(tex);
+    b.onclick = ()=>responder(b, !!o.ok, q);
+    cont.appendChild(b);
+  });
+
+  hablar(q.p);
+}
+function responder(boton, esCorrecta, q){
+  if(esCorrecta){
+    boton.classList.add("correcta");
+    document.querySelectorAll(".opcion").forEach(b=>b.disabled = true);
+    $("escenario").classList.add("bien");
+    estrellas++;
+    $("puntaje").textContent = "⭐ " + estrellas;
+    coleccion.push(ESTAMPILLAS[(estrellas-1) % ESTAMPILLAS.length]);
+    const frase = alAzar(APLAUSOS);
+    $("aviso").textContent = frase + " " + q.dato;
+    $("aviso").className = "aviso ok";
+    pito(true);
+    hablar(frase + " " + q.dato);
+    setTimeout(siguiente, 4200);
+  }else{
+    boton.classList.add("incorrecta");
+    boton.disabled = true;
+    $("escenario").classList.remove("mal");
+    void $("escenario").offsetWidth;
+    $("escenario").classList.add("mal");
+    const pista = alAzar(PISTAS);
+    $("aviso").textContent = pista;
+    $("aviso").className = "aviso ups";
+    pito(false);
+    hablar(pista);
+  }
+}
+function siguiente(){
+  indice++;
+  if(indice < NIVELES[nivel].preguntas.length){ mostrarPregunta(); return; }
+  nivel++;
+  if(nivel < NIVELES.length){
+    confeti();
+    presentarNivel();
+    return;
+  }
+  terminar();
+}
+function terminar(){
+  const total = NIVELES.reduce((s,n)=>s+n.preguntas.length,0);
+  $("resumen").textContent = "Respondiste " + estrellas + " de " + total +
+    " preguntas sobre El estofado del lobo, de Keiko Kasza. ¡Ya te sabes el libro del mes!";
+  $("paraContar").textContent = "Para contar en el colegio: el lobo quería hacer un estofado con la gallina, " +
+    "le llevó panqueques, rosquillas y un pastel para engordarla, pero al final descubrió que era mamá de cien pollitos " +
+    "y prefirió cocinar para ellos.";
+  const al = $("album");
+  al.innerHTML = "";
+  coleccion.forEach((e,i)=>{
+    const s = document.createElement("span");
+    s.textContent = e;
+    s.style.animationDelay = (i*.06)+"s";
+    al.appendChild(s);
+  });
+  pantalla("final");
+  confeti();
+  hablar("¡Felicitaciones! Ganaste " + estrellas + " estrellas. Ya conoces muy bien El estofado del lobo.");
+}
+
+/* ================== EVENTOS ================== */
+$("btnCuento").onclick = abrirCuento;
+$("btnVolverCuento").onclick = abrirCuento;
+$("btnDirecto").onclick = iniciarJuego;
+$("btnSigue").onclick = avanzarCuento;
+$("btnRepite").onclick = ()=>hablar(CUENTO[escena].t);
+$("btnSaltar").onclick = iniciarJuego;
+$("btnSigueNivel").onclick = comenzarNivel;
+$("btnOtraVez").onclick = iniciarJuego;
+$("btnVoz").onclick = function(){
+  vozOn = !vozOn;
+  this.textContent = vozOn ? "🔊 Voz" : "🔇 Voz";
+  this.setAttribute("aria-pressed", vozOn);
+  if(!vozOn && window.speechSynthesis) speechSynthesis.cancel();
+};
+if(window.speechSynthesis) speechSynthesis.onvoiceschanged = ()=>{};
+</script>
+</body>
+</html>

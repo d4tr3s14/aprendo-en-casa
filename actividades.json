@@ -23,6 +23,17 @@
       "archivo": "1-basico/semestre-1/ciencias-naturales/clasificar-animales.html",
       "emoji": "🦜",
       "fecha": "2026-08-21"
+    },
+    {
+      "id": "len-el-estofado-del-lobo",
+      "titulo": "El estofado del lobo",
+      "curso": "1-basico",
+      "semestre": 2,
+      "asignatura": "lenguaje",
+      "objetivo": "Comprender el libro del mes: personajes, secuencia de hechos, características del lobo, vocabulario y enseñanza.",
+      "archivo": "1-basico/semestre-2/lenguaje/repaso-el-estofado-del-lobo.html",
+      "emoji": "🐺",
+      "fecha": "2026-08-21"
     }
   ]
 }
