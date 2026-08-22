@@ -34,6 +34,28 @@
       "archivo": "1-basico/semestre-2/lenguaje/repaso-el-estofado-del-lobo.html",
       "emoji": "🐺",
       "fecha": "2026-08-21"
+    },
+    {
+      "id": "his-carabineros-practica",
+      "titulo": "Carabineros · Practico mi presentación",
+      "curso": "1-basico",
+      "semestre": 2,
+      "asignatura": "historia",
+      "objetivo": "Preparar la presentación oral del oficio de carabinero: qué hace, sus herramientas y su aporte a la comunidad. Incluye ensayo guiado de los 8 pasos.",
+      "archivo": "1-basico/semestre-2/historia/carabineros-practica.html",
+      "emoji": "🚔",
+      "fecha": "2026-08-22"
+    },
+    {
+      "id": "his-carabineros-presentacion",
+      "titulo": "Carabineros · Presentación para el curso",
+      "curso": "1-basico",
+      "semestre": 2,
+      "asignatura": "historia",
+      "objetivo": "Ocho diapositivas para proyectar el día de la evaluación de Historia: quién es, qué hace, qué usa, cómo ayuda y por qué su trabajo es importante.",
+      "archivo": "1-basico/semestre-2/historia/carabineros-presentacion.html",
+      "emoji": "📽️",
+      "fecha": "2026-08-22"
     }
   ]
 }
