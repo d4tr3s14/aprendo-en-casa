@@ -3,10 +3,16 @@
 Prompts escritos para **Nano Banana Pro** (Gemini 3 Pro Image), que es el modelo
 de imágenes que viene con Google AI Pro.
 
-Esta carpeta es opcional: los dos HTML ya funcionan con dibujos vectoriales
-incluidos. Si aquí aparece un archivo con el nombre de la lista, la actividad lo
-usa automáticamente en lugar del dibujo. Si no está, se sigue viendo el dibujo.
-Puedes ir agregándolas de a una, sin tocar código.
+**Estado: las 16 fotos ya están generadas y en uso.** Los dibujos vectoriales
+que había antes fueron eliminados; ahora las actividades usan solo estas fotos.
+Si borras una, en su lugar queda un recuadro verde vacío.
+
+Las imágenes fueron optimizadas a 1280 px y calidad 82: pesaban 40,9 MB en total
+y quedaron en 2,75 MB, sin pérdida visible. Si en el futuro reemplazas alguna,
+bájala al mismo tamaño antes de subirla — si no, la presentación se vuelve lenta
+de cargar en el proyector del colegio.
+
+Este archivo queda como referencia por si hay que regenerar o agregar alguna.
 
 ---
 

@@ -5,14 +5,9 @@
   Aprendo en casa · 1° Básico · Historia (HI01 OA 11)
   Archivo único autocontenido. Sin dependencias externas. Funciona sin conexión.
 
-  FOTOS REALES (opcional):
-  Crea una carpeta "img" junto a este archivo y pon fotos con estos nombres:
-    carabinera.jpg  carabinero.jpg  patrulla.jpg  quepis.jpg  silbato.jpg
-    radio.jpg  chaleco.jpg  linterna.jpg  perro.jpg  caballo.jpg
-    cruzar.jpg  telefono.jpg  placa.jpg  bandera.jpg  moto.jpg
-    comunidad.jpg  cono.jpg  noche.jpg
-  Sirve .jpg, .jpeg, .png o .webp. Si la foto existe, reemplaza sola al dibujo;
-  si no existe, se ve el dibujo.
+  FOTOS: carpeta "img" junto a este archivo. Sirve .jpg, .jpeg, .png o .webp.
+    carabinera  cruzar  patrulla  quepis  silbato  radio  chaleco
+    perro  caballo  placa  comunidad  telefono  bandera  moto  cono  linterna
 -->
 <head>
 <meta charset="UTF-8">
@@ -40,7 +35,6 @@ body{
     radial-gradient(circle at 88% 78%, rgba(63,193,224,.22), transparent 45%),
     var(--selva);
 }
-.sprite{position:absolute;width:0;height:0;overflow:hidden}
 .marco{
   width:min(760px,100%);background:var(--selva-claro);
   border:6px solid var(--sol);border-radius:34px;padding:18px 16px 24px;
@@ -76,9 +70,9 @@ h1 span{display:block;color:var(--crema);font-size:.4em;letter-spacing:1px;margi
   background:var(--crema);border-radius:26px;padding:12px;margin:0 auto 14px;
   max-width:270px;box-shadow:var(--sombra);
 }
-.ilu{display:block;width:100%;aspect-ratio:1/1;border-radius:20px;overflow:hidden;background:#E4F0E2}
-.ilu svg,.ilu img{display:block;width:100%;height:100%}
-.ilu img{object-fit:cover}
+.ilu{display:block;width:100%;aspect-ratio:1/1;border-radius:20px;overflow:hidden;
+  background:#1E5C46 linear-gradient(140deg, rgba(255,255,255,.06), transparent)}
+.ilu img{display:block;width:100%;height:100%;object-fit:cover}
 .escenario.mal{animation:tiembla .4s}
 @keyframes tiembla{0%,100%{transform:translateX(0)}25%{transform:translateX(-12px)}75%{transform:translateX(12px)}}
 .escenario.bien{animation:brinca .5s}
@@ -89,7 +83,7 @@ h1 span{display:block;color:var(--crema);font-size:.4em;letter-spacing:1px;margi
   padding:12px 8px;cursor:pointer;display:flex;flex-direction:column;align-items:center;gap:6px;
   box-shadow:var(--sombra);transition:transform .12s;font-family:'Nunito',system-ui,sans-serif;
 }
-.opcion .ilu{width:74px;aspect-ratio:1/1;border-radius:16px}
+.opcion .ilu{width:104px;aspect-ratio:1/1;border-radius:16px}
 .opcion b{font-size:1.05rem;line-height:1.15}
 .opcion:active{transform:translateY(5px);box-shadow:0 3px 0 rgba(0,0,0,.18)}
 .opcion.correcta{background:var(--hoja);border-color:#fff}
@@ -112,7 +106,7 @@ h1 span{display:block;color:var(--crema);font-size:.4em;letter-spacing:1px;margi
 .progreso i.hecho{background:var(--hoja)}
 .progreso i.ahora{background:var(--sol)}
 .album{background:var(--crema);border-radius:24px;padding:12px;margin:12px 0;display:flex;flex-wrap:wrap;gap:8px;justify-content:center}
-.album .ilu{width:58px;aspect-ratio:1/1;border-radius:14px}
+.album .ilu{width:62px;aspect-ratio:1/1;border-radius:14px}
 .trofeo{font-size:4.4rem;display:block;animation:flota 2.5s ease-in-out infinite}
 @keyframes flota{0%,100%{transform:translateY(0)}50%{transform:translateY(-12px)}}
 .confeti{position:absolute;top:-20px;font-size:1.6rem;pointer-events:none;animation:cae linear forwards}
@@ -121,318 +115,6 @@ h1 span{display:block;color:var(--crema);font-size:.4em;letter-spacing:1px;margi
 </style>
 </head>
 <body>
-
-<svg class="sprite" aria-hidden="true" focusable="false" xmlns="http://www.w3.org/2000/svg"><defs>
-
-<symbol id="i-carabinera" viewBox="0 0 120 120">
-  <circle cx="60" cy="60" r="59" fill="#E4F0E2"/>
-  <path d="M36 52 Q31 84 43 90 L49 60 Z" fill="#4A3020"/>
-  <path d="M84 52 Q89 84 77 90 L71 60 Z" fill="#4A3020"/>
-  <circle cx="60" cy="86" r="9" fill="#4A3020"/>
-  <rect x="51" y="64" width="18" height="22" rx="7" fill="#E0AE7E"/>
-  <path d="M14 120 Q17 91 39 84 L60 100 L81 84 Q103 91 106 120 Z" fill="#3D6B4C"/>
-  <path d="M39 84 L60 100 L81 84 L74 80 L60 92 L46 80 Z" fill="#F6F9F2"/>
-  <path d="M60 94 L66 101 L60 120 L54 101 Z" fill="#25412F"/>
-  <rect x="22" y="93" width="17" height="7" rx="3" fill="#FFC93C"/>
-  <rect x="81" y="93" width="17" height="7" rx="3" fill="#FFC93C"/>
-  <path d="M33 104 l9-4 9 4 v8 q0 7-9 10 -9-3-9-10 z" fill="#FFC93C" stroke="#C9922A" stroke-width="1.5"/>
-  <circle cx="60" cy="54" r="19" fill="#F2C79B"/>
-  <circle cx="53" cy="58" r="2.8" fill="#2A3A2F"/>
-  <circle cx="67" cy="58" r="2.8" fill="#2A3A2F"/>
-  <circle cx="46" cy="65" r="4" fill="#FF6B5A" opacity=".38"/>
-  <circle cx="74" cy="65" r="4" fill="#FF6B5A" opacity=".38"/>
-  <path d="M53 66 q7 8 14 0" stroke="#2A3A2F" stroke-width="2.8" fill="none" stroke-linecap="round"/>
-  <path d="M38 36 L42 18 Q60 12 78 18 L82 36 Z" fill="#3D6B4C"/>
-  <rect x="36" y="33" width="48" height="10" rx="3" fill="#1F3226"/>
-  <path d="M30 46 Q60 55 90 46 L88 41 L32 41 Z" fill="#16241B"/>
-  <rect x="36" y="39" width="48" height="2.6" fill="#FFC93C"/>
-  <path d="M60 19 l2.8 6 6.5.8-4.9 4.5 1.4 6.4-5.8-3.2-5.8 3.2 1.4-6.4-4.9-4.5 6.5-.8z" fill="#FFC93C"/>
-</symbol>
-
-<symbol id="i-carabinero" viewBox="0 0 120 120">
-  <circle cx="60" cy="60" r="59" fill="#E4F0E2"/>
-  <rect x="51" y="64" width="18" height="22" rx="7" fill="#D9A473"/>
-  <path d="M14 120 Q17 91 39 84 L60 100 L81 84 Q103 91 106 120 Z" fill="#3D6B4C"/>
-  <path d="M39 84 L60 100 L81 84 L74 80 L60 92 L46 80 Z" fill="#F6F9F2"/>
-  <path d="M60 94 L66 101 L60 120 L54 101 Z" fill="#25412F"/>
-  <rect x="22" y="93" width="17" height="7" rx="3" fill="#FFC93C"/>
-  <rect x="81" y="93" width="17" height="7" rx="3" fill="#FFC93C"/>
-  <path d="M33 104 l9-4 9 4 v8 q0 7-9 10 -9-3-9-10 z" fill="#FFC93C" stroke="#C9922A" stroke-width="1.5"/>
-  <circle cx="60" cy="54" r="19" fill="#EDBB8A"/>
-  <circle cx="53" cy="58" r="2.8" fill="#2A3A2F"/>
-  <circle cx="67" cy="58" r="2.8" fill="#2A3A2F"/>
-  <path d="M53 66 q7 8 14 0" stroke="#2A3A2F" stroke-width="2.8" fill="none" stroke-linecap="round"/>
-  <path d="M38 36 L42 18 Q60 12 78 18 L82 36 Z" fill="#3D6B4C"/>
-  <rect x="36" y="33" width="48" height="10" rx="3" fill="#1F3226"/>
-  <path d="M30 46 Q60 55 90 46 L88 41 L32 41 Z" fill="#16241B"/>
-  <rect x="36" y="39" width="48" height="2.6" fill="#FFC93C"/>
-  <path d="M60 19 l2.8 6 6.5.8-4.9 4.5 1.4 6.4-5.8-3.2-5.8 3.2 1.4-6.4-4.9-4.5 6.5-.8z" fill="#FFC93C"/>
-</symbol>
-
-<symbol id="i-patrulla" viewBox="0 0 120 120">
-  <circle cx="60" cy="60" r="59" fill="#E4F0E2"/>
-  <rect x="4" y="92" width="112" height="8" rx="4" fill="#9FB0A3"/>
-  <rect x="46" y="26" width="28" height="9" rx="4" fill="#1F3226"/>
-  <rect x="47" y="27" width="12.5" height="7" rx="3" fill="#FF6B5A"/>
-  <rect x="60.5" y="27" width="12.5" height="7" rx="3" fill="#3FC1E0"/>
-  <path d="M8 84 Q7 60 27 56 L38 41 Q42 35 52 35 L82 35 Q90 35 94 41 L104 56 Q113 59 112 84 Z" fill="#F7F9F4" stroke="#2A3A2F" stroke-width="2.6" stroke-linejoin="round"/>
-  <path d="M44 42 L80 42 Q85 42 88 46 L94 55 L44 55 Z" fill="#A9DCEE" stroke="#2A3A2F" stroke-width="2.2" stroke-linejoin="round"/>
-  <line x1="64" y1="42" x2="64" y2="55" stroke="#2A3A2F" stroke-width="2.2"/>
-  <path d="M40 42 L40 55 L20 55 Q26 44 34 42 Z" fill="#A9DCEE" stroke="#2A3A2F" stroke-width="2.2" stroke-linejoin="round"/>
-  <path d="M10 62 L110 62 L109 74 L10 74 Z" fill="#3D6B4C"/>
-  <text x="60" y="71.5" font-family="Verdana,sans-serif" font-size="7.4" font-weight="bold" fill="#FFF6E5" text-anchor="middle" letter-spacing="1">CARABINEROS</text>
-  <rect x="102" y="78" width="11" height="7" rx="3" fill="#FFC93C"/>
-  <circle cx="34" cy="88" r="13" fill="#26332B"/>
-  <circle cx="34" cy="88" r="6" fill="#C3CFC6"/>
-  <circle cx="90" cy="88" r="13" fill="#26332B"/>
-  <circle cx="90" cy="88" r="6" fill="#C3CFC6"/>
-</symbol>
-
-<symbol id="i-quepis" viewBox="0 0 120 120">
-  <circle cx="60" cy="60" r="59" fill="#E4F0E2"/>
-  <path d="M16 56 L24 26 Q60 16 96 26 L104 56 Z" fill="#3D6B4C" stroke="#25412F" stroke-width="2.5" stroke-linejoin="round"/>
-  <rect x="14" y="53" width="92" height="16" rx="5" fill="#1F3226"/>
-  <path d="M6 74 Q60 96 114 74 L110 66 Q60 82 10 66 Z" fill="#16241B"/>
-  <rect x="14" y="62" width="92" height="4" fill="#FFC93C"/>
-  <circle cx="18" cy="64" r="4" fill="#C9922A"/>
-  <circle cx="102" cy="64" r="4" fill="#C9922A"/>
-  <path d="M60 28 l4 8.6 9.4 1.1-7 6.5 2 9.2-8.4-4.7-8.4 4.7 2-9.2-7-6.5 9.4-1.1z" fill="#FFC93C" stroke="#C9922A" stroke-width="1.4"/>
-</symbol>
-
-<symbol id="i-silbato" viewBox="0 0 120 120">
-  <circle cx="60" cy="60" r="59" fill="#E4F0E2"/>
-  <path d="M92 40 Q104 26 110 14" stroke="#C9922A" stroke-width="4.5" fill="none" stroke-linecap="round"/>
-  <circle cx="88" cy="46" r="7.5" fill="none" stroke="#C9922A" stroke-width="4.5"/>
-  <path d="M12 56 H53.7 A20 20 0 1 1 53.7 76 H12 Q4 76 4 68 V64 Q4 56 12 56 Z" fill="#DDE3DF" stroke="#5D6A62" stroke-width="3" stroke-linejoin="round"/>
-  <path d="M12 59 H56 V67 H12 z" fill="#F4F7F4"/>
-  <path d="M46 46 h16 q3 0 3 3 v9 H46 q-3 0-3-3 z" fill="#7C8880" stroke="#5D6A62" stroke-width="2.4" stroke-linejoin="round"/>
-  <circle cx="79" cy="70" r="7" fill="#8F9A93"/>
-  <path d="M96 84 q9 8 8 20" stroke="#FFC93C" stroke-width="4.5" fill="none" stroke-linecap="round"/>
-  <path d="M106 78 q12 11 10 28" stroke="#FFC93C" stroke-width="4.5" fill="none" stroke-linecap="round" opacity=".55"/>
-</symbol>
-
-<symbol id="i-radio" viewBox="0 0 120 120">
-  <circle cx="60" cy="60" r="59" fill="#E4F0E2"/>
-  <rect x="66" y="12" width="7" height="34" rx="3.5" fill="#3A4A40"/>
-  <circle cx="69.5" cy="12" r="4.5" fill="#3A4A40"/>
-  <rect x="36" y="34" width="48" height="76" rx="10" fill="#3A4A40" stroke="#25332B" stroke-width="2.5"/>
-  <rect x="44" y="42" width="32" height="18" rx="4" fill="#7ED957"/>
-  <circle cx="52" cy="51" r="3" fill="#25412F"/>
-  <circle cx="60" cy="51" r="3" fill="#25412F"/>
-  <circle cx="68" cy="51" r="3" fill="#25412F"/>
-  <rect x="44" y="66" width="32" height="4" rx="2" fill="#8C9A92"/>
-  <rect x="44" y="74" width="32" height="4" rx="2" fill="#8C9A92"/>
-  <rect x="44" y="82" width="32" height="4" rx="2" fill="#8C9A92"/>
-  <rect x="48" y="92" width="24" height="11" rx="5" fill="#FF6B5A"/>
-  <rect x="27" y="52" width="10" height="20" rx="5" fill="#25332B"/>
-  <path d="M86 26 q10 8 10 20" stroke="#3FC1E0" stroke-width="4" fill="none" stroke-linecap="round"/>
-  <path d="M94 18 q16 12 16 28" stroke="#3FC1E0" stroke-width="4" fill="none" stroke-linecap="round" opacity=".55"/>
-</symbol>
-
-<symbol id="i-chaleco" viewBox="0 0 120 120">
-  <circle cx="60" cy="60" r="59" fill="#E4F0E2"/>
-  <path d="M40 20 L60 34 L80 20 Q102 26 104 62 L92 66 L92 106 Q60 114 28 106 L28 66 L16 62 Q18 26 40 20 Z" fill="#D7F24B" stroke="#8FA61F" stroke-width="2.6" stroke-linejoin="round"/>
-  <path d="M40 20 L60 34 L80 20 L80 30 L60 44 L40 30 Z" fill="#FFF6E5" opacity=".55"/>
-  <rect x="28" y="70" width="64" height="9" fill="#C7CFC9" stroke="#8FA61F" stroke-width="1.4"/>
-  <rect x="28" y="88" width="64" height="9" fill="#C7CFC9" stroke="#8FA61F" stroke-width="1.4"/>
-  <rect x="56" y="40" width="8" height="70" fill="#8FA61F" opacity=".35"/>
-  <text x="60" y="62" font-family="Verdana,sans-serif" font-size="7" font-weight="bold" fill="#3D6B4C" text-anchor="middle" letter-spacing=".3">CARABINEROS</text>
-</symbol>
-
-<symbol id="i-linterna" viewBox="0 0 120 120">
-  <circle cx="60" cy="60" r="59" fill="#E4F0E2"/>
-  <path d="M30 46 L58 34 L58 86 L30 74 Z" fill="#FFC93C" opacity=".55"/>
-  <path d="M14 40 L58 22 L58 98 L14 80 Z" fill="#FFC93C" opacity=".28"/>
-  <rect x="56" y="42" width="18" height="36" rx="4" fill="#3A4A40" stroke="#25332B" stroke-width="2.4"/>
-  <rect x="72" y="50" width="34" height="20" rx="7" fill="#5D6A62" stroke="#25332B" stroke-width="2.4"/>
-  <rect x="80" y="54" width="8" height="12" rx="3" fill="#FF6B5A"/>
-  <circle cx="60" cy="60" r="8" fill="#FFF6E5"/>
-</symbol>
-
-<symbol id="i-perro" viewBox="0 0 120 120">
-  <circle cx="60" cy="60" r="59" fill="#E4F0E2"/>
-  <rect x="6" y="96" width="108" height="7" rx="3.5" fill="#9FB0A3"/>
-  <path d="M96 60 q16-14 18 2 q2 16-16 22 z" fill="#7E5731"/>
-  <rect x="44" y="76" width="12" height="24" rx="6" fill="#8C6234"/>
-  <rect x="86" y="76" width="12" height="24" rx="6" fill="#8C6234"/>
-  <ellipse cx="70" cy="66" rx="30" ry="19" fill="#B98246"/>
-  <path d="M46 52 q28-8 50 4 q6 4 6 12 q-28-12-58-4 z" fill="#3B3229"/>
-  <rect x="58" y="78" width="12" height="24" rx="6" fill="#B98246"/>
-  <rect x="72" y="78" width="12" height="24" rx="6" fill="#B98246"/>
-  <path d="M38 58 q0-14 10-20 l16 12 q6 10 4 18 z" fill="#B98246"/>
-  <path d="M25 28 L17 6 L39 20 Z" fill="#8C6234"/>
-  <path d="M43 26 L52 6 L54 28 Z" fill="#8C6234"/>
-  <circle cx="33" cy="40" r="19" fill="#B98246"/>
-  <path d="M14 40 q-8 1-8 8 q0 8 12 8 q12 0 14-9 z" fill="#8C6234"/>
-  <ellipse cx="8" cy="46" rx="5" ry="4" fill="#25332B"/>
-  <circle cx="26" cy="34" r="3.2" fill="#25332B"/>
-  <circle cx="42" cy="36" r="3.2" fill="#25332B"/>
-  <path d="M8 52 q8 4 16 2" stroke="#25332B" stroke-width="2" fill="none" stroke-linecap="round"/>
-  <path d="M20 56 q14 8 28 2 l2 8 q-16 7-32-2 z" fill="#3D6B4C"/>
-  <circle cx="34" cy="65" r="5.5" fill="#FFC93C"/>
-</symbol>
-
-<symbol id="i-caballo" viewBox="0 0 120 120">
-  <circle cx="60" cy="60" r="59" fill="#E4F0E2"/>
-  <rect x="4" y="98" width="112" height="7" rx="3.5" fill="#9FB0A3"/>
-  <path d="M100 56 q18 4 16 22 q-2 18-14 24 l-8-24 z" fill="#4A3020"/>
-  <rect x="58" y="74" width="13" height="30" rx="6.5" fill="#734A28"/>
-  <rect x="92" y="74" width="13" height="30" rx="6.5" fill="#734A28"/>
-  <ellipse cx="76" cy="68" rx="28" ry="19" fill="#8C5A31"/>
-  <rect x="66" y="78" width="13" height="26" rx="6.5" fill="#8C5A31"/>
-  <rect x="84" y="78" width="13" height="26" rx="6.5" fill="#8C5A31"/>
-  <path d="M48 32 L68 56 L58 70 L34 52 Z" fill="#8C5A31"/>
-  <path d="M44 14 Q60 32 68 60 L56 64 Q50 36 36 20 Z" fill="#4A3020"/>
-  <path d="M48 32 Q50 14 34 10 Q18 6 12 22 L6 46 Q2 58 14 61 Q30 65 36 52 Z" fill="#8C5A31"/>
-  <path d="M8 44 Q2 58 14 61 Q26 64 30 55 L16 46 Z" fill="#734A28"/>
-  <ellipse cx="12" cy="53" rx="3.2" ry="2.6" fill="#3A2A1C"/>
-  <circle cx="30" cy="27" r="3.6" fill="#25332B"/>
-  <path d="M30 12 L25 0 L38 6 Z" fill="#734A28"/>
-  <path d="M40 14 L47 3 L49 16 Z" fill="#734A28"/>
-  <path d="M60 52 q22-9 38 0 l2 15 q-22 9-42 0 z" fill="#3D6B4C" stroke="#25412F" stroke-width="2.2"/>
-  <rect x="70" y="44" width="20" height="12" rx="4" fill="#25412F"/>
-  <path d="M9 40 Q19 34 28 41" stroke="#25412F" stroke-width="3.2" fill="none" stroke-linecap="round"/>
-  <path d="M22 20 Q34 30 30 44" stroke="#25412F" stroke-width="3.2" fill="none" stroke-linecap="round"/>
-</symbol>
-
-<symbol id="i-cruzar" viewBox="0 0 120 120">
-  <circle cx="60" cy="60" r="59" fill="#E4F0E2"/>
-  <rect x="0" y="86" width="120" height="34" fill="#7C8A81"/>
-  <rect x="6" y="90" width="12" height="28" fill="#FFF6E5"/>
-  <rect x="30" y="90" width="12" height="28" fill="#FFF6E5"/>
-  <rect x="54" y="90" width="12" height="28" fill="#FFF6E5"/>
-  <rect x="78" y="90" width="12" height="28" fill="#FFF6E5"/>
-  <rect x="102" y="90" width="12" height="28" fill="#FFF6E5"/>
-  <rect x="96" y="20" width="20" height="46" rx="6" fill="#3A4A40"/>
-  <rect x="103" y="66" width="6" height="24" fill="#3A4A40"/>
-  <circle cx="106" cy="30" r="6" fill="#FF6B5A" opacity=".35"/>
-  <circle cx="106" cy="43" r="6" fill="#FFC93C" opacity=".35"/>
-  <circle cx="106" cy="56" r="6" fill="#7ED957"/>
-  <path d="M20 96 q0-22 16-22 t16 22 z" fill="#3D6B4C"/>
-  <rect x="30" y="96" width="12" height="16" fill="#25412F"/>
-  <circle cx="36" cy="61" r="13" fill="#EDBB8A"/>
-  <circle cx="32" cy="63" r="2" fill="#2A3A2F"/>
-  <circle cx="40" cy="63" r="2" fill="#2A3A2F"/>
-  <path d="M33 68 q3 4 6 0" stroke="#2A3A2F" stroke-width="1.8" fill="none" stroke-linecap="round"/>
-  <path d="M25 44 L27 32 Q36 28 45 32 L47 44 Z" fill="#3D6B4C"/>
-  <rect x="24" y="42" width="24" height="7" rx="2" fill="#1F3226"/>
-  <path d="M20 52 Q36 58 52 52 L51 47 L21 47 Z" fill="#16241B"/>
-  <circle cx="36" cy="34" r="2.6" fill="#FFC93C"/>
-  <path d="M50 78 q14-4 22 2" stroke="#3D6B4C" stroke-width="9" fill="none" stroke-linecap="round"/>
-  <path d="M18 76 q-8-16 0-26" stroke="#3D6B4C" stroke-width="9" fill="none" stroke-linecap="round"/>
-  <path d="M68 100 q0-16 11-16 t11 16 z" fill="#FF6B5A"/>
-  <rect x="74" y="100" width="10" height="12" fill="#3FC1E0"/>
-  <circle cx="79" cy="76" r="10" fill="#F2C79B"/>
-  <path d="M69 74 q2-11 10-11 t10 11 q-4-6-10-6 t-10 6 z" fill="#5A3A24"/>
-  <circle cx="76" cy="77" r="1.8" fill="#2A3A2F"/>
-  <circle cx="83" cy="77" r="1.8" fill="#2A3A2F"/>
-</symbol>
-
-<symbol id="i-telefono" viewBox="0 0 120 120">
-  <circle cx="60" cy="60" r="59" fill="#E4F0E2"/>
-  <rect x="30" y="10" width="60" height="100" rx="14" fill="#2A3A2F" stroke="#1B2620" stroke-width="2.5"/>
-  <rect x="36" y="22" width="48" height="76" rx="6" fill="#FFF6E5"/>
-  <rect x="50" y="14" width="20" height="4" rx="2" fill="#5D6A62"/>
-  <text x="60" y="62" font-family="Verdana,sans-serif" font-size="30" font-weight="bold" fill="#FF6B5A" text-anchor="middle">133</text>
-  <text x="60" y="77" font-family="Verdana,sans-serif" font-size="6.2" font-weight="bold" fill="#3D6B4C" text-anchor="middle" letter-spacing=".3">EMERGENCIA</text>
-  <circle cx="60" cy="89" r="8" fill="#7ED957"/>
-  <path d="M56 85.5 q1.4-2.3 3.2-.7 l1.4 1.8 q.7 1-.3 2.1 q-1 1 0 2.8 q1.4 2.5 3.9 3.9 q1.8 1 2.8 0 q1-1 2.1-.3 l1.8 1.4 q1.4 1.4-.3 3.2 q-2.1 1.8-5.6 0 q-4.6-2.1-7.4-6.7 q-2.5-3.9-1.4-5.6 z" fill="#1F3226"/>
-  <path d="M96 34 q10 10 10 26" stroke="#3FC1E0" stroke-width="4.5" fill="none" stroke-linecap="round"/>
-  <path d="M18 34 q-10 10-10 26" stroke="#3FC1E0" stroke-width="4.5" fill="none" stroke-linecap="round"/>
-</symbol>
-
-<symbol id="i-placa" viewBox="0 0 120 120">
-  <circle cx="60" cy="60" r="59" fill="#E4F0E2"/>
-  <path d="M60 8 L104 24 v34 q0 34-44 54 Q16 92 16 58 V24 Z" fill="#FFC93C" stroke="#C9922A" stroke-width="3" stroke-linejoin="round"/>
-  <path d="M60 18 L94 31 v27 q0 26-34 42 Q26 84 26 58 V31 Z" fill="#FFE08A"/>
-  <path d="M60 34 l6.4 13.6 14.6 1.8-11 10 3.2 14.6L60 66.6 46.8 74l3.2-14.6-11-10 14.6-1.8z" fill="#3D6B4C"/>
-  <text x="60" y="94" font-family="Verdana,sans-serif" font-size="9.5" font-weight="bold" fill="#7A5A16" text-anchor="middle">CHILE</text>
-</symbol>
-
-<symbol id="i-bandera" viewBox="0 0 120 120">
-  <circle cx="60" cy="60" r="59" fill="#E4F0E2"/>
-  <rect x="16" y="18" width="7" height="92" rx="3.5" fill="#8C6234"/>
-  <rect x="23" y="26" width="82" height="30" fill="#FFF6E5" stroke="#B8C2BA" stroke-width="1.5"/>
-  <rect x="23" y="56" width="82" height="30" fill="#E03A3E" stroke="#B8C2BA" stroke-width="1.5"/>
-  <rect x="23" y="26" width="30" height="30" fill="#1B4EA0"/>
-  <path d="M38 32 l3.6 7.6 8.2 1-6.2 5.6 1.8 8.2L38 50.2 30.6 54.4l1.8-8.2-6.2-5.6 8.2-1z" fill="#FFF6E5"/>
-  <text x="64" y="102" font-family="Verdana,sans-serif" font-size="12" font-weight="bold" fill="#3D6B4C" text-anchor="middle">CHILE</text>
-</symbol>
-
-<symbol id="i-moto" viewBox="0 0 120 120">
-  <circle cx="60" cy="60" r="59" fill="#E4F0E2"/>
-  <rect x="4" y="96" width="112" height="7" rx="3.5" fill="#9FB0A3"/>
-  <circle cx="28" cy="86" r="17" fill="#26332B"/>
-  <circle cx="28" cy="86" r="7" fill="#C3CFC6"/>
-  <circle cx="94" cy="86" r="17" fill="#26332B"/>
-  <circle cx="94" cy="86" r="7" fill="#C3CFC6"/>
-  <path d="M28 86 L52 60 h28 l14 26" stroke="#3D6B4C" stroke-width="8" fill="none" stroke-linecap="round" stroke-linejoin="round"/>
-  <path d="M46 62 q16-10 34-2 l-2 12 q-16-6-32 0 z" fill="#F7F9F4" stroke="#2A3A2F" stroke-width="2"/>
-  <rect x="70" y="52" width="24" height="10" rx="4" fill="#25412F"/>
-  <path d="M38 42 q10-8 20-2" stroke="#2A3A2F" stroke-width="6" fill="none" stroke-linecap="round"/>
-  <path d="M30 40 q-6-14 8-20 q10-4 14 6" stroke="#3D6B4C" stroke-width="6" fill="none" stroke-linecap="round"/>
-  <rect x="20" y="30" width="20" height="10" rx="4" fill="#1F3226"/>
-  <rect x="22" y="20" width="9" height="9" rx="3" fill="#FF6B5A"/>
-  <rect x="32" y="20" width="9" height="9" rx="3" fill="#3FC1E0"/>
-</symbol>
-
-<symbol id="i-comunidad" viewBox="0 0 120 120">
-  <circle cx="60" cy="60" r="59" fill="#E4F0E2"/>
-  <rect x="0" y="98" width="120" height="22" fill="#7ED957"/>
-  <path d="M6 62 L26 44 L46 62 V98 H6 Z" fill="#FFC93C" stroke="#C9922A" stroke-width="2.2" stroke-linejoin="round"/>
-  <rect x="18" y="72" width="16" height="26" fill="#8C5A31"/>
-  <path d="M42 54 L66 34 L90 54 V98 H42 Z" fill="#FF6B5A" stroke="#C74C3E" stroke-width="2.2" stroke-linejoin="round"/>
-  <rect x="56" y="70" width="18" height="28" rx="2" fill="#FFF6E5"/>
-  <rect x="50" y="60" width="10" height="9" fill="#FFF6E5"/>
-  <rect x="72" y="60" width="10" height="9" fill="#FFF6E5"/>
-  <path d="M86 66 L102 52 L118 66 V98 H86 Z" fill="#3FC1E0" stroke="#2A93AC" stroke-width="2.2" stroke-linejoin="round"/>
-  <rect x="96" y="76" width="13" height="22" fill="#FFF6E5"/>
-  <path d="M60 8 q8-9 15-1 q7 8-15 24 q-22-16-15-24 q7-8 15 1 z" fill="#FF6B5A"/>
-</symbol>
-
-<symbol id="i-cono" viewBox="0 0 120 120">
-  <circle cx="60" cy="60" r="59" fill="#E4F0E2"/>
-  <rect x="16" y="96" width="88" height="12" rx="5" fill="#FF8A3D" stroke="#C2591B" stroke-width="2.2"/>
-  <path d="M52 20 q8-8 16 0 L88 96 H32 Z" fill="#FF8A3D" stroke="#C2591B" stroke-width="2.4" stroke-linejoin="round"/>
-  <path d="M44 52 h32 l3 12 H41 Z" fill="#FFF6E5"/>
-  <path d="M38 74 h44 l3 12 H35 Z" fill="#FFF6E5"/>
-</symbol>
-
-<symbol id="i-esposas" viewBox="0 0 120 120">
-  <circle cx="60" cy="60" r="59" fill="#E4F0E2"/>
-  <circle cx="36" cy="58" r="24" fill="none" stroke="#8F9A93" stroke-width="11"/>
-  <circle cx="84" cy="58" r="24" fill="none" stroke="#8F9A93" stroke-width="11"/>
-  <circle cx="36" cy="58" r="24" fill="none" stroke="#C7CFC9" stroke-width="5"/>
-  <circle cx="84" cy="58" r="24" fill="none" stroke="#C7CFC9" stroke-width="5"/>
-  <rect x="50" y="80" width="20" height="12" rx="5" fill="#5D6A62"/>
-  <rect x="52" y="90" width="16" height="18" rx="6" fill="#8F9A93" stroke="#5D6A62" stroke-width="2"/>
-</symbol>
-
-<symbol id="i-noche" viewBox="0 0 120 120">
-  <circle cx="60" cy="60" r="59" fill="#1B2F44"/>
-  <circle cx="92" cy="28" r="12" fill="#FFF6E5"/>
-  <circle cx="86" cy="24" r="10" fill="#1B2F44"/>
-  <circle cx="26" cy="24" r="2.6" fill="#FFF6E5"/>
-  <circle cx="44" cy="16" r="2" fill="#FFF6E5"/>
-  <circle cx="16" cy="44" r="1.8" fill="#FFF6E5"/>
-  <rect x="0" y="90" width="120" height="30" fill="#2A3A2F"/>
-  <rect x="10" y="52" width="26" height="42" fill="#3A4A40"/>
-  <rect x="16" y="58" width="7" height="8" fill="#FFC93C"/>
-  <rect x="26" y="72" width="7" height="8" fill="#FFC93C"/>
-  <rect x="44" y="62" width="24" height="32" fill="#3A4A40"/>
-  <rect x="50" y="68" width="7" height="8" fill="#FFC93C"/>
-  <rect x="82" y="56" width="26" height="38" fill="#3A4A40"/>
-  <rect x="88" y="64" width="7" height="8" fill="#FFC93C"/>
-  <rect x="46" y="30" width="26" height="9" rx="4" fill="#1F3226"/>
-  <rect x="47" y="31" width="11.5" height="7" rx="3" fill="#FF6B5A"/>
-  <rect x="60.5" y="31" width="11.5" height="7" rx="3" fill="#3FC1E0"/>
-  <path d="M28 88 Q27 70 44 67 L52 56 Q56 50 64 50 L84 50 Q90 50 93 55 L100 66 Q108 69 107 88 Z" fill="#F7F9F4"/>
-  <path d="M30 72 L106 72 L105 80 L30 80 Z" fill="#3D6B4C"/>
-  <circle cx="46" cy="90" r="9" fill="#26332B"/>
-  <circle cx="90" cy="90" r="9" fill="#26332B"/>
-</symbol>
-
-</defs></svg>
 
 <div class="marco">
 
@@ -445,7 +127,7 @@ h1 span{display:block;color:var(--crema);font-size:.4em;letter-spacing:1px;margi
   <section class="pantalla activa" id="inicio">
     <h1>Carabineros de Chile<span>Preparo mi presentación de Historia</span></h1>
     <div class="escenario" style="max-width:200px">
-      <span class="ilu" data-icono="i-carabinera"><svg viewBox="0 0 120 120" role="img" aria-label="Carabinera de Chile"><use href="#i-carabinera"/></svg></span>
+      <span class="ilu" id="iluInicio"></span>
     </div>
     <p class="intro">Elige qué quieres hacer hoy.</p>
     <div class="menu">
@@ -502,13 +184,8 @@ h1 span{display:block;color:var(--crema);font-size:.4em;letter-spacing:1px;margi
    Si existe img/<nombre>.jpg, reemplaza al dibujo automáticamente.
    ============================================================ */
 const CARPETA_FOTOS = "img/";
-const FOTOS = {
-  "i-carabinera":"carabinera","i-carabinero":"carabinero","i-patrulla":"patrulla",
-  "i-quepis":"quepis","i-silbato":"silbato","i-radio":"radio","i-chaleco":"chaleco",
-  "i-linterna":"linterna","i-perro":"perro","i-caballo":"caballo","i-cruzar":"cruzar",
-  "i-telefono":"telefono","i-placa":"placa","i-bandera":"bandera","i-moto":"moto",
-  "i-comunidad":"comunidad","i-cono":"cono","i-noche":"noche"
-};
+const EXTENSIONES = [".jpg",".jpeg",".png",".webp"];
+const rutaCache = {};
 
 /* ============================================================
    1. PREGUNTAS DEL JUEGO  (10 · una por idea de la rúbrica)
@@ -516,44 +193,44 @@ const FOTOS = {
 /* Regla: cada opción muestra el dibujo de LO QUE DICE su texto.
    Así ella puede responder mirando, aunque todavía no lea de corrido. */
 const PREGUNTAS = [
-  { icono:"i-carabinera", p:"¿Qué hace un carabinero?",
-    ops:[{i:"i-cruzar",t:"Ayuda a las personas",ok:1},{i:"i-comunidad",t:"Construye casas"}],
+  { icono:"carabinera", p:"¿Qué hace un carabinero?",
+    ops:[{i:"cruzar",t:"Ayuda a las personas",ok:1},{i:"comunidad",t:"Construye casas"}],
     dato:"Los carabineros cuidan y ayudan a las personas." },
 
-  { icono:"i-patrulla", p:"¿Cómo se llama el auto verde y blanco de Carabineros?",
-    ops:[{i:"i-patrulla",t:"La patrulla",ok:1},{i:"i-moto",t:"La moto"},{i:"i-caballo",t:"El caballo"}],
+  { icono:"patrulla", p:"¿Cómo se llama el auto verde y blanco de Carabineros?",
+    ops:[{i:"patrulla",t:"La patrulla",ok:1},{i:"moto",t:"La moto"},{i:"caballo",t:"El caballo"}],
     dato:"El auto de Carabineros se llama patrulla." },
 
-  { icono:"i-silbato", p:"¿Qué usa el carabinero para detener los autos?",
-    ops:[{i:"i-silbato",t:"El silbato",ok:1},{i:"i-linterna",t:"La linterna"},{i:"i-radio",t:"La radio"}],
+  { icono:"silbato", p:"¿Qué usa el carabinero para detener los autos?",
+    ops:[{i:"silbato",t:"El silbato",ok:1},{i:"linterna",t:"La linterna"},{i:"radio",t:"La radio"}],
     dato:"El silbato sirve para avisar y detener los autos." },
 
-  { icono:"i-telefono", p:"¿A qué número llamamos si necesitamos a Carabineros?",
+  { icono:"telefono", p:"¿A qué número llamamos si necesitamos a Carabineros?",
     ops:[{t:"133",ok:1},{t:"711"},{t:"250"}],
     dato:"En Chile llamamos al ciento treinta y tres." },
 
-  { icono:"i-perro", p:"¿Qué animal ayuda a buscar personas perdidas?",
-    ops:[{i:"i-perro",t:"El perro",ok:1},{i:"i-caballo",t:"El caballo"}],
+  { icono:"perro", p:"¿Qué animal ayuda a buscar personas perdidas?",
+    ops:[{i:"perro",t:"El perro",ok:1},{i:"caballo",t:"El caballo"}],
     dato:"El perro busca personas perdidas porque huele muy bien." },
 
-  { icono:"i-quepis", p:"¿Cómo se llama este gorro del carabinero?",
-    ops:[{i:"i-quepis",t:"El quepis",ok:1},{i:"i-chaleco",t:"El chaleco"},{i:"i-placa",t:"La placa"}],
+  { icono:"quepis", p:"¿Cómo se llama este gorro del carabinero?",
+    ops:[{i:"quepis",t:"El quepis",ok:1},{i:"chaleco",t:"El chaleco"},{i:"placa",t:"La placa"}],
     dato:"El gorro del carabinero se llama quepis." },
 
-  { icono:"i-radio", p:"¿Con qué pide ayuda el carabinero?",
-    ops:[{i:"i-radio",t:"La radio",ok:1},{i:"i-silbato",t:"El silbato"},{i:"i-linterna",t:"La linterna"}],
+  { icono:"radio", p:"¿Con qué pide ayuda el carabinero?",
+    ops:[{i:"radio",t:"La radio",ok:1},{i:"silbato",t:"El silbato"},{i:"linterna",t:"La linterna"}],
     dato:"Con la radio pide ayuda y avisa a los otros carabineros." },
 
-  { icono:"i-caballo", p:"¿En qué animal patrullan las plazas y los parques?",
-    ops:[{i:"i-caballo",t:"El caballo",ok:1},{i:"i-perro",t:"El perro"}],
+  { icono:"caballo", p:"¿En qué animal patrullan las plazas y los parques?",
+    ops:[{i:"caballo",t:"El caballo",ok:1},{i:"perro",t:"El perro"}],
     dato:"Los carabineros a caballo cuidan las plazas y los parques." },
 
-  { icono:"i-chaleco", p:"¿Qué se pone el carabinero para que todos lo vean?",
-    ops:[{i:"i-chaleco",t:"El chaleco",ok:1},{i:"i-quepis",t:"El quepis"},{i:"i-placa",t:"La placa"}],
+  { icono:"chaleco", p:"¿Qué se pone el carabinero para que todos lo vean?",
+    ops:[{i:"chaleco",t:"El chaleco",ok:1},{i:"quepis",t:"El quepis"},{i:"placa",t:"La placa"}],
     dato:"El chaleco brilla para que todos lo vean, hasta de noche." },
 
-  { icono:"i-comunidad", p:"¿Por qué es importante el trabajo de los carabineros?",
-    ops:[{i:"i-comunidad",t:"Porque nos cuidan",ok:1},{i:"i-cono",t:"Porque pintan las calles"}],
+  { icono:"comunidad", p:"¿Por qué es importante el trabajo de los carabineros?",
+    ops:[{i:"comunidad",t:"Porque nos cuidan",ok:1},{i:"cono",t:"Porque pintan las calles"}],
     dato:"Su trabajo es importante porque nos cuida a todos." }
 ];
 
@@ -561,35 +238,35 @@ const PREGUNTAS = [
    2. ENSAYO · 8 pasos, uno por criterio de la rúbrica
    ============================================================ */
 const ENSAYO = [
-  { titulo:"1. Me presento", icono:"i-carabinera",
+  { titulo:"1. Me presento", icono:"carabinera",
     frase:"Buenos días. Soy carabinera de Chile.",
     pista:"Párate derecha, mira a tus compañeros y habla fuerte. <b>Toca tu gorro o tu placa al decirlo.</b>" },
 
-  { titulo:"2. Digo qué es mi oficio", icono:"i-placa",
+  { titulo:"2. Digo qué es mi oficio", icono:"placa",
     frase:"Los carabineros somos los que cuidamos a las personas en las calles.",
     pista:"Este es el criterio más importante: <b>di el nombre del oficio y qué trabajo hace</b>." },
 
-  { titulo:"3. Cuento qué hago", icono:"i-cruzar",
+  { titulo:"3. Cuento qué hago", icono:"cruzar",
     frase:"Yo cuido las calles en mi patrulla y ayudo a los niños a cruzar.",
     pista:"Aquí nombras <b>dos cosas</b> que hace un carabinero. Puedes agregar: busco a personas perdidas." },
 
-  { titulo:"4. Muestro mis herramientas", icono:"i-silbato",
+  { titulo:"4. Muestro mis herramientas", icono:"silbato",
     frase:"Uso mi quepis, mi silbato y mi radio. El silbato sirve para detener los autos.",
     pista:"Nombra <b>dos o más</b> objetos y explica <b>para qué sirve uno</b>. Muéstralos si los tienes." },
 
-  { titulo:"5. Presento a mis ayudantes", icono:"i-perro",
+  { titulo:"5. Presento a mis ayudantes", icono:"perro",
     frase:"Los carabineros también trabajamos con perros y con caballos.",
     pista:"Este dato le gusta mucho al curso. Los perros <b>huelen</b> para buscar personas." },
 
-  { titulo:"6. Explico cómo ayudo", icono:"i-telefono",
+  { titulo:"6. Explico cómo ayudo", icono:"telefono",
     frase:"Si alguien necesita ayuda, llama al ciento treinta y tres y nosotros llegamos rápido.",
     pista:"Aquí explicas <b>cómo ayudas a la comunidad</b>. El número es el <b>133</b>." },
 
-  { titulo:"7. Cuento un dato entretenido", icono:"i-bandera",
+  { titulo:"7. Cuento un dato entretenido", icono:"bandera",
     frase:"¿Sabían que los Carabineros de Chile nacieron en el año mil novecientos veintisiete? Su lema es Orden y Patria.",
     pista:"Un dato sorprendente hace que todos te escuchen. Di <b>Orden y Patria</b> bien fuerte." },
 
-  { titulo:"8. Me despido", icono:"i-comunidad",
+  { titulo:"8. Me despido", icono:"comunidad",
     frase:"El trabajo de los carabineros es muy importante porque nos cuida a todos. Muchas gracias.",
     pista:"Termina <b>agradeciendo</b> y diciendo por qué el trabajo es importante." }
 ];
@@ -604,23 +281,42 @@ const mezclar = a => a.map(v=>[Math.random(),v]).sort((x,y)=>x[0]-y[0]).map(v=>v
 
 let indice=0, estrellas=0, lista=[], coleccion=[], vozOn=true, pasoEnsayo=0, hechos=[];
 
-function svgIlu(id,label){
-  return '<svg viewBox="0 0 120 120" role="img" aria-label="'+(label||"")+'"><use href="#'+id+'"/></svg>';
-}
-/* Acepta .jpg, .jpeg, .png o .webp: usa la primera que encuentre. */
-const EXTENSIONES = [".jpg",".jpeg",".png",".webp"];
-function ponerIlu(el,id,label){
-  el.innerHTML = svgIlu(id,label);
-  el.dataset.icono = id;
-  const base = FOTOS[id]; if(!base) return;
+/* Busca la foto probando .jpg, .jpeg, .png y .webp. */
+function ponerIlu(el, base, label){
+  el.innerHTML = "";
+  el.dataset.icono = base;
+  const pinta = ruta => {
+    if(el.dataset.icono !== base) return;
+    const im = new Image();
+    im.alt = label || "";
+    im.decoding = "async";
+    im.src = ruta;
+    el.innerHTML = "";
+    el.appendChild(im);
+  };
+  if(rutaCache[base]){ pinta(rutaCache[base]); return; }
   (function probar(k){
     if(k >= EXTENSIONES.length) return;
-    const im = new Image();
-    im.alt = label||"";
-    im.onload  = ()=>{ if(el.dataset.icono===id){ el.innerHTML=""; el.appendChild(im); } };
-    im.onerror = ()=>probar(k+1);
-    im.src = CARPETA_FOTOS + base + EXTENSIONES[k];
+    const t = new Image();
+    t.onload  = ()=>{ rutaCache[base] = CARPETA_FOTOS+base+EXTENSIONES[k]; pinta(rutaCache[base]); };
+    t.onerror = ()=>probar(k+1);
+    t.src = CARPETA_FOTOS + base + EXTENSIONES[k];
   })(0);
+}
+/* Precarga todo para que el juego no parpadee. */
+function precargar(){
+  const bases = new Set();
+  PREGUNTAS.forEach(p=>{ bases.add(p.icono); p.ops.forEach(o=>{ if(o.i) bases.add(o.i); }); });
+  ENSAYO.forEach(e=>bases.add(e.icono));
+  bases.forEach(b=>{
+    (function probar(k){
+      if(k >= EXTENSIONES.length) return;
+      const im = new Image();
+      im.onload  = ()=>{ rutaCache[b] = CARPETA_FOTOS+b+EXTENSIONES[k]; };
+      im.onerror = ()=>probar(k+1);
+      im.src = CARPETA_FOTOS + b + EXTENSIONES[k];
+    })(0);
+  });
 }
 function hablar(txt){
   if(!vozOn || !window.speechSynthesis) return;
@@ -792,6 +488,8 @@ $("btnVoz").onclick = function(){
   if(!vozOn && window.speechSynthesis) speechSynthesis.cancel();
 };
 if(window.speechSynthesis) speechSynthesis.getVoices();
+ponerIlu($("iluInicio"), "carabinera", "Carabinera de Chile");
+precargar();
 </script>
 </body>
 </html>

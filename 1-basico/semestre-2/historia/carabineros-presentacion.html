@@ -3,24 +3,27 @@
 <!--
   Carabineros de Chile · Presentación para proyector
   Aprendo en casa · 1° Básico · Historia (HI01 OA 11)
-  Archivo único autocontenido. Sin dependencias externas. Funciona sin conexión.
 
-  CÓMO SE USA EL DÍA DE LA PRESENTACIÓN
-  · Se avanza TOCANDO la mitad derecha de la pantalla (o el botón ›).
+  Archivo único autocontenido: CSS y JS inline, sin librerías ni CDNs.
+  Las únicas dependencias externas son las fotos de la carpeta img/.
+
+  CÓMO FUNCIONA
+  · Lienzo fijo de 1600x900 (16:9) que se escala completo para caber en
+    cualquier pantalla, igual que una diapositiva de PowerPoint: lo que se
+    diseña es exactamente lo que se proyecta, sin que el texto se reacomode.
+  · Se avanza tocando la mitad derecha de la pantalla (o el botón ›).
   · Se vuelve atrás tocando la mitad izquierda (o el botón ‹).
-  · También sirven las flechas del teclado y la barra espaciadora.
-  · Botón ⛶ para pantalla completa en el proyector.
-  · Botón 📝 muestra el guion (lo que ella dice). Déjalo APAGADO al presentar.
-  · Botón 🔊 hace que la diapositiva se lea sola, por si se le olvida la frase.
+  · Flechas del teclado, barra espaciadora, Inicio y Fin también sirven.
+  · Botón ▦ muestra las 8 diapositivas juntas para saltar a cualquiera.
+  · Botón ⛶ pantalla completa.
+  · Botón 📝 muestra el guion. Déjalo APAGADO al presentar.
+  · Botón 🔊 lee la diapositiva en voz alta.
+  · Para PDF: Imprimir (Ctrl+P) → Guardar como PDF. Sale una diapositiva
+    por página, sin los botones.
 
-  FOTOS REALES (opcional):
-  Crea una carpeta "img" junto a este archivo con estos nombres:
-    carabinera.jpg  carabinero.jpg  patrulla.jpg  quepis.jpg  silbato.jpg
-    radio.jpg  chaleco.jpg  linterna.jpg  perro.jpg  caballo.jpg
-    cruzar.jpg  telefono.jpg  placa.jpg  bandera.jpg  moto.jpg
-    comunidad.jpg  cono.jpg  noche.jpg
-  Sirve .jpg, .jpeg, .png o .webp. Si la foto existe, reemplaza sola al dibujo;
-  si no existe, se ve el dibujo.
+  FOTOS: img/ junto a este archivo. Sirve .jpg, .jpeg, .png o .webp.
+    carabinera  cruzar  patrulla  quepis  silbato  radio  chaleco
+    perro  caballo  placa  comunidad  telefono  bandera
 -->
 <head>
 <meta charset="UTF-8">
@@ -37,432 +40,205 @@
 :root{
   --selva:#0E3B2E; --selva-claro:#17513E; --crema:#FFF6E5;
   --sol:#FFC93C; --coral:#FF6B5A; --agua:#3FC1E0; --hoja:#7ED957;
-  --sombra:0 8px 0 rgba(0,0,0,.2);
+  --sombra:0 10px 0 rgba(0,0,0,.2);
+  --W:1600; --H:900;
 }
 *{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
-html,body{height:100%}
+html,body{height:100%;overflow:hidden}
 body{
-  margin:0;color:var(--crema);overflow:hidden;
+  margin:0;color:var(--crema);display:flex;flex-direction:column;
   font-family:'Nunito','Baloo 2',system-ui,-apple-system,sans-serif;
-  background:
-    radial-gradient(circle at 12% 10%, rgba(126,217,87,.20), transparent 46%),
-    radial-gradient(circle at 88% 82%, rgba(63,193,224,.20), transparent 46%),
-    var(--selva);
-  display:flex;flex-direction:column;
+  background:#08251C;
 }
-.sprite{position:absolute;width:0;height:0;overflow:hidden}
-h1,h2,h3,.btn,.chip,.frase,.rotulo,.contador{font-family:'Baloo 2',system-ui,sans-serif}
+h1,h2,h3,.chip,.frase,.rotulo,.contador,.numerote,.marca,.nav{font-family:'Baloo 2',system-ui,sans-serif}
 
-/* ---------- barra superior ---------- */
+/* ============ barra superior ============ */
 .barra{
   display:flex;align-items:center;justify-content:space-between;gap:8px;
-  padding:8px 12px;flex:0 0 auto;position:relative;z-index:5;
+  padding:8px 12px;flex:0 0 auto;z-index:20;background:#08251C;
 }
-.grupo{display:flex;gap:6px;align-items:center;flex-wrap:wrap}
+.grupo{display:flex;gap:6px;align-items:center}
 .mini{
-  background:rgba(255,246,229,.08);border:2.5px solid rgba(255,246,229,.3);color:var(--crema);
-  border-radius:999px;padding:7px 13px;font-weight:800;cursor:pointer;font-size:.95rem;
+  background:rgba(255,246,229,.08);border:2.5px solid rgba(255,246,229,.28);color:var(--crema);
+  border-radius:999px;padding:8px 14px;font-weight:800;cursor:pointer;font-size:.95rem;
   font-family:'Nunito',system-ui,sans-serif;text-decoration:none;display:inline-block;line-height:1;
 }
 .mini[aria-pressed="true"]{background:var(--sol);color:var(--selva);border-color:var(--sol)}
-.mini:focus-visible,.nav:focus-visible,.zona:focus-visible{outline:4px solid var(--agua);outline-offset:3px}
+.mini:focus-visible,.nav:focus-visible,.zona:focus-visible,.mini-diapo:focus-visible{outline:4px solid var(--agua);outline-offset:3px}
 .contador{color:var(--sol);font-size:1.15rem;letter-spacing:2px;white-space:nowrap}
-@media (max-width:640px){
-  .barra{padding:6px 8px;gap:6px;flex-wrap:nowrap}
-  .mini{padding:7px 10px;font-size:.9rem}
-  .contador{font-size:1rem;letter-spacing:1px}
-  .solo-ancho{display:none}
-}
 
-/* ---------- escenario ---------- */
-.escena{flex:1 1 auto;position:relative;display:flex;align-items:center;justify-content:center;padding:0 clamp(10px,3vw,34px);min-height:0}
-.zona{position:absolute;top:0;bottom:0;width:26%;border:none;background:transparent;cursor:pointer;z-index:2}
+/* ============ escenario y lienzo ============ */
+.escenario{flex:1 1 auto;position:relative;display:flex;align-items:center;justify-content:center;min-height:0;overflow:hidden}
+.zona{position:absolute;top:0;bottom:0;width:24%;border:none;background:transparent;cursor:pointer;z-index:15}
 .zona.izq{left:0}
 .zona.der{right:0}
+.lienzo{
+  width:1600px;height:900px;flex:0 0 auto;position:relative;overflow:hidden;
+  transform-origin:center center;background:var(--selva);
+  border-radius:18px;box-shadow:0 24px 70px rgba(0,0,0,.55);
+}
+
+/* ============ diapositivas ============ */
 .diapo{
-  width:min(1180px,100%);max-height:100%;overflow:auto;text-align:center;
-  background:var(--selva-claro);border:5px solid var(--sol);border-radius:30px;
-  padding:clamp(14px,2.6vh,28px) clamp(14px,3vw,32px);box-shadow:0 16px 40px rgba(0,0,0,.35);
-  animation:entra .4s ease;position:relative;z-index:3;
+  position:absolute;inset:0;opacity:0;pointer-events:none;
+  transition:opacity .42s ease, transform .42s ease;
+  background:
+    radial-gradient(circle at 10% 8%, rgba(126,217,87,.16), transparent 46%),
+    radial-gradient(circle at 92% 88%, rgba(63,193,224,.16), transparent 46%),
+    var(--selva);
 }
-@keyframes entra{from{opacity:0;transform:translateY(16px)}to{opacity:1;transform:none}}
-.diapo h2{
-  font-size:clamp(1.5rem,4.6vmin,3.1rem);color:var(--sol);margin:0 0 clamp(8px,1.6vh,18px);line-height:1.08;
+.diapo.activa{opacity:1;pointer-events:auto;transform:none;z-index:2}
+.d-portada,.d-duo,.d-rejilla,.d-numero,.d-cierre{height:100%}
+.diapo.entra-der{transform:translateX(70px) scale(.985)}
+.diapo.entra-izq{transform:translateX(-70px) scale(.985)}
+
+.marca{
+  position:absolute;left:52px;bottom:26px;font-size:20px;color:rgba(255,246,229,.42);
+  letter-spacing:2px;z-index:6;
 }
-.diapo h1{
-  font-size:clamp(2rem,7vmin,4.6rem);color:var(--sol);margin:0 0 .1em;line-height:1;
+.pagina{
+  position:absolute;right:52px;bottom:24px;font-size:26px;color:var(--sol);
+  font-family:'Baloo 2',sans-serif;z-index:6;
 }
-.sub{font-size:clamp(1rem,2.9vmin,1.9rem);margin:0 0 clamp(8px,1.6vh,16px);line-height:1.25}
-.credito{font-size:clamp(.85rem,2.1vmin,1.3rem);opacity:.9;margin:0;letter-spacing:.5px}
-.credito .nombre{font-family:'Baloo 2',system-ui,sans-serif;color:var(--sol);font-size:1.25em}
+.progreso{position:absolute;left:0;bottom:0;height:9px;background:var(--sol);z-index:8;transition:width .42s ease;border-radius:0 6px 0 0}
+
+/* --- fotos --- */
+.foto{display:block;width:100%;height:100%;object-fit:cover;background:#1E5C46}
+.cuadro{border-radius:26px;overflow:hidden;box-shadow:0 14px 34px rgba(0,0,0,.4);background:#1E5C46;position:relative}
+
+/* --- portada --- */
+.d-portada{display:grid;grid-template-columns:1fr 700px}
+.portada-txt{display:flex;flex-direction:column;justify-content:center;padding:0 70px 0 90px;position:relative;z-index:3}
+.eyebrow{font-size:26px;letter-spacing:5px;color:var(--hoja);text-transform:uppercase;margin:0 0 18px;font-weight:800}
+.d-portada h1{font-size:92px;line-height:1;color:var(--sol);margin:0 0 20px;text-shadow:0 6px 0 rgba(0,0,0,.18)}
+.d-portada .sub{font-size:38px;line-height:1.2;margin:0 0 44px;color:var(--crema);max-width:16ch}
+.autor{display:inline-flex;align-items:center;gap:16px;background:var(--crema);color:var(--selva);
+  border-radius:999px;padding:14px 30px;box-shadow:var(--sombra);width:fit-content}
+.autor small{font-size:20px;font-weight:800;opacity:.65;letter-spacing:1px}
+.autor b{font-family:'Baloo 2',sans-serif;font-size:34px;line-height:1}
+.portada-foto{position:relative;overflow:hidden}
+.portada-foto .foto{object-position:center 18%}
+.portada-foto::after{content:"";position:absolute;inset:0;width:180px;
+  background:linear-gradient(to right, var(--selva), transparent)}
+
+/* --- duo: foto + texto --- */
+.d-duo{display:grid;grid-template-rows:auto 1fr;padding:52px 70px 74px}
+.d-duo h2,.d-rejilla h2,.d-numero h2{
+  font-size:66px;line-height:1.04;color:var(--sol);margin:0 0 34px;text-align:center;
+}
+.duo-cuerpo{display:grid;grid-template-columns:560px 1fr;gap:56px;align-items:center;min-height:0}
+.duo-cuerpo .cuadro{height:100%;max-height:520px}
+.bloque{display:flex;flex-direction:column;gap:22px}
 .frase{
-  background:var(--crema);color:var(--selva);border-radius:22px;
-  padding:clamp(10px,1.8vh,18px) clamp(12px,2.4vw,22px);
-  font-size:clamp(1.15rem,4.1vmin,2.7rem);line-height:1.22;box-shadow:var(--sombra);
-  margin:clamp(8px,1.6vh,16px) auto 0;max-width:26ch;
+  background:var(--crema);color:var(--selva);border-radius:26px;padding:30px 34px;
+  font-size:48px;line-height:1.2;box-shadow:var(--sombra);margin:0;
 }
-.frase.destacada{background:var(--sol);color:#20301F}
-.numerote{font-size:clamp(2.6rem,11vmin,7rem);color:var(--coral);line-height:1;margin:.1em 0}
+.frase.destacada{background:var(--sol);color:#1B2E1C}
+.frase.chica{font-size:38px}
 
-/* ilustraciones */
-.ilu{display:block;width:100%;aspect-ratio:1/1;border-radius:22px;overflow:hidden;background:#E4F0E2;box-shadow:var(--sombra)}
-.ilu svg,.ilu img{display:block;width:100%;height:100%}
-.ilu img{object-fit:cover}
-.grande{max-width:min(34vh,300px);margin:0 auto}
-.rejilla{display:grid;gap:clamp(8px,1.6vw,16px);justify-content:center}
-.rejilla.n2{grid-template-columns:repeat(2,minmax(0,1fr));max-width:760px;margin:0 auto}
-.rejilla.n3{grid-template-columns:repeat(3,minmax(0,1fr));max-width:1000px;margin:0 auto}
-.rejilla.n4{grid-template-columns:repeat(4,minmax(0,1fr));max-width:1060px;margin:0 auto}
-.tarjeta{background:var(--crema);color:var(--selva);border-radius:22px;padding:clamp(7px,1.2vh,12px);box-shadow:var(--sombra);display:flex;flex-direction:column;gap:6px}
-.tarjeta .ilu{box-shadow:none;border-radius:16px}
-.rotulo{font-size:clamp(.85rem,2.4vmin,1.55rem);line-height:1.15;font-weight:800}
-.duo{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1.15fr);gap:clamp(10px,2.4vw,26px);align-items:center;text-align:left}
-.duo .frase{margin:0;max-width:none;text-align:left}
-@media (max-width:640px), (orientation:portrait){
-  .duo{grid-template-columns:1fr;text-align:center}
-  .duo .frase{text-align:center}
-  .rejilla.n4{grid-template-columns:repeat(2,minmax(0,1fr))}
-  .grande{max-width:min(28vh,220px)}
+/* --- rejilla de tarjetas --- */
+.d-rejilla{display:grid;grid-template-rows:auto 1fr;padding:52px 64px 74px}
+.rejilla{display:grid;gap:32px;align-items:stretch;min-height:0}
+.rejilla.n2{grid-template-columns:repeat(2,1fr);max-width:1120px;margin:0 auto;width:100%}
+.rejilla.n3{grid-template-columns:repeat(3,1fr)}
+.rejilla.n4{grid-template-columns:repeat(4,1fr)}
+.tarjeta{
+  background:var(--crema);border-radius:28px;overflow:hidden;box-shadow:var(--sombra);
+  display:grid;grid-template-rows:auto 108px;min-height:0;align-self:center;
 }
+.tarjeta .cuadro{border-radius:0;box-shadow:none;min-height:0;aspect-ratio:1/1}
+.rotulo{
+  color:var(--selva);font-size:30px;line-height:1.15;font-weight:800;
+  padding:10px 16px;text-align:center;display:flex;align-items:center;justify-content:center;
+}
+.rejilla.n2 .tarjeta{grid-template-rows:1fr 120px;align-self:stretch}
+.rejilla.n2 .tarjeta .cuadro{aspect-ratio:auto}
+.rejilla.n2 .rotulo{font-size:38px}
+.tipo-portada .marca,.tipo-portada .pagina{display:none}
+.tipo-cierre .marca,.tipo-cierre .pagina{color:rgba(255,246,229,.75);text-shadow:0 2px 6px rgba(0,0,0,.6)}
 
-/* ---------- guion ---------- */
+/* --- número grande (133) --- */
+.d-numero{display:grid;grid-template-rows:auto 1fr;padding:52px 70px 74px}
+.numero-cuerpo{display:grid;grid-template-columns:520px 1fr;gap:56px;align-items:center;min-height:0}
+.numero-cuerpo .cuadro{height:100%;max-height:520px}
+.numerote{font-size:230px;line-height:.85;color:var(--coral);margin:0 0 8px;text-shadow:0 8px 0 rgba(0,0,0,.2)}
+
+/* --- cierre a sangre --- */
+.d-cierre{position:relative}
+.d-cierre .foto{position:absolute;inset:0;object-position:center 60%}
+.velo{position:absolute;inset:0;background:linear-gradient(to bottom, rgba(14,59,46,.62), rgba(14,59,46,.9))}
+.cierre-txt{position:absolute;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:26px;padding:0 90px;text-align:center}
+.d-cierre h2{font-size:76px;line-height:1.05;color:var(--sol);margin:0;text-shadow:0 6px 14px rgba(0,0,0,.5)}
+.d-cierre .frase{font-size:46px;max-width:22ch}
+.gracias{font-family:'Baloo 2',sans-serif;font-size:80px;color:var(--crema);margin:8px 0 0;text-shadow:0 6px 14px rgba(0,0,0,.5)}
+
+/* ============ vista general ============ */
+.general{
+  position:fixed;inset:0;background:#08251C;z-index:60;
+  display:none;flex-direction:column;padding:20px 24px;
+}
+.general.abierta{display:flex}
+.general-tope{display:flex;align-items:center;justify-content:space-between;gap:12px;margin:0 0 14px}
+.general h3{font-size:1.4rem;color:var(--sol);margin:0;text-align:center;flex:1}
+.mini-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:14px;overflow:auto;flex:1;align-content:start}
+.mini-diapo{
+  background:var(--selva-claro);border:4px solid transparent;border-radius:18px;overflow:hidden;
+  cursor:pointer;padding:0;display:flex;flex-direction:column;text-align:left;color:var(--crema);
+}
+.mini-diapo.ahora{border-color:var(--sol)}
+.mini-diapo .cuadro{border-radius:0;box-shadow:none;aspect-ratio:16/10}
+.mini-diapo span{padding:8px 10px;font-size:.9rem;font-weight:800;line-height:1.15;font-family:'Nunito',sans-serif}
+.mini-diapo b{color:var(--sol);margin-right:6px}
+
+/* ============ guion y pie ============ */
 .guion{
-  flex:0 0 auto;background:rgba(0,0,0,.28);border-top:3px solid rgba(255,201,60,.35);
-  padding:10px 16px;font-size:clamp(.95rem,2.2vmin,1.35rem);line-height:1.35;display:none;
+  flex:0 0 auto;background:rgba(0,0,0,.34);border-top:3px solid rgba(255,201,60,.35);
+  padding:10px 18px;font-size:1.05rem;line-height:1.35;display:none;z-index:20;
 }
 .guion.visible{display:block}
 .guion b{color:var(--sol)}
-
-/* ---------- barra inferior ---------- */
-.pie{display:flex;align-items:center;justify-content:center;gap:12px;padding:10px 12px 14px;flex:0 0 auto;position:relative;z-index:5}
+.pie{display:flex;align-items:center;justify-content:center;gap:14px;padding:10px 12px 14px;flex:0 0 auto;z-index:20;background:#08251C}
 .nav{
   background:var(--coral);color:#fff;border:none;border-radius:999px;
-  width:clamp(62px,9vmin,88px);height:clamp(52px,7.4vmin,72px);
-  font-size:clamp(1.8rem,4.4vmin,2.6rem);font-weight:800;cursor:pointer;box-shadow:var(--sombra);
+  width:78px;height:60px;font-size:2.2rem;font-weight:800;cursor:pointer;box-shadow:var(--sombra);
   display:flex;align-items:center;justify-content:center;line-height:1;
 }
 .nav.sol{background:var(--sol);color:var(--selva)}
-.nav:active{transform:translateY(5px);box-shadow:0 3px 0 rgba(0,0,0,.2)}
-.nav[disabled]{opacity:.35;box-shadow:none}
-.puntos{display:flex;gap:6px;align-items:center}
-.puntos i{width:11px;height:11px;border-radius:99px;background:rgba(255,246,229,.28);display:block}
-.puntos i.ahora{background:var(--sol);transform:scale(1.35)}
+.nav:active{transform:translateY(5px);box-shadow:0 4px 0 rgba(0,0,0,.2)}
+.nav[disabled]{opacity:.3;box-shadow:none}
+.puntos{display:flex;gap:7px;align-items:center}
+.puntos i{width:12px;height:12px;border-radius:99px;background:rgba(255,246,229,.28);display:block;transition:transform .2s}
+.puntos i.ahora{background:var(--sol);transform:scale(1.4)}
+
+.gira{display:none;position:absolute;top:10px;left:50%;transform:translateX(-50%);z-index:18;
+  background:var(--sol);color:var(--selva);font-weight:800;border-radius:999px;padding:8px 18px;font-size:.92rem}
+@media (orientation:portrait) and (max-width:820px){ .gira{display:block} }
+@media (max-width:700px){
+  .mini{padding:8px 11px;font-size:.88rem}
+  .contador{font-size:1rem;letter-spacing:1px}
+  .solo-ancho{display:none}
+  .nav{width:66px;height:54px;font-size:1.9rem}
+  .mini-grid{grid-template-columns:repeat(2,1fr)}
+}
 @media (prefers-reduced-motion: reduce){*{animation:none !important;transition:none !important}}
+
+/* ============ impresión / PDF ============ */
+@media print{
+  @page{size:landscape;margin:0}
+  html,body{overflow:visible;height:auto;background:#fff}
+  .barra,.pie,.guion,.zona,.general,.gira{display:none !important}
+  .escenario{display:block;overflow:visible}
+  .lienzo{transform:none !important;border-radius:0;box-shadow:none;
+    width:1600px;height:auto;overflow:visible;display:block}
+  .diapo{position:relative;inset:auto;opacity:1 !important;transform:none !important;
+    display:block;width:1600px;height:900px;overflow:hidden;
+    page-break-after:always;break-after:page}
+  .diapo:last-of-type{page-break-after:auto;break-after:auto}
+  .progreso{display:none}
+}
 </style>
 </head>
 <body>
-
-<svg class="sprite" aria-hidden="true" focusable="false" xmlns="http://www.w3.org/2000/svg"><defs>
-
-<symbol id="i-carabinera" viewBox="0 0 120 120">
-  <circle cx="60" cy="60" r="59" fill="#E4F0E2"/>
-  <path d="M36 52 Q31 84 43 90 L49 60 Z" fill="#4A3020"/>
-  <path d="M84 52 Q89 84 77 90 L71 60 Z" fill="#4A3020"/>
-  <circle cx="60" cy="86" r="9" fill="#4A3020"/>
-  <rect x="51" y="64" width="18" height="22" rx="7" fill="#E0AE7E"/>
-  <path d="M14 120 Q17 91 39 84 L60 100 L81 84 Q103 91 106 120 Z" fill="#3D6B4C"/>
-  <path d="M39 84 L60 100 L81 84 L74 80 L60 92 L46 80 Z" fill="#F6F9F2"/>
-  <path d="M60 94 L66 101 L60 120 L54 101 Z" fill="#25412F"/>
-  <rect x="22" y="93" width="17" height="7" rx="3" fill="#FFC93C"/>
-  <rect x="81" y="93" width="17" height="7" rx="3" fill="#FFC93C"/>
-  <path d="M33 104 l9-4 9 4 v8 q0 7-9 10 -9-3-9-10 z" fill="#FFC93C" stroke="#C9922A" stroke-width="1.5"/>
-  <circle cx="60" cy="54" r="19" fill="#F2C79B"/>
-  <circle cx="53" cy="58" r="2.8" fill="#2A3A2F"/>
-  <circle cx="67" cy="58" r="2.8" fill="#2A3A2F"/>
-  <circle cx="46" cy="65" r="4" fill="#FF6B5A" opacity=".38"/>
-  <circle cx="74" cy="65" r="4" fill="#FF6B5A" opacity=".38"/>
-  <path d="M53 66 q7 8 14 0" stroke="#2A3A2F" stroke-width="2.8" fill="none" stroke-linecap="round"/>
-  <path d="M38 36 L42 18 Q60 12 78 18 L82 36 Z" fill="#3D6B4C"/>
-  <rect x="36" y="33" width="48" height="10" rx="3" fill="#1F3226"/>
-  <path d="M30 46 Q60 55 90 46 L88 41 L32 41 Z" fill="#16241B"/>
-  <rect x="36" y="39" width="48" height="2.6" fill="#FFC93C"/>
-  <path d="M60 19 l2.8 6 6.5.8-4.9 4.5 1.4 6.4-5.8-3.2-5.8 3.2 1.4-6.4-4.9-4.5 6.5-.8z" fill="#FFC93C"/>
-</symbol>
-
-<symbol id="i-carabinero" viewBox="0 0 120 120">
-  <circle cx="60" cy="60" r="59" fill="#E4F0E2"/>
-  <rect x="51" y="64" width="18" height="22" rx="7" fill="#D9A473"/>
-  <path d="M14 120 Q17 91 39 84 L60 100 L81 84 Q103 91 106 120 Z" fill="#3D6B4C"/>
-  <path d="M39 84 L60 100 L81 84 L74 80 L60 92 L46 80 Z" fill="#F6F9F2"/>
-  <path d="M60 94 L66 101 L60 120 L54 101 Z" fill="#25412F"/>
-  <rect x="22" y="93" width="17" height="7" rx="3" fill="#FFC93C"/>
-  <rect x="81" y="93" width="17" height="7" rx="3" fill="#FFC93C"/>
-  <path d="M33 104 l9-4 9 4 v8 q0 7-9 10 -9-3-9-10 z" fill="#FFC93C" stroke="#C9922A" stroke-width="1.5"/>
-  <circle cx="60" cy="54" r="19" fill="#EDBB8A"/>
-  <circle cx="53" cy="58" r="2.8" fill="#2A3A2F"/>
-  <circle cx="67" cy="58" r="2.8" fill="#2A3A2F"/>
-  <path d="M53 66 q7 8 14 0" stroke="#2A3A2F" stroke-width="2.8" fill="none" stroke-linecap="round"/>
-  <path d="M38 36 L42 18 Q60 12 78 18 L82 36 Z" fill="#3D6B4C"/>
-  <rect x="36" y="33" width="48" height="10" rx="3" fill="#1F3226"/>
-  <path d="M30 46 Q60 55 90 46 L88 41 L32 41 Z" fill="#16241B"/>
-  <rect x="36" y="39" width="48" height="2.6" fill="#FFC93C"/>
-  <path d="M60 19 l2.8 6 6.5.8-4.9 4.5 1.4 6.4-5.8-3.2-5.8 3.2 1.4-6.4-4.9-4.5 6.5-.8z" fill="#FFC93C"/>
-</symbol>
-
-<symbol id="i-patrulla" viewBox="0 0 120 120">
-  <circle cx="60" cy="60" r="59" fill="#E4F0E2"/>
-  <rect x="4" y="92" width="112" height="8" rx="4" fill="#9FB0A3"/>
-  <rect x="46" y="26" width="28" height="9" rx="4" fill="#1F3226"/>
-  <rect x="47" y="27" width="12.5" height="7" rx="3" fill="#FF6B5A"/>
-  <rect x="60.5" y="27" width="12.5" height="7" rx="3" fill="#3FC1E0"/>
-  <path d="M8 84 Q7 60 27 56 L38 41 Q42 35 52 35 L82 35 Q90 35 94 41 L104 56 Q113 59 112 84 Z" fill="#F7F9F4" stroke="#2A3A2F" stroke-width="2.6" stroke-linejoin="round"/>
-  <path d="M44 42 L80 42 Q85 42 88 46 L94 55 L44 55 Z" fill="#A9DCEE" stroke="#2A3A2F" stroke-width="2.2" stroke-linejoin="round"/>
-  <line x1="64" y1="42" x2="64" y2="55" stroke="#2A3A2F" stroke-width="2.2"/>
-  <path d="M40 42 L40 55 L20 55 Q26 44 34 42 Z" fill="#A9DCEE" stroke="#2A3A2F" stroke-width="2.2" stroke-linejoin="round"/>
-  <path d="M10 62 L110 62 L109 74 L10 74 Z" fill="#3D6B4C"/>
-  <text x="60" y="71.5" font-family="Verdana,sans-serif" font-size="7.4" font-weight="bold" fill="#FFF6E5" text-anchor="middle" letter-spacing="1">CARABINEROS</text>
-  <rect x="102" y="78" width="11" height="7" rx="3" fill="#FFC93C"/>
-  <circle cx="34" cy="88" r="13" fill="#26332B"/>
-  <circle cx="34" cy="88" r="6" fill="#C3CFC6"/>
-  <circle cx="90" cy="88" r="13" fill="#26332B"/>
-  <circle cx="90" cy="88" r="6" fill="#C3CFC6"/>
-</symbol>
-
-<symbol id="i-quepis" viewBox="0 0 120 120">
-  <circle cx="60" cy="60" r="59" fill="#E4F0E2"/>
-  <path d="M16 56 L24 26 Q60 16 96 26 L104 56 Z" fill="#3D6B4C" stroke="#25412F" stroke-width="2.5" stroke-linejoin="round"/>
-  <rect x="14" y="53" width="92" height="16" rx="5" fill="#1F3226"/>
-  <path d="M6 74 Q60 96 114 74 L110 66 Q60 82 10 66 Z" fill="#16241B"/>
-  <rect x="14" y="62" width="92" height="4" fill="#FFC93C"/>
-  <circle cx="18" cy="64" r="4" fill="#C9922A"/>
-  <circle cx="102" cy="64" r="4" fill="#C9922A"/>
-  <path d="M60 28 l4 8.6 9.4 1.1-7 6.5 2 9.2-8.4-4.7-8.4 4.7 2-9.2-7-6.5 9.4-1.1z" fill="#FFC93C" stroke="#C9922A" stroke-width="1.4"/>
-</symbol>
-
-<symbol id="i-silbato" viewBox="0 0 120 120">
-  <circle cx="60" cy="60" r="59" fill="#E4F0E2"/>
-  <path d="M92 40 Q104 26 110 14" stroke="#C9922A" stroke-width="4.5" fill="none" stroke-linecap="round"/>
-  <circle cx="88" cy="46" r="7.5" fill="none" stroke="#C9922A" stroke-width="4.5"/>
-  <path d="M12 56 H53.7 A20 20 0 1 1 53.7 76 H12 Q4 76 4 68 V64 Q4 56 12 56 Z" fill="#DDE3DF" stroke="#5D6A62" stroke-width="3" stroke-linejoin="round"/>
-  <path d="M12 59 H56 V67 H12 z" fill="#F4F7F4"/>
-  <path d="M46 46 h16 q3 0 3 3 v9 H46 q-3 0-3-3 z" fill="#7C8880" stroke="#5D6A62" stroke-width="2.4" stroke-linejoin="round"/>
-  <circle cx="79" cy="70" r="7" fill="#8F9A93"/>
-  <path d="M96 84 q9 8 8 20" stroke="#FFC93C" stroke-width="4.5" fill="none" stroke-linecap="round"/>
-  <path d="M106 78 q12 11 10 28" stroke="#FFC93C" stroke-width="4.5" fill="none" stroke-linecap="round" opacity=".55"/>
-</symbol>
-
-<symbol id="i-radio" viewBox="0 0 120 120">
-  <circle cx="60" cy="60" r="59" fill="#E4F0E2"/>
-  <rect x="66" y="12" width="7" height="34" rx="3.5" fill="#3A4A40"/>
-  <circle cx="69.5" cy="12" r="4.5" fill="#3A4A40"/>
-  <rect x="36" y="34" width="48" height="76" rx="10" fill="#3A4A40" stroke="#25332B" stroke-width="2.5"/>
-  <rect x="44" y="42" width="32" height="18" rx="4" fill="#7ED957"/>
-  <circle cx="52" cy="51" r="3" fill="#25412F"/>
-  <circle cx="60" cy="51" r="3" fill="#25412F"/>
-  <circle cx="68" cy="51" r="3" fill="#25412F"/>
-  <rect x="44" y="66" width="32" height="4" rx="2" fill="#8C9A92"/>
-  <rect x="44" y="74" width="32" height="4" rx="2" fill="#8C9A92"/>
-  <rect x="44" y="82" width="32" height="4" rx="2" fill="#8C9A92"/>
-  <rect x="48" y="92" width="24" height="11" rx="5" fill="#FF6B5A"/>
-  <rect x="27" y="52" width="10" height="20" rx="5" fill="#25332B"/>
-  <path d="M86 26 q10 8 10 20" stroke="#3FC1E0" stroke-width="4" fill="none" stroke-linecap="round"/>
-  <path d="M94 18 q16 12 16 28" stroke="#3FC1E0" stroke-width="4" fill="none" stroke-linecap="round" opacity=".55"/>
-</symbol>
-
-<symbol id="i-chaleco" viewBox="0 0 120 120">
-  <circle cx="60" cy="60" r="59" fill="#E4F0E2"/>
-  <path d="M40 20 L60 34 L80 20 Q102 26 104 62 L92 66 L92 106 Q60 114 28 106 L28 66 L16 62 Q18 26 40 20 Z" fill="#D7F24B" stroke="#8FA61F" stroke-width="2.6" stroke-linejoin="round"/>
-  <path d="M40 20 L60 34 L80 20 L80 30 L60 44 L40 30 Z" fill="#FFF6E5" opacity=".55"/>
-  <rect x="28" y="70" width="64" height="9" fill="#C7CFC9" stroke="#8FA61F" stroke-width="1.4"/>
-  <rect x="28" y="88" width="64" height="9" fill="#C7CFC9" stroke="#8FA61F" stroke-width="1.4"/>
-  <rect x="56" y="40" width="8" height="70" fill="#8FA61F" opacity=".35"/>
-  <text x="60" y="62" font-family="Verdana,sans-serif" font-size="7" font-weight="bold" fill="#3D6B4C" text-anchor="middle" letter-spacing=".3">CARABINEROS</text>
-</symbol>
-
-<symbol id="i-linterna" viewBox="0 0 120 120">
-  <circle cx="60" cy="60" r="59" fill="#E4F0E2"/>
-  <path d="M30 46 L58 34 L58 86 L30 74 Z" fill="#FFC93C" opacity=".55"/>
-  <path d="M14 40 L58 22 L58 98 L14 80 Z" fill="#FFC93C" opacity=".28"/>
-  <rect x="56" y="42" width="18" height="36" rx="4" fill="#3A4A40" stroke="#25332B" stroke-width="2.4"/>
-  <rect x="72" y="50" width="34" height="20" rx="7" fill="#5D6A62" stroke="#25332B" stroke-width="2.4"/>
-  <rect x="80" y="54" width="8" height="12" rx="3" fill="#FF6B5A"/>
-  <circle cx="60" cy="60" r="8" fill="#FFF6E5"/>
-</symbol>
-
-<symbol id="i-perro" viewBox="0 0 120 120">
-  <circle cx="60" cy="60" r="59" fill="#E4F0E2"/>
-  <rect x="6" y="96" width="108" height="7" rx="3.5" fill="#9FB0A3"/>
-  <path d="M96 60 q16-14 18 2 q2 16-16 22 z" fill="#7E5731"/>
-  <rect x="44" y="76" width="12" height="24" rx="6" fill="#8C6234"/>
-  <rect x="86" y="76" width="12" height="24" rx="6" fill="#8C6234"/>
-  <ellipse cx="70" cy="66" rx="30" ry="19" fill="#B98246"/>
-  <path d="M46 52 q28-8 50 4 q6 4 6 12 q-28-12-58-4 z" fill="#3B3229"/>
-  <rect x="58" y="78" width="12" height="24" rx="6" fill="#B98246"/>
-  <rect x="72" y="78" width="12" height="24" rx="6" fill="#B98246"/>
-  <path d="M38 58 q0-14 10-20 l16 12 q6 10 4 18 z" fill="#B98246"/>
-  <path d="M25 28 L17 6 L39 20 Z" fill="#8C6234"/>
-  <path d="M43 26 L52 6 L54 28 Z" fill="#8C6234"/>
-  <circle cx="33" cy="40" r="19" fill="#B98246"/>
-  <path d="M14 40 q-8 1-8 8 q0 8 12 8 q12 0 14-9 z" fill="#8C6234"/>
-  <ellipse cx="8" cy="46" rx="5" ry="4" fill="#25332B"/>
-  <circle cx="26" cy="34" r="3.2" fill="#25332B"/>
-  <circle cx="42" cy="36" r="3.2" fill="#25332B"/>
-  <path d="M8 52 q8 4 16 2" stroke="#25332B" stroke-width="2" fill="none" stroke-linecap="round"/>
-  <path d="M20 56 q14 8 28 2 l2 8 q-16 7-32-2 z" fill="#3D6B4C"/>
-  <circle cx="34" cy="65" r="5.5" fill="#FFC93C"/>
-</symbol>
-
-<symbol id="i-caballo" viewBox="0 0 120 120">
-  <circle cx="60" cy="60" r="59" fill="#E4F0E2"/>
-  <rect x="4" y="98" width="112" height="7" rx="3.5" fill="#9FB0A3"/>
-  <path d="M100 56 q18 4 16 22 q-2 18-14 24 l-8-24 z" fill="#4A3020"/>
-  <rect x="58" y="74" width="13" height="30" rx="6.5" fill="#734A28"/>
-  <rect x="92" y="74" width="13" height="30" rx="6.5" fill="#734A28"/>
-  <ellipse cx="76" cy="68" rx="28" ry="19" fill="#8C5A31"/>
-  <rect x="66" y="78" width="13" height="26" rx="6.5" fill="#8C5A31"/>
-  <rect x="84" y="78" width="13" height="26" rx="6.5" fill="#8C5A31"/>
-  <path d="M48 32 L68 56 L58 70 L34 52 Z" fill="#8C5A31"/>
-  <path d="M44 14 Q60 32 68 60 L56 64 Q50 36 36 20 Z" fill="#4A3020"/>
-  <path d="M48 32 Q50 14 34 10 Q18 6 12 22 L6 46 Q2 58 14 61 Q30 65 36 52 Z" fill="#8C5A31"/>
-  <path d="M8 44 Q2 58 14 61 Q26 64 30 55 L16 46 Z" fill="#734A28"/>
-  <ellipse cx="12" cy="53" rx="3.2" ry="2.6" fill="#3A2A1C"/>
-  <circle cx="30" cy="27" r="3.6" fill="#25332B"/>
-  <path d="M30 12 L25 0 L38 6 Z" fill="#734A28"/>
-  <path d="M40 14 L47 3 L49 16 Z" fill="#734A28"/>
-  <path d="M60 52 q22-9 38 0 l2 15 q-22 9-42 0 z" fill="#3D6B4C" stroke="#25412F" stroke-width="2.2"/>
-  <rect x="70" y="44" width="20" height="12" rx="4" fill="#25412F"/>
-  <path d="M9 40 Q19 34 28 41" stroke="#25412F" stroke-width="3.2" fill="none" stroke-linecap="round"/>
-  <path d="M22 20 Q34 30 30 44" stroke="#25412F" stroke-width="3.2" fill="none" stroke-linecap="round"/>
-</symbol>
-
-<symbol id="i-cruzar" viewBox="0 0 120 120">
-  <circle cx="60" cy="60" r="59" fill="#E4F0E2"/>
-  <rect x="0" y="86" width="120" height="34" fill="#7C8A81"/>
-  <rect x="6" y="90" width="12" height="28" fill="#FFF6E5"/>
-  <rect x="30" y="90" width="12" height="28" fill="#FFF6E5"/>
-  <rect x="54" y="90" width="12" height="28" fill="#FFF6E5"/>
-  <rect x="78" y="90" width="12" height="28" fill="#FFF6E5"/>
-  <rect x="102" y="90" width="12" height="28" fill="#FFF6E5"/>
-  <rect x="96" y="20" width="20" height="46" rx="6" fill="#3A4A40"/>
-  <rect x="103" y="66" width="6" height="24" fill="#3A4A40"/>
-  <circle cx="106" cy="30" r="6" fill="#FF6B5A" opacity=".35"/>
-  <circle cx="106" cy="43" r="6" fill="#FFC93C" opacity=".35"/>
-  <circle cx="106" cy="56" r="6" fill="#7ED957"/>
-  <path d="M20 96 q0-22 16-22 t16 22 z" fill="#3D6B4C"/>
-  <rect x="30" y="96" width="12" height="16" fill="#25412F"/>
-  <circle cx="36" cy="61" r="13" fill="#EDBB8A"/>
-  <circle cx="32" cy="63" r="2" fill="#2A3A2F"/>
-  <circle cx="40" cy="63" r="2" fill="#2A3A2F"/>
-  <path d="M33 68 q3 4 6 0" stroke="#2A3A2F" stroke-width="1.8" fill="none" stroke-linecap="round"/>
-  <path d="M25 44 L27 32 Q36 28 45 32 L47 44 Z" fill="#3D6B4C"/>
-  <rect x="24" y="42" width="24" height="7" rx="2" fill="#1F3226"/>
-  <path d="M20 52 Q36 58 52 52 L51 47 L21 47 Z" fill="#16241B"/>
-  <circle cx="36" cy="34" r="2.6" fill="#FFC93C"/>
-  <path d="M50 78 q14-4 22 2" stroke="#3D6B4C" stroke-width="9" fill="none" stroke-linecap="round"/>
-  <path d="M18 76 q-8-16 0-26" stroke="#3D6B4C" stroke-width="9" fill="none" stroke-linecap="round"/>
-  <path d="M68 100 q0-16 11-16 t11 16 z" fill="#FF6B5A"/>
-  <rect x="74" y="100" width="10" height="12" fill="#3FC1E0"/>
-  <circle cx="79" cy="76" r="10" fill="#F2C79B"/>
-  <path d="M69 74 q2-11 10-11 t10 11 q-4-6-10-6 t-10 6 z" fill="#5A3A24"/>
-  <circle cx="76" cy="77" r="1.8" fill="#2A3A2F"/>
-  <circle cx="83" cy="77" r="1.8" fill="#2A3A2F"/>
-</symbol>
-
-<symbol id="i-telefono" viewBox="0 0 120 120">
-  <circle cx="60" cy="60" r="59" fill="#E4F0E2"/>
-  <rect x="30" y="10" width="60" height="100" rx="14" fill="#2A3A2F" stroke="#1B2620" stroke-width="2.5"/>
-  <rect x="36" y="22" width="48" height="76" rx="6" fill="#FFF6E5"/>
-  <rect x="50" y="14" width="20" height="4" rx="2" fill="#5D6A62"/>
-  <text x="60" y="62" font-family="Verdana,sans-serif" font-size="30" font-weight="bold" fill="#FF6B5A" text-anchor="middle">133</text>
-  <text x="60" y="77" font-family="Verdana,sans-serif" font-size="6.2" font-weight="bold" fill="#3D6B4C" text-anchor="middle" letter-spacing=".3">EMERGENCIA</text>
-  <circle cx="60" cy="89" r="8" fill="#7ED957"/>
-  <path d="M56 85.5 q1.4-2.3 3.2-.7 l1.4 1.8 q.7 1-.3 2.1 q-1 1 0 2.8 q1.4 2.5 3.9 3.9 q1.8 1 2.8 0 q1-1 2.1-.3 l1.8 1.4 q1.4 1.4-.3 3.2 q-2.1 1.8-5.6 0 q-4.6-2.1-7.4-6.7 q-2.5-3.9-1.4-5.6 z" fill="#1F3226"/>
-  <path d="M96 34 q10 10 10 26" stroke="#3FC1E0" stroke-width="4.5" fill="none" stroke-linecap="round"/>
-  <path d="M18 34 q-10 10-10 26" stroke="#3FC1E0" stroke-width="4.5" fill="none" stroke-linecap="round"/>
-</symbol>
-
-<symbol id="i-placa" viewBox="0 0 120 120">
-  <circle cx="60" cy="60" r="59" fill="#E4F0E2"/>
-  <path d="M60 8 L104 24 v34 q0 34-44 54 Q16 92 16 58 V24 Z" fill="#FFC93C" stroke="#C9922A" stroke-width="3" stroke-linejoin="round"/>
-  <path d="M60 18 L94 31 v27 q0 26-34 42 Q26 84 26 58 V31 Z" fill="#FFE08A"/>
-  <path d="M60 34 l6.4 13.6 14.6 1.8-11 10 3.2 14.6L60 66.6 46.8 74l3.2-14.6-11-10 14.6-1.8z" fill="#3D6B4C"/>
-  <text x="60" y="94" font-family="Verdana,sans-serif" font-size="9.5" font-weight="bold" fill="#7A5A16" text-anchor="middle">CHILE</text>
-</symbol>
-
-<symbol id="i-bandera" viewBox="0 0 120 120">
-  <circle cx="60" cy="60" r="59" fill="#E4F0E2"/>
-  <rect x="16" y="18" width="7" height="92" rx="3.5" fill="#8C6234"/>
-  <rect x="23" y="26" width="82" height="30" fill="#FFF6E5" stroke="#B8C2BA" stroke-width="1.5"/>
-  <rect x="23" y="56" width="82" height="30" fill="#E03A3E" stroke="#B8C2BA" stroke-width="1.5"/>
-  <rect x="23" y="26" width="30" height="30" fill="#1B4EA0"/>
-  <path d="M38 32 l3.6 7.6 8.2 1-6.2 5.6 1.8 8.2L38 50.2 30.6 54.4l1.8-8.2-6.2-5.6 8.2-1z" fill="#FFF6E5"/>
-  <text x="64" y="102" font-family="Verdana,sans-serif" font-size="12" font-weight="bold" fill="#3D6B4C" text-anchor="middle">CHILE</text>
-</symbol>
-
-<symbol id="i-moto" viewBox="0 0 120 120">
-  <circle cx="60" cy="60" r="59" fill="#E4F0E2"/>
-  <rect x="4" y="96" width="112" height="7" rx="3.5" fill="#9FB0A3"/>
-  <circle cx="28" cy="86" r="17" fill="#26332B"/>
-  <circle cx="28" cy="86" r="7" fill="#C3CFC6"/>
-  <circle cx="94" cy="86" r="17" fill="#26332B"/>
-  <circle cx="94" cy="86" r="7" fill="#C3CFC6"/>
-  <path d="M28 86 L52 60 h28 l14 26" stroke="#3D6B4C" stroke-width="8" fill="none" stroke-linecap="round" stroke-linejoin="round"/>
-  <path d="M46 62 q16-10 34-2 l-2 12 q-16-6-32 0 z" fill="#F7F9F4" stroke="#2A3A2F" stroke-width="2"/>
-  <rect x="70" y="52" width="24" height="10" rx="4" fill="#25412F"/>
-  <path d="M38 42 q10-8 20-2" stroke="#2A3A2F" stroke-width="6" fill="none" stroke-linecap="round"/>
-  <path d="M30 40 q-6-14 8-20 q10-4 14 6" stroke="#3D6B4C" stroke-width="6" fill="none" stroke-linecap="round"/>
-  <rect x="20" y="30" width="20" height="10" rx="4" fill="#1F3226"/>
-  <rect x="22" y="20" width="9" height="9" rx="3" fill="#FF6B5A"/>
-  <rect x="32" y="20" width="9" height="9" rx="3" fill="#3FC1E0"/>
-</symbol>
-
-<symbol id="i-comunidad" viewBox="0 0 120 120">
-  <circle cx="60" cy="60" r="59" fill="#E4F0E2"/>
-  <rect x="0" y="98" width="120" height="22" fill="#7ED957"/>
-  <path d="M6 62 L26 44 L46 62 V98 H6 Z" fill="#FFC93C" stroke="#C9922A" stroke-width="2.2" stroke-linejoin="round"/>
-  <rect x="18" y="72" width="16" height="26" fill="#8C5A31"/>
-  <path d="M42 54 L66 34 L90 54 V98 H42 Z" fill="#FF6B5A" stroke="#C74C3E" stroke-width="2.2" stroke-linejoin="round"/>
-  <rect x="56" y="70" width="18" height="28" rx="2" fill="#FFF6E5"/>
-  <rect x="50" y="60" width="10" height="9" fill="#FFF6E5"/>
-  <rect x="72" y="60" width="10" height="9" fill="#FFF6E5"/>
-  <path d="M86 66 L102 52 L118 66 V98 H86 Z" fill="#3FC1E0" stroke="#2A93AC" stroke-width="2.2" stroke-linejoin="round"/>
-  <rect x="96" y="76" width="13" height="22" fill="#FFF6E5"/>
-  <path d="M60 8 q8-9 15-1 q7 8-15 24 q-22-16-15-24 q7-8 15 1 z" fill="#FF6B5A"/>
-</symbol>
-
-<symbol id="i-cono" viewBox="0 0 120 120">
-  <circle cx="60" cy="60" r="59" fill="#E4F0E2"/>
-  <rect x="16" y="96" width="88" height="12" rx="5" fill="#FF8A3D" stroke="#C2591B" stroke-width="2.2"/>
-  <path d="M52 20 q8-8 16 0 L88 96 H32 Z" fill="#FF8A3D" stroke="#C2591B" stroke-width="2.4" stroke-linejoin="round"/>
-  <path d="M44 52 h32 l3 12 H41 Z" fill="#FFF6E5"/>
-  <path d="M38 74 h44 l3 12 H35 Z" fill="#FFF6E5"/>
-</symbol>
-
-<symbol id="i-esposas" viewBox="0 0 120 120">
-  <circle cx="60" cy="60" r="59" fill="#E4F0E2"/>
-  <circle cx="36" cy="58" r="24" fill="none" stroke="#8F9A93" stroke-width="11"/>
-  <circle cx="84" cy="58" r="24" fill="none" stroke="#8F9A93" stroke-width="11"/>
-  <circle cx="36" cy="58" r="24" fill="none" stroke="#C7CFC9" stroke-width="5"/>
-  <circle cx="84" cy="58" r="24" fill="none" stroke="#C7CFC9" stroke-width="5"/>
-  <rect x="50" y="80" width="20" height="12" rx="5" fill="#5D6A62"/>
-  <rect x="52" y="90" width="16" height="18" rx="6" fill="#8F9A93" stroke="#5D6A62" stroke-width="2"/>
-</symbol>
-
-<symbol id="i-noche" viewBox="0 0 120 120">
-  <circle cx="60" cy="60" r="59" fill="#1B2F44"/>
-  <circle cx="92" cy="28" r="12" fill="#FFF6E5"/>
-  <circle cx="86" cy="24" r="10" fill="#1B2F44"/>
-  <circle cx="26" cy="24" r="2.6" fill="#FFF6E5"/>
-  <circle cx="44" cy="16" r="2" fill="#FFF6E5"/>
-  <circle cx="16" cy="44" r="1.8" fill="#FFF6E5"/>
-  <rect x="0" y="90" width="120" height="30" fill="#2A3A2F"/>
-  <rect x="10" y="52" width="26" height="42" fill="#3A4A40"/>
-  <rect x="16" y="58" width="7" height="8" fill="#FFC93C"/>
-  <rect x="26" y="72" width="7" height="8" fill="#FFC93C"/>
-  <rect x="44" y="62" width="24" height="32" fill="#3A4A40"/>
-  <rect x="50" y="68" width="7" height="8" fill="#FFC93C"/>
-  <rect x="82" y="56" width="26" height="38" fill="#3A4A40"/>
-  <rect x="88" y="64" width="7" height="8" fill="#FFC93C"/>
-  <rect x="46" y="30" width="26" height="9" rx="4" fill="#1F3226"/>
-  <rect x="47" y="31" width="11.5" height="7" rx="3" fill="#FF6B5A"/>
-  <rect x="60.5" y="31" width="11.5" height="7" rx="3" fill="#3FC1E0"/>
-  <path d="M28 88 Q27 70 44 67 L52 56 Q56 50 64 50 L84 50 Q90 50 93 55 L100 66 Q108 69 107 88 Z" fill="#F7F9F4"/>
-  <path d="M30 72 L106 72 L105 80 L30 80 Z" fill="#3D6B4C"/>
-  <circle cx="46" cy="90" r="9" fill="#26332B"/>
-  <circle cx="90" cy="90" r="9" fill="#26332B"/>
-</symbol>
-
-</defs></svg>
 
 <header class="barra">
   <div class="grupo">
@@ -471,16 +247,18 @@ h1,h2,h3,.btn,.chip,.frase,.rotulo,.contador{font-family:'Baloo 2',system-ui,san
   </div>
   <div class="contador" id="contador">1 / 8</div>
   <div class="grupo">
+    <button class="mini" id="btnGeneral">▦</button>
     <button class="mini" id="btnGuion" aria-pressed="false">📝<span class="solo-ancho"> Guion</span></button>
     <button class="mini" id="btnVoz" aria-pressed="false">🔊<span class="solo-ancho"> Leer</span></button>
     <button class="mini" id="btnPantalla">⛶</button>
   </div>
 </header>
 
-<main class="escena">
+<main class="escenario" id="escenario">
+  <div class="gira">↻ Gira el teléfono para verla más grande</div>
   <button class="zona izq" id="zonaIzq" aria-label="Diapositiva anterior"></button>
   <button class="zona der" id="zonaDer" aria-label="Diapositiva siguiente"></button>
-  <section class="diapo" id="diapo" aria-live="polite"></section>
+  <div class="lienzo" id="lienzo" aria-live="polite"></div>
 </main>
 
 <div class="guion" id="guion"></div>
@@ -491,98 +269,97 @@ h1,h2,h3,.btn,.chip,.frase,.rotulo,.contador{font-family:'Baloo 2',system-ui,san
   <button class="nav sol" id="btnSig" aria-label="Siguiente">›</button>
 </footer>
 
+<div class="general" id="general">
+  <div class="general-tope">
+    <h3>Todas las diapositivas · toca una para ir</h3>
+    <button class="mini" id="btnCerrarGeneral">✕ Cerrar</button>
+  </div>
+  <div class="mini-grid" id="miniGrid"></div>
+</div>
+
 <script>
 /* ============================================================
-   FOTOS REALES OPCIONALES
+   FOTOS · carpeta img/ junto a este archivo
    ============================================================ */
-const CARPETA_FOTOS = "img/";
-const FOTOS = {
-  "i-carabinera":"carabinera","i-carabinero":"carabinero","i-patrulla":"patrulla",
-  "i-quepis":"quepis","i-silbato":"silbato","i-radio":"radio","i-chaleco":"chaleco",
-  "i-linterna":"linterna","i-perro":"perro","i-caballo":"caballo","i-cruzar":"cruzar",
-  "i-telefono":"telefono","i-placa":"placa","i-bandera":"bandera","i-moto":"moto",
-  "i-comunidad":"comunidad","i-cono":"cono","i-noche":"noche"
-};
+const CARPETA = "img/";
+const EXT = [".jpg",".jpeg",".png",".webp"];
 
 /* ============================================================
    LAS 8 DIAPOSITIVAS
-   · "texto"  = lo que se ve proyectado (corto y grande)
-   · "guion"  = lo que ella dice en voz alta
-   · "voz"    = lo que se lee si toca 🔊
+   texto = lo proyectado · guion = lo que ella dice · voz = lo que se lee
    ============================================================ */
 const DIAPOS = [
   {
-    tipo:"portada",
+    tipo:"portada", miniatura:"carabinera",
     titulo:"Los Carabineros de Chile",
     sub:"Un oficio que cuida a las personas",
-    credito:"1° Básico · Historia",
-    icono:"i-placa",
-    voz:"Los Carabineros de Chile. Un oficio que cuida a las personas.",
+    foto:"carabinera",
+    voz:"Los Carabineros de Chile. Un oficio que cuida a las personas. Presentado por Renata Leiva.",
     guion:"Buenos días. Hoy les voy a hablar de <b>los Carabineros de Chile</b>."
   },
   {
-    tipo:"duo",
+    tipo:"duo", miniatura:"placa",
     titulo:"¡Hola! Soy carabinera",
-    icono:"i-carabinera",
+    foto:"placa",
     frase:"Los carabineros cuidamos a las personas en las calles.",
     voz:"Hola. Soy carabinera de Chile. Los carabineros cuidamos a las personas en las calles.",
     guion:"<b>Soy carabinera de Chile.</b> Los carabineros somos los que cuidamos a las personas en las calles. <i>(Muestra tu gorro o tu placa.)</i>"
   },
   {
-    tipo:"rejilla",
+    tipo:"rejilla", miniatura:"patrulla",
     titulo:"¿Qué hago en mi trabajo?",
     items:[
-      {icono:"i-patrulla", rotulo:"Cuido las calles en mi patrulla"},
-      {icono:"i-cruzar",   rotulo:"Ayudo a cruzar la calle"},
-      {icono:"i-radio",    rotulo:"Voy rápido si alguien necesita ayuda"}
+      {foto:"patrulla", rotulo:"Cuido las calles en mi patrulla"},
+      {foto:"cruzar",   rotulo:"Ayudo a cruzar la calle"},
+      {foto:"radio",    rotulo:"Voy rápido si alguien necesita ayuda"}
     ],
     voz:"¿Qué hago en mi trabajo? Cuido las calles en mi patrulla. Ayudo a las personas a cruzar la calle. Y voy rápido si alguien necesita ayuda.",
     guion:"En mi trabajo <b>cuido las calles</b> en mi patrulla, <b>ayudo a los niños a cruzar</b> y voy rápido cuando alguien necesita ayuda."
   },
   {
-    tipo:"rejilla",
+    tipo:"rejilla", miniatura:"quepis",
     titulo:"¿Qué uso para trabajar?",
     items:[
-      {icono:"i-quepis",  rotulo:"Quepis: mi gorro"},
-      {icono:"i-silbato", rotulo:"Silbato: detiene los autos"},
-      {icono:"i-radio",   rotulo:"Radio: pido ayuda"},
-      {icono:"i-chaleco", rotulo:"Chaleco: para que me vean"}
+      {foto:"quepis",  rotulo:"Quepis: mi gorro"},
+      {foto:"silbato", rotulo:"Silbato: detiene los autos"},
+      {foto:"radio",   rotulo:"Radio: pido ayuda"},
+      {foto:"chaleco", rotulo:"Chaleco: para que me vean"}
     ],
     voz:"¿Qué uso para trabajar? Mi quepis, que es mi gorro. El silbato, que sirve para detener los autos. La radio, para pedir ayuda. Y el chaleco, para que todos me vean.",
     guion:"Uso mi <b>quepis</b>, mi <b>silbato</b> y mi <b>radio</b>. El silbato <b>sirve para detener los autos</b> y con la radio pido ayuda."
   },
   {
-    tipo:"rejilla",
+    tipo:"rejilla", miniatura:"perro",
     titulo:"Mis ayudantes",
     items:[
-      {icono:"i-perro",   rotulo:"El perro busca personas perdidas"},
-      {icono:"i-caballo", rotulo:"El caballo cuida plazas y parques"}
+      {foto:"perro",   rotulo:"El perro busca personas perdidas"},
+      {foto:"caballo", rotulo:"El caballo cuida plazas y parques"}
     ],
     voz:"Estos son mis ayudantes. El perro busca personas perdidas porque huele muy bien. Y el caballo cuida las plazas y los parques.",
     guion:"Los carabineros también trabajamos con <b>perros</b> y con <b>caballos</b>. El perro busca personas perdidas porque huele muy bien."
   },
   {
-    tipo:"numero",
+    tipo:"numero", miniatura:"telefono",
     titulo:"¿Cómo ayudo a mi comunidad?",
-    icono:"i-telefono",
+    foto:"telefono",
     numero:"133",
     frase:"Si alguien necesita ayuda, llama al 133 y llegamos rápido.",
     voz:"¿Cómo ayudo a mi comunidad? Si alguien necesita ayuda, llama al ciento treinta y tres, y los carabineros llegamos rápido.",
     guion:"Los carabineros ayudamos a la comunidad: si alguien necesita ayuda <b>llama al 133</b> y llegamos rápido a cuidarlo."
   },
   {
-    tipo:"duo",
+    tipo:"duo", miniatura:"bandera",
     titulo:"¿Sabías que...?",
-    icono:"i-bandera",
+    foto:"bandera",
     frase:"Los Carabineros de Chile nacieron en el año 1927.",
     extra:"Su lema es: “Orden y Patria”.",
     voz:"¿Sabías que los Carabineros de Chile nacieron en el año mil novecientos veintisiete? Su lema es: Orden y Patria.",
     guion:"¿Sabían que los Carabineros de Chile <b>nacieron en el año 1927</b>? Su lema es <b>Orden y Patria</b>."
   },
   {
-    tipo:"cierre",
+    tipo:"cierre", miniatura:"comunidad",
     titulo:"Su trabajo es muy importante",
-    icono:"i-comunidad",
+    foto:"comunidad",
     frase:"Porque nos cuida a todos.",
     gracias:"¡Muchas gracias!",
     voz:"El trabajo de los carabineros es muy importante porque nos cuida a todos. ¡Muchas gracias!",
@@ -596,28 +373,50 @@ const DIAPOS = [
 const $ = id => document.getElementById(id);
 let actual = 0, vozOn = false, guionOn = false;
 
-function svgIlu(id,label){
-  return '<svg viewBox="0 0 120 120" role="img" aria-label="'+(label||"")+'"><use href="#'+id+'"/></svg>';
-}
-function ilu(id,label,clases){
-  return '<span class="ilu '+(clases||"")+'" data-icono="'+id+'">'+svgIlu(id,label)+'</span>';
-}
-/* Acepta .jpg, .jpeg, .png o .webp: usa la primera que encuentre. */
-const EXTENSIONES = [".jpg",".jpeg",".png",".webp"];
-function cargarFotos(){
-  document.querySelectorAll('.ilu[data-icono]').forEach(el=>{
-    const id = el.dataset.icono, base = FOTOS[id];
-    if(!base) return;
+/* --- Fotos: prueba las extensiones hasta encontrar la que existe --- */
+const rutaCache = {};
+function foto(base, alt, clases){
+  const id = "f" + Math.random().toString(36).slice(2,9);
+  setTimeout(()=>{
+    const el = document.getElementById(id);
+    if(!el) return;
+    if(rutaCache[base]){ el.src = rutaCache[base]; return; }
     (function probar(k){
-      if(k >= EXTENSIONES.length) return;
-      const im = new Image();
-      im.alt = "";
-      im.onload  = ()=>{ if(el.dataset.icono===id && el.isConnected){ el.innerHTML=""; el.appendChild(im); } };
-      im.onerror = ()=>probar(k+1);
-      im.src = CARPETA_FOTOS + base + EXTENSIONES[k];
+      if(k >= EXT.length) return;
+      const test = new Image();
+      test.onload  = ()=>{ rutaCache[base] = CARPETA+base+EXT[k]; const e=document.getElementById(id); if(e) e.src = rutaCache[base]; };
+      test.onerror = ()=>probar(k+1);
+      test.src = CARPETA + base + EXT[k];
     })(0);
+  },0);
+  return '<div class="cuadro '+(clases||"")+'"><img class="foto" id="'+id+'" alt="'+(alt||"")+'"></div>';
+}
+function precargar(){
+  const vistos = new Set();
+  DIAPOS.forEach(d=>{
+    const bases = d.items ? d.items.map(i=>i.foto) : [d.foto];
+    bases.forEach(b=>{
+      if(!b || vistos.has(b)) return; vistos.add(b);
+      (function probar(k){
+        if(k >= EXT.length) return;
+        const im = new Image();
+        im.onload  = ()=>{ rutaCache[b] = CARPETA+b+EXT[k]; };
+        im.onerror = ()=>probar(k+1);
+        im.src = CARPETA + b + EXT[k];
+      })(0);
+    });
   });
 }
+
+/* --- Escalado del lienzo, como una diapositiva real --- */
+function ajustar(){
+  const c = $("escenario"), l = $("lienzo");
+  const s = Math.min((c.clientWidth-16)/1600, (c.clientHeight-16)/900);
+  l.style.transform = "scale(" + Math.max(s, .05) + ")";
+}
+window.addEventListener("resize", ajustar);
+window.addEventListener("orientationchange", ()=>setTimeout(ajustar,250));
+
 function hablar(txt){
   if(!window.speechSynthesis) return;
   try{
@@ -630,78 +429,123 @@ function hablar(txt){
   }catch(e){}
 }
 
-function pintar(){
-  const d = DIAPOS[actual];
-  let html = "";
-
+/* --- Construcción de cada diapositiva --- */
+function armar(d, n){
+  let h = "";
   if(d.tipo==="portada"){
-    html += ilu(d.icono,"Escudo de Carabineros de Chile","grande");
-    html += '<h1>'+d.titulo+'</h1>';
-    html += '<p class="sub">'+d.sub+'</p>';
-    html += '<p class="credito">Presentado por: <b class="nombre">Renata Leiva</b></p>';
-    html += '<p class="credito">'+d.credito+'</p>';
+    h = '<div class="d-portada">'+
+          '<div class="portada-txt">'+
+            '<p class="eyebrow">1° Básico · Historia</p>'+
+            '<h1>'+d.titulo+'</h1>'+
+            '<p class="sub">'+d.sub+'</p>'+
+            '<div class="autor"><small>PRESENTADO POR</small><b>Renata Leiva</b></div>'+
+          '</div>'+
+          '<div class="portada-foto">'+
+            '<img class="foto" alt="Carabinera de Chile" data-base="'+d.foto+'">'+
+          '</div>'+
+        '</div>';
   }
-
   if(d.tipo==="duo"){
-    html += '<h2>'+d.titulo+'</h2>';
-    html += '<div class="duo">'+ilu(d.icono,d.titulo,"grande")+
-            '<div><p class="frase">'+d.frase+'</p>'+
-            (d.extra?'<p class="frase destacada" style="margin-top:10px">'+d.extra+'</p>':'')+
-            '</div></div>';
+    h = '<div class="d-duo"><h2>'+d.titulo+'</h2>'+
+          '<div class="duo-cuerpo">'+ foto(d.foto, d.titulo) +
+            '<div class="bloque"><p class="frase">'+d.frase+'</p>'+
+            (d.extra?'<p class="frase destacada chica">'+d.extra+'</p>':'')+
+            '</div></div></div>';
   }
-
   if(d.tipo==="rejilla"){
-    html += '<h2>'+d.titulo+'</h2>';
-    html += '<div class="rejilla n'+d.items.length+'">';
-    d.items.forEach(it=>{
-      html += '<div class="tarjeta">'+ilu(it.icono,it.rotulo)+'<span class="rotulo">'+it.rotulo+'</span></div>';
-    });
-    html += '</div>';
+    h = '<div class="d-rejilla"><h2>'+d.titulo+'</h2>'+
+          '<div class="rejilla n'+d.items.length+'">'+
+          d.items.map(it=>'<div class="tarjeta">'+foto(it.foto,it.rotulo)+'<span class="rotulo">'+it.rotulo+'</span></div>').join("")+
+          '</div></div>';
   }
-
   if(d.tipo==="numero"){
-    html += '<h2>'+d.titulo+'</h2>';
-    html += '<div class="duo">'+ilu(d.icono,"Llamar al 133","grande")+
-            '<div><p class="numerote">'+d.numero+'</p><p class="frase">'+d.frase+'</p></div></div>';
+    h = '<div class="d-numero"><h2>'+d.titulo+'</h2>'+
+          '<div class="numero-cuerpo">'+ foto(d.foto,"Llamar al 133") +
+            '<div class="bloque"><p class="numerote">'+d.numero+'</p>'+
+            '<p class="frase">'+d.frase+'</p></div></div></div>';
   }
-
   if(d.tipo==="cierre"){
-    html += '<h2>'+d.titulo+'</h2>';
-    html += '<div class="duo">'+ilu(d.icono,"La comunidad","grande")+
-            '<div><p class="frase">'+d.frase+'</p>'+
-            '<p class="frase destacada" style="margin-top:10px">'+d.gracias+'</p></div></div>';
+    h = '<div class="d-cierre">'+
+          '<img class="foto" alt="La comunidad" data-base="'+d.foto+'">'+
+          '<div class="velo"></div>'+
+          '<div class="cierre-txt"><h2>'+d.titulo+'</h2>'+
+            '<p class="frase">'+d.frase+'</p>'+
+            '<p class="gracias">'+d.gracias+'</p></div>'+
+        '</div>';
   }
+  h += '<div class="marca">Carabineros de Chile</div>'+
+       '<div class="pagina">'+(n+1)+'</div>';
+  return h;
+}
 
-  $("diapo").innerHTML = html;
-  cargarFotos();
+function construir(){
+  const l = $("lienzo");
+  l.innerHTML = DIAPOS.map((d,i)=>'<section class="diapo tipo-'+d.tipo+'" id="diapo'+i+'">'+armar(d,i)+'</section>').join("")
+              + '<div class="progreso" id="progreso"></div>';
+  /* fotos a sangre (portada y cierre) */
+  l.querySelectorAll("img[data-base]").forEach(im=>{
+    const b = im.dataset.base;
+    (function probar(k){
+      if(k >= EXT.length) return;
+      const t = new Image();
+      t.onload  = ()=>{ im.src = CARPETA+b+EXT[k]; rutaCache[b]=im.src; };
+      t.onerror = ()=>probar(k+1);
+      t.src = CARPETA + b + EXT[k];
+    })(0);
+  });
+}
 
+function mostrar(dir){
+  DIAPOS.forEach((_,i)=>{
+    const el = $("diapo"+i);
+    el.classList.remove("activa","entra-der","entra-izq");
+    if(i===actual){
+      el.classList.add(dir==="atras" ? "entra-izq" : "entra-der");
+      requestAnimationFrame(()=>requestAnimationFrame(()=>{
+        el.classList.remove("entra-der","entra-izq");
+        el.classList.add("activa");
+      }));
+    }
+  });
+  const d = DIAPOS[actual];
   $("contador").textContent = (actual+1)+" / "+DIAPOS.length;
   $("guion").innerHTML = '<b>Digo:</b> '+d.guion;
+  $("progreso").style.width = ((actual+1)/DIAPOS.length*100)+"%";
   $("btnAtras").disabled = actual===0;
-  $("btnSig").disabled = actual===DIAPOS.length-1;
-
+  $("btnSig").disabled   = actual===DIAPOS.length-1;
   const p = $("puntos"); p.innerHTML="";
-  DIAPOS.forEach((_,k)=>{
-    const i=document.createElement("i");
-    if(k===actual) i.className="ahora";
-    p.appendChild(i);
-  });
-
+  DIAPOS.forEach((_,k)=>{ const i=document.createElement("i"); if(k===actual) i.className="ahora"; p.appendChild(i); });
+  document.querySelectorAll(".mini-diapo").forEach((b,k)=>b.classList.toggle("ahora",k===actual));
   if(vozOn) hablar(d.voz);
 }
 
-function ir(n){
+function ir(n, dir){
   const nuevo = Math.min(DIAPOS.length-1, Math.max(0, n));
   if(nuevo===actual) return;
+  const d = dir || (nuevo>actual ? "adelante" : "atras");
   actual = nuevo;
-  pintar();
+  mostrar(d);
 }
 
-$("btnSig").onclick   = ()=>ir(actual+1);
-$("btnAtras").onclick = ()=>ir(actual-1);
-$("zonaDer").onclick  = ()=>ir(actual+1);
-$("zonaIzq").onclick  = ()=>ir(actual-1);
+/* --- Vista general --- */
+function armarGeneral(){
+  const g = $("miniGrid");
+  g.innerHTML = DIAPOS.map((d,i)=>
+    '<button class="mini-diapo" data-i="'+i+'">'+foto(d.miniatura,"")+
+    '<span><b>'+(i+1)+'</b>'+d.titulo+'</span></button>').join("");
+  g.querySelectorAll(".mini-diapo").forEach(b=>{
+    b.onclick = ()=>{ ir(parseInt(b.dataset.i,10)); $("general").classList.remove("abierta"); };
+  });
+}
 
+/* --- Botones --- */
+$("btnSig").onclick   = ()=>ir(actual+1,"adelante");
+$("btnAtras").onclick = ()=>ir(actual-1,"atras");
+$("zonaDer").onclick  = ()=>ir(actual+1,"adelante");
+$("zonaIzq").onclick  = ()=>ir(actual-1,"atras");
+$("btnGeneral").onclick = ()=>$("general").classList.add("abierta");
+$("btnCerrarGeneral").onclick = ()=>$("general").classList.remove("abierta");
+$("general").onclick = e=>{ if(e.target===$("general")) $("general").classList.remove("abierta"); };
 $("btnVoz").onclick = function(){
   vozOn = !vozOn;
   this.setAttribute("aria-pressed", vozOn);
@@ -713,6 +557,7 @@ $("btnGuion").onclick = function(){
   guionOn = !guionOn;
   this.setAttribute("aria-pressed", guionOn);
   $("guion").classList.toggle("visible", guionOn);
+  setTimeout(ajustar, 40);
 };
 $("btnPantalla").onclick = function(){
   const el = document.documentElement;
@@ -723,20 +568,28 @@ $("btnPantalla").onclick = function(){
       (el.requestFullscreen||el.webkitRequestFullscreen).call(el);
     }
   }catch(e){}
+  setTimeout(ajustar, 300);
 };
 if(!document.documentElement.requestFullscreen && !document.documentElement.webkitRequestFullscreen){
   $("btnPantalla").style.display="none";
 }
+document.addEventListener("fullscreenchange", ()=>setTimeout(ajustar,120));
 
 document.addEventListener("keydown", e=>{
-  if(e.key==="ArrowRight"||e.key===" "||e.key==="PageDown"){ e.preventDefault(); ir(actual+1); }
-  if(e.key==="ArrowLeft"||e.key==="PageUp"){ e.preventDefault(); ir(actual-1); }
-  if(e.key==="Home") ir(0);
-  if(e.key==="End") ir(DIAPOS.length-1);
+  if(e.key==="Escape"){ $("general").classList.toggle("abierta"); e.preventDefault(); return; }
+  if($("general").classList.contains("abierta")) return;
+  if(e.key==="ArrowRight"||e.key===" "||e.key==="PageDown"){ e.preventDefault(); ir(actual+1,"adelante"); }
+  if(e.key==="ArrowLeft"||e.key==="PageUp"){ e.preventDefault(); ir(actual-1,"atras"); }
+  if(e.key==="Home") ir(0,"atras");
+  if(e.key==="End") ir(DIAPOS.length-1,"adelante");
 });
 
 if(window.speechSynthesis) speechSynthesis.getVoices();
-pintar();
+construir();
+armarGeneral();
+ajustar();
+precargar();
+mostrar("adelante");
 </script>
 </body>
 </html>
