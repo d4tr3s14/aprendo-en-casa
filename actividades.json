@@ -7,10 +7,30 @@
     }
   ],
   "asignaturas": [
-    { "id": "ciencias-naturales", "nombre": "Ciencias Naturales", "emoji": "🌱", "color": "#7ED957" },
-    { "id": "lenguaje",           "nombre": "Lenguaje",           "emoji": "📖", "color": "#FF6B5A" },
-    { "id": "matematica",         "nombre": "Matemática",         "emoji": "🔢", "color": "#3FC1E0" },
-    { "id": "historia",           "nombre": "Historia",           "emoji": "🏘️", "color": "#FFC93C" }
+    {
+      "id": "ciencias-naturales",
+      "nombre": "Ciencias Naturales",
+      "emoji": "🌱",
+      "color": "#7ED957"
+    },
+    {
+      "id": "lenguaje",
+      "nombre": "Lenguaje",
+      "emoji": "📖",
+      "color": "#FF6B5A"
+    },
+    {
+      "id": "matematica",
+      "nombre": "Matemática",
+      "emoji": "🔢",
+      "color": "#3FC1E0"
+    },
+    {
+      "id": "historia",
+      "nombre": "Historia",
+      "emoji": "🏘️",
+      "color": "#FFC93C"
+    }
   ],
   "actividades": [
     {
@@ -55,6 +75,17 @@
       "objetivo": "Ocho diapositivas para proyectar el día de la evaluación de Historia: quién es, qué hace, qué usa, cómo ayuda y por qué su trabajo es importante.",
       "archivo": "1-basico/semestre-2/historia/carabineros-presentacion.html",
       "emoji": "📽️",
+      "fecha": "2026-08-22"
+    },
+    {
+      "id": "mat-cubos-y-numeros",
+      "titulo": "Cubos y números",
+      "curso": "1-basico",
+      "semestre": 2,
+      "asignatura": "matematica",
+      "objetivo": "Representar números al dictado (0 al 30), representar decenas y unidades con cubos (0 al 50), y componer y descomponer aditivamente (0 al 50).",
+      "archivo": "1-basico/semestre-2/matematica/cubos-y-numeros.html",
+      "emoji": "🔢",
       "fecha": "2026-08-22"
     }
   ]
