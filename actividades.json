@@ -109,6 +109,28 @@
       "archivo": "1-basico/semestre-2/historia/veterinaria-presentacion.html",
       "emoji": "🐶",
       "fecha": "2026-08-28"
+    },
+    {
+      "id": "mat-el-abaco-de-la-selva",
+      "titulo": "El ábaco de la selva",
+      "curso": "1-basico",
+      "semestre": 2,
+      "asignatura": "matematica",
+      "objetivo": "Representar números del 0 al 50 en el ábaco reconociendo decenas y unidades, leer el ábaco y descomponer aditivamente (10 + n).",
+      "archivo": "1-basico/semestre-2/matematica/el-abaco-de-la-selva.html",
+      "emoji": "🧮",
+      "fecha": "2026-08-28"
+    },
+    {
+      "id": "len-escribo-al-dictado",
+      "titulo": "Escribo al dictado",
+      "curso": "1-basico",
+      "semestre": 2,
+      "asignatura": "lenguaje",
+      "objetivo": "Trazar en letra ligada las letras l, d, b, p, f, n, m y s; escribir al dictado palabras con esos fonemas y distinguir palabras que suenan parecido.",
+      "archivo": "1-basico/semestre-2/lenguaje/escribo-al-dictado.html",
+      "emoji": "✏️",
+      "fecha": "2026-08-28"
     }
   ]
 }
