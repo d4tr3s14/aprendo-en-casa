@@ -87,6 +87,28 @@
       "archivo": "1-basico/semestre-2/matematica/cubos-y-numeros.html",
       "emoji": "🔢",
       "fecha": "2026-08-22"
+    },
+    {
+      "id": "his-veterinaria-practica",
+      "titulo": "Veterinaria · Practico mi presentación",
+      "curso": "1-basico",
+      "semestre": 2,
+      "asignatura": "historia",
+      "objetivo": "Preparar la presentación oral del oficio de veterinaria: qué hace, sus herramientas y su aporte a la comunidad. Incluye ensayo guiado de los 8 pasos de la rúbrica.",
+      "archivo": "1-basico/semestre-2/historia/veterinaria-practica.html",
+      "emoji": "🩺",
+      "fecha": "2026-08-28"
+    },
+    {
+      "id": "his-veterinaria-presentacion",
+      "titulo": "Veterinaria · Presentación para el curso",
+      "curso": "1-basico",
+      "semestre": 2,
+      "asignatura": "historia",
+      "objetivo": "Ocho diapositivas para proyectar: quién es la veterinaria, qué hace, qué usa, a quiénes atiende y por qué su trabajo es importante.",
+      "archivo": "1-basico/semestre-2/historia/veterinaria-presentacion.html",
+      "emoji": "🐶",
+      "fecha": "2026-08-28"
     }
   ]
 }
