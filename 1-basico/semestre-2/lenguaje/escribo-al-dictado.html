@@ -150,9 +150,13 @@ h1 span{display:block;color:var(--crema);font-size:.4em;letter-spacing:1px}
 .pauta{stroke:#e3d9c2;stroke-width:2}
 .pauta.base{stroke:#FF6B5A;stroke-width:2.5}
 .pauta.media{stroke-dasharray:7 7}
-.guia{fill:none;stroke:#d9cfba;stroke-width:22;stroke-linecap:round;stroke-linejoin:round}
-.guiaPunteada{fill:none;stroke:#fff;stroke-width:5;stroke-linecap:round;stroke-dasharray:2 15}
-.hecho{fill:none;stroke:var(--hoja);stroke-width:22;stroke-linecap:round;stroke-linejoin:round}
+.pizarra.mal{animation:tiembla .45s}
+.pizarra.mal .guia{stroke:#FFC0B6}
+.barraTrazo{width:min(330px,86vw);height:12px;background:rgba(14,59,46,.12);border-radius:999px;overflow:hidden}
+.barraTrazo i{display:block;height:100%;width:0%;background:var(--hoja);border-radius:999px;transition:width .08s linear}
+.guia{fill:none;stroke:#ded4bf;stroke-width:30;stroke-linecap:round;stroke-linejoin:round;transition:stroke .2s}
+.guiaPunteada{fill:none;stroke:#fff;stroke-width:5;stroke-linecap:round;stroke-dasharray:2 16}
+.hecho{fill:none;stroke:var(--hoja);stroke-width:26;stroke-linecap:round;stroke-linejoin:round}
 .hecho.listo{stroke:var(--hoja)}
 .puntoInicio{fill:var(--hoja);stroke:#0E3B2E;stroke-width:3}
 .puntoInicio.pulsa{animation:latido 1.3s ease-in-out infinite}
@@ -228,6 +232,7 @@ h1 span{display:block;color:var(--crema);font-size:.4em;letter-spacing:1px}
     <div class="escena" id="escena"></div>
     <div id="respuesta"></div>
     <div class="aviso" id="aviso" aria-live="polite"></div>
+    <div id="avanzar"></div>
   </section>
 
   <!-- FINAL -->
@@ -248,22 +253,80 @@ const azar = (a,b) => a + Math.floor(Math.random()*(b-a+1));
 const mezclar = a => a.map(v=>[Math.random(),v]).sort((x,y)=>x[0]-y[0]).map(v=>v[1]);
 
 let vozOn = true;
-function hablar(txt, cb){
-  const espera = Math.min(9000, 1400 + txt.length*52);
-  if(window.speechSynthesis) speechSynthesis.cancel();
-  if(!window.speechSynthesis || !vozOn){ if(cb) setTimeout(cb, espera); return; }
-  const u = new SpeechSynthesisUtterance(txt);
-  u.lang = "es-CL"; u.rate = .88; u.pitch = 1.1;
+let vozSerie = 0;
+
+/* Parte el texto en trozos cortos: Safari corta las frases muy largas. */
+function trozos(txt, max){
+  max = max || 130;
+  const out = []; let act = "";
+  txt.split(" ").forEach(w=>{
+    if((act + " " + w).trim().length > max){ if(act) out.push(act.trim()); act = w; }
+    else act = (act + " " + w).trim();
+  });
+  if(act.trim()) out.push(act.trim());
+  return out.length ? out : [txt];
+}
+function eligeVoz(){
   const vs = speechSynthesis.getVoices();
-  const v = vs.find(v=>v.lang==="es-CL") || vs.find(v=>v.lang==="es-MX") ||
-            vs.find(v=>v.lang==="es-ES") || vs.find(v=>v.lang.startsWith("es"));
-  if(v) u.voice = v;
-  if(cb){ u.onend = cb; u.onerror = cb; }
-  speechSynthesis.speak(u);
+  return vs.find(v=>v.lang==="es-CL") || vs.find(v=>v.lang==="es-MX") ||
+         vs.find(v=>v.lang==="es-ES") || vs.find(v=>v.lang.startsWith("es")) || null;
+}
+/* dice(): promesa que se resuelve SOLO cuando la voz terminó de verdad.
+   Resuelve "reemplazada" si otra frase la interrumpió, para que quien esperaba
+   el final no avance de pantalla por error. */
+function dice(txt){
+  const mio = ++vozSerie;
+  return new Promise(res=>{
+    const espera = Math.min(11000, 1300 + txt.length*58);
+    if(!window.speechSynthesis || !vozOn){
+      try{ if(window.speechSynthesis) speechSynthesis.cancel(); }catch(_){}
+      setTimeout(()=>res(mio === vozSerie ? "sin-voz" : "reemplazada"), espera);
+      return;
+    }
+    try{ speechSynthesis.cancel(); }catch(_){}
+    let listo = false, vig = null;
+    const fin = r => { if(listo) return; listo = true; if(vig) clearInterval(vig); res(r); };
+    const partes = trozos(txt);
+    partes.forEach((t,i)=>{
+      const u = new SpeechSynthesisUtterance(t);
+      u.lang = "es-CL"; u.rate = .85; u.pitch = 1.1;
+      const v = eligeVoz(); if(v) u.voice = v;
+      if(i === partes.length-1){ u.onend = ()=>fin("fin"); u.onerror = ()=>fin("error"); }
+      speechSynthesis.speak(u);
+    });
+    /* Vigilante: en iOS el evento onend a veces no llega nunca. */
+    let arranco = false; const t0 = Date.now();
+    vig = setInterval(()=>{
+      if(mio !== vozSerie){ fin("reemplazada"); return; }
+      if(speechSynthesis.speaking || speechSynthesis.pending) arranco = true;
+      else if(arranco){ fin("vigilante"); return; }
+      /* Si el motor de voz nunca partió (pasa en iOS con el timbre en silencio),
+         se da igualmente el tiempo de lectura antes de continuar. */
+      if(!arranco && Date.now() - t0 > 1800){
+        clearInterval(vig); vig = null;
+        setTimeout(()=>fin("sin-voz"), Math.max(0, espera - 1800));
+        return;
+      }
+      if(Date.now() - t0 > 25000) fin("tope");
+    }, 220);
+  });
+}
+function hablar(txt, cb){ const p = dice(txt); if(cb) p.then(cb); return p; }
+function hablando(){
+  return !!(window.speechSynthesis && (speechSynthesis.speaking || speechSynthesis.pending));
+}
+/* Un solo AudioContext reutilizado: Safari en iPhone permite muy pocos. */
+let ctxAudio = null;
+function audio(){
+  try{
+    if(!ctxAudio) ctxAudio = new (window.AudioContext||window.webkitAudioContext)();
+    if(ctxAudio.state === "suspended") ctxAudio.resume();
+    return ctxAudio;
+  }catch(e){ return null; }
 }
 function pito(ok){
+  const ctx = audio(); if(!ctx) return;
   try{
-    const ctx = new (window.AudioContext||window.webkitAudioContext)();
     const notas = ok ? [523,659,784] : [330,262];
     notas.forEach((f,i)=>{
       const o = ctx.createOscillator(), g = ctx.createGain();
@@ -277,8 +340,8 @@ function pito(ok){
   }catch(e){}
 }
 function clic(){
+  const ctx = audio(); if(!ctx) return;
   try{
-    const ctx = new (window.AudioContext||window.webkitAudioContext)();
     const o = ctx.createOscillator(), g = ctx.createGain();
     o.type="sine"; o.frequency.value=880;
     g.gain.setValueAtTime(.09,ctx.currentTime);
@@ -322,7 +385,7 @@ function conectarVoz(){
     vozOn = !vozOn;
     b.textContent = vozOn ? "🔊 Voz" : "🔇 Voz";
     b.setAttribute("aria-pressed", vozOn);
-    if(!vozOn && window.speechSynthesis) speechSynthesis.cancel();
+    if(!vozOn && window.speechSynthesis){ vozSerie++; speechSynthesis.cancel(); }
   });
   if(window.speechSynthesis) speechSynthesis.onvoiceschanged = ()=>{};
 }
@@ -340,6 +403,12 @@ const LETRAS = {
   s: { son:"ese", ej:"sandía", emo:"🍉", d:'M 58 178 C 74 156 92 126 104 102 C 108 93 115 97 111 107 C 116 130 110 154 94 168 C 84 176 70 178 62 172 C 72 184 102 184 124 174 C 138 168 148 161 156 152' }
 };
 const ORDEN_LETRAS = ["l","d","b","p","f","n","m","s"];
+
+/* Qué tan exigente es el trazo (en unidades del marco de 240) */
+const TOL      = 15;   // desviación máxima respecto al centro de la guía (el camino gris mide 30 de ancho)
+const TOL_INI  = 24;   // margen para empezar sobre el punto verde
+const META     = 0.97; // hay que recorrer el 97% de la letra
+const VENTANA  = 40;   // cuántos puntos hacia adelante se pueden avanzar de una vez
 
 /* ==================== PALABRAS DEL DICTADO ==================== */
 const PALS = [
@@ -379,10 +448,22 @@ function sumaEstrella(){
   $("puntaje").textContent = "⭐ " + estrellas;
   album.push(PREMIOS[(estrellas-1) % PREMIOS.length]);
 }
+
+/* Cierra el ítem: muestra el botón Siguiente y espera a que la voz TERMINE
+   antes de avanzar sola. Nunca corta la narración a la mitad. */
 function cierra(txtVoz){
   cerrado = true;
-  hablar(txtVoz, siguiente);
-  setTimeout(siguiente, 9500);
+  const s = serie;
+  $("avanzar").innerHTML = `<button class="btn hoja" id="btnSig">Siguiente ▶️</button>`;
+  $("btnSig").onclick = ()=>{ if(window.speechSynthesis) speechSynthesis.cancel(); siguiente(); };
+  const t0 = Date.now();
+  /* Tiempo mínimo en pantalla, por si el motor de voz no funciona o va muy rápido */
+  const minimo = Math.min(9000, 2200 + txtVoz.length*45);
+  dice(txtVoz).then(r=>{
+    if(r === "reemplazada" || s !== serie || !cerrado) return;
+    const falta = Math.max(1200, minimo - (Date.now() - t0));
+    setTimeout(()=>{ if(s === serie && cerrado && !hablando()) siguiente(); }, falta);
+  });
 }
 function siguiente(){
   if(!cerrado) return;
@@ -394,17 +475,17 @@ function siguiente(){
   render();
 }
 
-/* ==================== NIVEL 1: TRAZO LA LETRA ==================== */
+/* ==================== NIVEL 1: TRAZO LA LETRA (estricto) ==================== */
 let trazo = null;
 function nivel1(){
   const k = ORDEN_LETRAS[idx], L = LETRAS[k];
   $("chip").textContent = `Nivel 1 · ${idx+1} de ${ORDEN_LETRAS.length}`;
-  $("pregunta").textContent = "Traza la letra con el dedo";
+  $("pregunta").textContent = "Traza la letra sin salirte de la línea";
   $("escena").className = "escena";
   $("escena").innerHTML = `
     <div class="filaTrazo">
       <div class="chipLetra"><span class="emo">${L.emo}</span> la ${L.son} de <b>${L.ej}</b></div>
-      <div class="pizarra">
+      <div class="pizarra" id="pizarra">
         <svg id="svgLetra" viewBox="0 0 240 240" aria-label="Pizarra para trazar la letra ${L.son}">
           <line class="pauta" x1="6" y1="30" x2="234" y2="30"/>
           <line class="pauta media" x1="6" y1="105" x2="234" y2="105"/>
@@ -414,150 +495,237 @@ function nivel1(){
           <path class="guiaPunteada" d="${L.d}"/>
           <path id="hecho" class="hecho" d="${L.d}"/>
           <circle id="pIni" class="puntoInicio pulsa" r="13"/>
-          <circle id="lapiz" class="lapiz" r="10" style="display:none"/>
+          <circle id="lapiz" class="lapiz" r="9" style="display:none"/>
         </svg>
       </div>
+      <div class="barraTrazo"><i id="barra"></i></div>
     </div>`;
   $("respuesta").innerHTML = `<div class="controles">
       <button class="ctrl audio" id="verComo">👀 Ver cómo se hace</button>
       <button class="ctrl quitar" id="limpiar">↩️ Empezar de nuevo</button>
-      <button class="ctrl listo" id="seguir" style="display:none">✍️ Ya la escribí</button>
     </div>`;
+  $("avanzar").innerHTML = "";
   aviso("", "");
   intentos = 0;
   iniciaTrazo(L, k);
   $("verComo").onclick = ()=>demo(true);
   $("limpiar").onclick = ()=>{ reiniciaTrazo(); aviso("", ""); };
-  $("seguir").onclick = ()=>{ if(!cerrado){ sumaEstrella(); cierra(`Muy bien. Practica la ${L.son} también en tu cuaderno.`); } };
   const s = serie;
-  hablar(`Vamos a escribir la ${L.son}, la ${L.son} de ${L.ej}. Mira cómo se hace y después hazlo tú. Empieza en el punto verde.`, ()=>{ if(s===serie) demo(false); });
+  dice(`Vamos a escribir la ${L.son}, la ${L.son} de ${L.ej}. Mira cómo se hace y después hazlo tú. Empieza en el punto verde y no te salgas de la línea.`)
+    .then(r=>{ if(r !== "reemplazada" && s === serie) demo(false); });
+}
+
+const dist = (a,b) => Math.hypot(a.x-b.x, a.y-b.y);
+/* distancia de un punto al segmento a-b: sirve para detectar atajos */
+function distSeg(p, a, b){
+  const vx = b.x-a.x, vy = b.y-a.y;
+  const len2 = vx*vx + vy*vy;
+  if(len2 === 0) return dist(p, a);
+  let t = ((p.x-a.x)*vx + (p.y-a.y)*vy) / len2;
+  t = Math.max(0, Math.min(1, t));
+  return Math.hypot(p.x - (a.x + t*vx), p.y - (a.y + t*vy));
 }
 
 function iniciaTrazo(L, k){
   const svg = $("svgLetra"), guia = $("guia"), hecho = $("hecho");
   const largo = guia.getTotalLength();
-  const N = Math.max(60, Math.round(largo/2));
+  const N = Math.max(80, Math.round(largo/2));
   const pts = [];
   for(let i=0;i<=N;i++) pts.push(guia.getPointAtLength(largo*i/N));
   hecho.style.strokeDasharray = largo;
   hecho.style.strokeDashoffset = largo;
-  const ini = pts[0];
-  $("pIni").setAttribute("cx", ini.x); $("pIni").setAttribute("cy", ini.y);
+  $("pIni").setAttribute("cx", pts[0].x); $("pIni").setAttribute("cy", pts[0].y);
 
-  trazo = { svg, hecho, pts, N, largo, i:0, dibujando:false, letra:k, L, listo:false, demoOn:false };
+  trazo = { svg, hecho, pts, N, largo, i:0, prev:null, dibujando:false, L, listo:false, demoOn:false, demoTok:0 };
 
-  const aSvg = e => {
+  const aSvg = ev => {
     const m = svg.getScreenCTM().inverse();
-    let p;
-    try { p = new DOMPoint(e.clientX, e.clientY).matrixTransform(m); }
-    catch(_){ const q = svg.createSVGPoint(); q.x=e.clientX; q.y=e.clientY; p = q.matrixTransform(m); }
-    return p;
+    try { return new DOMPoint(ev.clientX, ev.clientY).matrixTransform(m); }
+    catch(_){ const q = svg.createSVGPoint(); q.x=ev.clientX; q.y=ev.clientY; return q.matrixTransform(m); }
   };
-  const dist = (a,b) => Math.hypot(a.x-b.x, a.y-b.y);
 
   svg.addEventListener("pointerdown", e=>{
-    if(trazo.listo || trazo.demoOn) return;
+    if(trazo.listo || cerrado) return;
     e.preventDefault();
+    /* si toca mientras corre la demostración, la corta y empieza ella */
+    if(trazo.demoOn){ cancelaDemo(); }
     const p = aSvg(e);
-    if(dist(p, trazo.pts[0]) > 42 && trazo.i === 0){
-      aviso("ups", "Empieza en el punto verde 🟢");
-      hablar("Empieza en el punto verde.");
+    if(trazo.i === 0 && dist(p, trazo.pts[0]) > TOL_INI){
+      $("pIni").classList.add("pulsa");
+      aviso("ups", "Empieza justo en el punto verde 🟢");
+      dice("Empieza justo en el punto verde.");
+      return;
+    }
+    if(trazo.i > 0 && dist(p, trazo.pts[trazo.i]) > TOL){
+      aviso("ups", "Sigue desde donde ibas, sin saltarte nada.");
       return;
     }
     trazo.dibujando = true;
+    trazo.prev = p;
     try{ svg.setPointerCapture(e.pointerId); }catch(_){ }
     $("lapiz").style.display = "";
     mueveLapiz(p);
   });
+
   svg.addEventListener("pointermove", e=>{
     if(!trazo.dibujando || trazo.listo) return;
     e.preventDefault();
-    const p = aSvg(e);
-    mueveLapiz(p);
-    let mejor = -1, mejorD = 999;
-    const hasta = Math.min(trazo.N, trazo.i + 26);
-    for(let j = trazo.i; j <= hasta; j++){
-      const dd = dist(p, trazo.pts[j]);
-      if(dd < 34 && dd < mejorD + 6){ mejorD = dd; mejor = j; }
+    let evs = [e];
+    if(e.getCoalescedEvents){
+      const c = e.getCoalescedEvents();
+      if(c && c.length) evs = c;
     }
-    if(mejor > trazo.i){
-      trazo.i = mejor;
-      trazo.hecho.style.strokeDashoffset = trazo.largo * (1 - trazo.i/trazo.N);
-      if(trazo.i/trazo.N > 0.93) terminaTrazo(true);
-    }
+    for(const ev of evs){ if(!avanza(aSvg(ev))) break; }
   });
-  const soltar = e => {
+
+  const soltar = () => {
     if(!trazo.dibujando) return;
     trazo.dibujando = false;
     $("lapiz").style.display = "none";
     if(trazo.listo) return;
-    if(trazo.i/trazo.N > 0.93) terminaTrazo(true);
-    else if(trazo.i > 4) terminaTrazo(false);
+    if(trazo.i/trazo.N >= META) exitoTrazo();
+    else falla("levanto");
   };
   svg.addEventListener("pointerup", soltar);
   svg.addEventListener("pointercancel", soltar);
   svg.addEventListener("pointerleave", soltar);
 }
+
+/* Devuelve false cuando el intento terminó (por acierto o por falla) */
+function avanza(p){
+  mueveLapiz(p);
+
+  /* 1) Se avanza punto a punto mientras el dedo se vaya ACERCANDO al siguiente.
+        Así nunca se salta un pico ni el cruce de un bucle, aunque los dos
+        tramos de la letra pasen uno al lado del otro. */
+  let j = trazo.i;
+  let dj = dist(p, trazo.pts[j]);
+  const lim = Math.min(trazo.N, trazo.i + VENTANA);
+  while(j < lim){
+    const dn = dist(p, trazo.pts[j+1]);
+    if(dn <= dj + 0.4){ j++; dj = dn; } else break;
+  }
+
+  /* ¿se salió del camino? Se permite dudar y retroceder un poco. */
+  if(dj > TOL){
+    let atras = dj;
+    for(let q = Math.max(0, trazo.i - 12); q < trazo.i; q++){
+      const d2 = dist(p, trazo.pts[q]);
+      if(d2 < atras) atras = d2;
+    }
+    if(atras > TOL){ falla("fuera"); return false; }
+    trazo.prev = p;
+    return true;
+  }
+
+  /* 2) No se puede avanzar por la letra más de lo que se movió el dedo.
+        Esto evita que en las puntas (donde el trazo de subida y el de bajada
+        quedan pegados) salte de un lado al otro sin recorrer la curva.
+        Aquí no se falla: simplemente no avanza. */
+  if(j > trazo.i && trazo.prev){
+    const arcoPaso = trazo.largo / trazo.N;
+    const maxPasos = Math.ceil((dist(trazo.prev, p) + 14) / arcoPaso);
+    if(j - trazo.i > maxPasos) j = trazo.i + maxPasos;
+  }
+
+  /* 3) ¿pasó por encima de todos los puntos intermedios? Nada de cortar camino. */
+  if(j > trazo.i && trazo.prev){
+    for(let k = trazo.i + 1; k <= j; k++){
+      if(distSeg(trazo.pts[k], trazo.prev, p) > TOL){ falla("atajo"); return false; }
+    }
+  }
+  trazo.prev = p;
+
+  if(j > trazo.i){
+    trazo.i = j;
+    const pc = trazo.i / trazo.N;
+    trazo.hecho.style.strokeDashoffset = trazo.largo * (1 - pc);
+    const barra = $("barra"); if(barra) barra.style.width = Math.round(pc*100) + "%";
+    if(pc >= META){ exitoTrazo(); return false; }
+  }
+  return true;
+}
+
 function mueveLapiz(p){
   const l = $("lapiz");
-  if(!l) return;
   if(l){ l.setAttribute("cx", p.x); l.setAttribute("cy", p.y); }
 }
 function reiniciaTrazo(){
   if(!trazo || !trazo.hecho || !trazo.hecho.isConnected) return;
-  trazo.i = 0; trazo.listo = false; trazo.dibujando = false;
+  trazo.i = 0; trazo.prev = null; trazo.listo = false; trazo.dibujando = false;
   trazo.hecho.style.strokeDashoffset = trazo.largo;
+  const barra = $("barra"); if(barra) barra.style.width = "0%";
+  const l = $("lapiz"); if(l) l.style.display = "none";
   $("pIni").classList.add("pulsa");
 }
-function terminaTrazo(ok){
+function exitoTrazo(){
   if(trazo.listo) return;
-  if(ok){
-    trazo.listo = true;
-    trazo.hecho.style.strokeDashoffset = 0;
-    $("pIni").classList.remove("pulsa");
-    pito(true); sumaEstrella();
-    $("escena").classList.add("bien");
-    const L = trazo.L;
-    aviso("ok", `${animo()} Esa es la ${L.son}, la primera letra de ${L.ej}.`);
-    cierra(`${animo()} Esa es la ${L.son}. La ${L.son} de ${L.ej}.`);
-  }else{
-    intentos++;
-    pito(false);
-    reiniciaTrazo();
-    if(intentos >= 2 && $("seguir")) $("seguir").style.display = "";
-    const pista = intentos >= 2
-      ? "Mira otra vez cómo se hace y sigue la línea sin levantar el dedo."
-      : "Sigue la línea sin levantar el dedo, desde el punto verde hasta el final.";
-    aviso("ups", `${casi()} ${pista}`);
-    const s = serie;
-    hablar(`${casi()} ${pista}`, ()=>{ if(s===serie && intentos>=2) demo(false); });
-  }
+  trazo.listo = true; trazo.dibujando = false;
+  trazo.hecho.style.strokeDashoffset = 0;
+  const barra = $("barra"); if(barra) barra.style.width = "100%";
+  const l = $("lapiz"); if(l) l.style.display = "none";
+  $("pIni").classList.remove("pulsa");
+  pito(true); sumaEstrella();
+  $("escena").classList.add("bien");
+  const L = trazo.L;
+  aviso("ok", `${animo()} Trazaste la ${L.son} completa y sin salirte. La ${L.son} de ${L.ej}.`);
+  cierra(`${animo()} Trazaste la ${L.son} completa y sin salirte. La ${L.son} de ${L.ej}.`);
+}
+function falla(motivo){
+  if(trazo.listo) return;
+  trazo.dibujando = false;
+  const l = $("lapiz"); if(l) l.style.display = "none";
+  const piz = $("pizarra");
+  if(piz){ piz.classList.add("mal"); setTimeout(()=>piz.classList.remove("mal"), 600); }
+  pito(false);
+  intentos++;
+  reiniciaTrazo();
+  const pistas = {
+    fuera:  "Te saliste de la línea. Empieza otra vez desde el punto verde y mantén el dedo dentro del camino gris.",
+    atajo:  "No cortes camino: hay que recorrer toda la línea, sin saltarse las curvas.",
+    levanto:"Te faltó llegar al final. No levantes el dedo hasta terminar la letra."
+  };
+  const pista = pistas[motivo] || pistas.fuera;
+  aviso("ups", `${casi()} ${pista}`);
+  const s = serie;
+  dice(`${casi()} ${pista}`).then(r=>{
+    if(r !== "reemplazada" && s === serie && intentos >= 2) demo(false);
+  });
+}
+function cancelaDemo(){
+  if(!trazo || !trazo.demoOn) return;
+  trazo.demoTok++;
+  trazo.demoOn = false;
+  const l = $("lapiz"); if(l) l.style.display = "none";
+  reiniciaTrazo();
+  aviso("", "");
 }
 function demo(conVoz){
   if(!trazo || trazo.listo || !trazo.hecho || !trazo.hecho.isConnected) return;
   const s = serie;
   const reduce = window.matchMedia && window.matchMedia("(prefers-reduced-motion: reduce)").matches;
-  if(conVoz) hablar(`Mira cómo se escribe la ${trazo.L.son}.`);
-  if(reduce){ aviso("", "Empieza en el punto verde y sigue la línea."); return; }
+  if(conVoz) dice(`Mira cómo se escribe la ${trazo.L.son}.`);
+  if(reduce){ aviso("", "Empieza en el punto verde y sigue la línea hasta el final."); return; }
   trazo.demoOn = true;
-  trazo.i = 0;
+  const tok = ++trazo.demoTok;
+  reiniciaTrazo();
   const lap = $("lapiz");
   lap.style.display = "";
-  const t0 = performance.now(), dur = 2600;
+  const t0 = performance.now(), dur = 3000;
   function paso(t){
-    if(s !== serie || !trazo || !trazo.hecho.isConnected) return;
+    if(s !== serie || !trazo || trazo.demoTok !== tok || !trazo.hecho.isConnected) return;
     const k = Math.min(1, (t - t0)/dur);
     trazo.hecho.style.strokeDashoffset = trazo.largo * (1 - k);
     const p = $("guia").getPointAtLength(trazo.largo * k);
     lap.setAttribute("cx", p.x); lap.setAttribute("cy", p.y);
     if(k < 1) requestAnimationFrame(paso);
     else setTimeout(()=>{
-      if(s !== serie || !trazo || !trazo.hecho.isConnected) return;
+      if(s !== serie || !trazo || trazo.demoTok !== tok || !trazo.hecho.isConnected) return;
       lap.style.display = "none";
       trazo.hecho.style.strokeDashoffset = trazo.largo;
       trazo.demoOn = false;
       aviso("", "Ahora hazlo tú: empieza en el punto verde 🟢");
-    }, 550);
+    }, 600);
   }
   requestAnimationFrame(paso);
 }
@@ -589,42 +757,48 @@ function nivel2(){
        <button class="ctrl" id="verPal">👀 Ver la palabra</button>
        <button class="ctrl quitar" id="borrar">⬅️ Borrar</button>
      </div>`;
+  $("avanzar").innerHTML = "";
 
   document.querySelectorAll("#banco .letraBtn").forEach(b=>{
     b.onclick = ()=>{
-      if(b.disabled || escrito.length >= letras.length) return;
+      if(b.disabled || cerrado || escrito.length >= letras.length) return;
       b.disabled = true; clic();
       escrito.push({c:b.dataset.c, btn:b});
       pintaVisor(letras.length);
       if(escrito.length === letras.length) revisa2(W);
     };
   });
-  $("repetir").onclick = ()=>hablar(W.p);
-  $("porSilabas").onclick = ()=>{ hablar(W.sil.join(", ")); pintaSilabas(W); };
-  $("verPal").onclick = ()=>{ pistaModelo(W); hablar(W.p);
+  $("repetir").onclick = ()=>dice(W.p);
+  $("porSilabas").onclick = ()=>{ dice(W.sil.join(", ")); pintaSilabas(W); };
+  $("verPal").onclick = ()=>{
+    pistaModelo(W); dice(W.p);
     const s0 = serie;
-    setTimeout(()=>{ if(s0===serie && $("ayuda") && !$("ayuda").querySelector(".silabas")) $("ayuda").innerHTML=""; }, 3500); };
+    setTimeout(()=>{ if(s0===serie && $("ayuda") && !$("ayuda").querySelector(".silabas")) $("ayuda").innerHTML=""; }, 3500);
+  };
   $("borrar").onclick = ()=>{
+    if(cerrado) return;
     const u = escrito.pop();
     if(u){ u.btn.disabled = false; clic(); pintaVisor(letras.length); aviso("",""); }
   };
   aviso("", "");
   pintaVisor(letras.length);
   const s = serie;
-  hablar(`Escucha bien y escribe: ${W.p}. ${W.p}.`, ()=>{ if(s===serie && !vozOn && $("ayuda")) pistaModelo(W); });
+  dice(`Escucha bien y escribe: ${W.p}. ${W.p}.`)
+    .then(r=>{ if(r !== "reemplazada" && s === serie && !vozOn && $("ayuda")) pistaModelo(W); });
   if(!vozOn) pistaModelo(W);
 }
 function pintaVisor(n){
   const v = $("visor");
+  if(!v) return;
   const puestas = escrito.map(e=>e.c).join(" ");
   const faltan = n - escrito.length;
   v.innerHTML = (puestas ? puestas : "") + (faltan>0 ? `<span class="vacia"> ${"_ ".repeat(faltan).trim()}</span>` : "");
 }
 function pintaSilabas(W){
-  $("ayuda").innerHTML = `<div class="silabas">${W.sil.map(s=>`<span>${s}</span>`).join("")}</div>`;
+  if($("ayuda")) $("ayuda").innerHTML = `<div class="silabas">${W.sil.map(s=>`<span>${s}</span>`).join("")}</div>`;
 }
 function pistaModelo(W){
-  $("ayuda").innerHTML = `<div class="modelo">${W.p}</div>`;
+  if($("ayuda")) $("ayuda").innerHTML = `<div class="modelo">${W.p}</div>`;
 }
 function revisa2(W){
   const escritaTxt = escrito.map(e=>e.c).join("");
@@ -639,7 +813,7 @@ function revisa2(W){
   }else{
     intentos++; pito(false);
     $("escena").classList.remove("bien"); $("escena").classList.add("mal");
-    setTimeout(()=>$("escena").classList.remove("mal"), 450);
+    setTimeout(()=>{ if($("escena")) $("escena").classList.remove("mal"); }, 450);
     let i = 0; while(i < escritaTxt.length && escritaTxt[i] === W.p[i]) i++;
     const buena = W.p.slice(0, i);
     $("visor").innerHTML = (buena ? buena.split("").join(" ") + " " : "") +
@@ -650,12 +824,12 @@ function revisa2(W){
       : `Hasta "${buena}" vas bien. Escucha lo que sigue: ${W.sil.join(", ")}.`;
     aviso("ups", `${casi()} ${pista}`);
     const s = serie;
-    hablar(`${casi()} ${pista}`, ()=>{
-      if(s !== serie || !$("visor")) return;
+    dice(`${casi()} ${pista}`).then(r=>{
+      if(r === "reemplazada" || s !== serie || !$("visor")) return;
       escrito.forEach(e=>{ e.btn.disabled = false; });
       escrito = [];
       pintaVisor(W.p.length);
-      hablar(W.p);
+      dice(W.p);
       if(intentos >= 2) pistaModelo(W);
     });
   }
@@ -670,8 +844,7 @@ function nivel3(){
   $("chip").textContent = `Nivel 3 · ${idx+1} de ${PARES.length}`;
   $("pregunta").textContent = "¿Cuál de las dos escuchaste?";
   $("escena").className = "escena";
-  $("escena").innerHTML = `<div class="emojote">👂</div>
-    <div id="ayuda"></div>`;
+  $("escena").innerHTML = `<div class="emojote">👂</div><div id="ayuda"></div>`;
   $("respuesta").innerHTML =
     `<div class="opciones dos">` +
     ops.map(o=>`<button class="opcion" data-p="${o.p}"><span class="emo">${o.emo}</span><b>${o.p}</b></button>`).join("") +
@@ -680,12 +853,14 @@ function nivel3(){
        <button class="ctrl audio" id="repetir">🔊 Escuchar otra vez</button>
        <button class="ctrl" id="verPal">👀 Ver la palabra</button>
      </div>`;
-  const decir = () => hablar(`Escucha: ${cual.p}. ${cual.p}. ¿Cuál es?`);
+  $("avanzar").innerHTML = "";
+  const decir = () => dice(`Escucha: ${cual.p}. ${cual.p}. ¿Cuál es?`);
   $("repetir").onclick = decir;
   $("verPal").onclick = ()=>{
     $("ayuda").innerHTML = `<div class="modelo">${cual.p}</div>`;
     const s0 = serie;
-    setTimeout(()=>{ if(s0===serie && $("ayuda")) $("ayuda").innerHTML=""; }, 3000); };
+    setTimeout(()=>{ if(s0===serie && $("ayuda")) $("ayuda").innerHTML=""; }, 3000);
+  };
   document.querySelectorAll("#respuesta .opcion").forEach(b=>{
     b.onclick = ()=>revisa3(b, b.dataset.p, cual, P);
   });
@@ -694,7 +869,7 @@ function nivel3(){
   if(!vozOn) $("ayuda").innerHTML = `<div class="modelo">${cual.p}</div>`;
 }
 function revisa3(btn, elegido, cual, P){
-  if(btn.disabled) return;
+  if(btn.disabled || cerrado) return;
   if(elegido === cual.p){
     document.querySelectorAll("#respuesta .opcion").forEach(b=>b.disabled=true);
     btn.classList.add("bien"); pito(true); sumaEstrella();
@@ -706,8 +881,8 @@ function revisa3(btn, elegido, cual, P){
     btn.classList.add("mal"); btn.disabled = true; pito(false);
     intentos++;
     aviso("ups", `${casi()} ${P.clave}`);
-    hablar(`${casi()} ${P.clave} Escucha otra vez: ${cual.p}.`);
-    setTimeout(()=>{ btn.classList.remove("mal"); btn.disabled = false; }, 2600);
+    dice(`${casi()} ${P.clave} Escucha otra vez: ${cual.p}.`);
+    setTimeout(()=>{ if(btn.isConnected){ btn.classList.remove("mal"); btn.disabled = false; } }, 3000);
   }
 }
 
@@ -719,13 +894,14 @@ function render(){
   if(nivel===1) nivel1(); else if(nivel===2) nivel2(); else nivel3();
 }
 function terminar(){
+  serie++;
   pantalla("final");
   const total = ORDEN_LETRAS.length + PALS.length + PARES.length;
   $("resumen").textContent = `Ganaste ${estrellas} de ${total} estrellas. Ya trazaste 8 letras ligadas y escribiste 8 palabras al dictado. ✏️`;
   $("album").innerHTML = album.map(e=>`<span>${e}</span>`).join("");
   confeti(["✏️","⭐","🌟","📖","✨"]);
   pito(true);
-  hablar(`${animo()} Ganaste ${estrellas} estrellas. Cada vez escribes mejor.`);
+  dice(`${animo()} Ganaste ${estrellas} estrellas. Cada vez escribes mejor.`);
 }
 function arranca(){
   nivel = 1; idx = 0; estrellas = 0; album = []; trazo = null;

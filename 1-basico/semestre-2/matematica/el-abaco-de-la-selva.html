@@ -239,6 +239,7 @@ h1 span{display:block;color:var(--crema);font-size:.4em;letter-spacing:1px}
     <div class="escena" id="escena"></div>
     <div id="respuesta"></div>
     <div class="aviso" id="aviso" aria-live="polite"></div>
+    <div id="avanzar"></div>
   </section>
 
   <!-- FINAL -->
@@ -259,22 +260,80 @@ const azar = (a,b) => a + Math.floor(Math.random()*(b-a+1));
 const mezclar = a => a.map(v=>[Math.random(),v]).sort((x,y)=>x[0]-y[0]).map(v=>v[1]);
 
 let vozOn = true;
-function hablar(txt, cb){
-  const espera = Math.min(9000, 1400 + txt.length*52);
-  if(window.speechSynthesis) speechSynthesis.cancel();
-  if(!window.speechSynthesis || !vozOn){ if(cb) setTimeout(cb, espera); return; }
-  const u = new SpeechSynthesisUtterance(txt);
-  u.lang = "es-CL"; u.rate = .88; u.pitch = 1.1;
+let vozSerie = 0;
+
+/* Parte el texto en trozos cortos: Safari corta las frases muy largas. */
+function trozos(txt, max){
+  max = max || 130;
+  const out = []; let act = "";
+  txt.split(" ").forEach(w=>{
+    if((act + " " + w).trim().length > max){ if(act) out.push(act.trim()); act = w; }
+    else act = (act + " " + w).trim();
+  });
+  if(act.trim()) out.push(act.trim());
+  return out.length ? out : [txt];
+}
+function eligeVoz(){
   const vs = speechSynthesis.getVoices();
-  const v = vs.find(v=>v.lang==="es-CL") || vs.find(v=>v.lang==="es-MX") ||
-            vs.find(v=>v.lang==="es-ES") || vs.find(v=>v.lang.startsWith("es"));
-  if(v) u.voice = v;
-  if(cb){ u.onend = cb; u.onerror = cb; }
-  speechSynthesis.speak(u);
+  return vs.find(v=>v.lang==="es-CL") || vs.find(v=>v.lang==="es-MX") ||
+         vs.find(v=>v.lang==="es-ES") || vs.find(v=>v.lang.startsWith("es")) || null;
+}
+/* dice(): promesa que se resuelve SOLO cuando la voz terminó de verdad.
+   Resuelve "reemplazada" si otra frase la interrumpió, para que quien esperaba
+   el final no avance de pantalla por error. */
+function dice(txt){
+  const mio = ++vozSerie;
+  return new Promise(res=>{
+    const espera = Math.min(11000, 1300 + txt.length*58);
+    if(!window.speechSynthesis || !vozOn){
+      try{ if(window.speechSynthesis) speechSynthesis.cancel(); }catch(_){}
+      setTimeout(()=>res(mio === vozSerie ? "sin-voz" : "reemplazada"), espera);
+      return;
+    }
+    try{ speechSynthesis.cancel(); }catch(_){}
+    let listo = false, vig = null;
+    const fin = r => { if(listo) return; listo = true; if(vig) clearInterval(vig); res(r); };
+    const partes = trozos(txt);
+    partes.forEach((t,i)=>{
+      const u = new SpeechSynthesisUtterance(t);
+      u.lang = "es-CL"; u.rate = .85; u.pitch = 1.1;
+      const v = eligeVoz(); if(v) u.voice = v;
+      if(i === partes.length-1){ u.onend = ()=>fin("fin"); u.onerror = ()=>fin("error"); }
+      speechSynthesis.speak(u);
+    });
+    /* Vigilante: en iOS el evento onend a veces no llega nunca. */
+    let arranco = false; const t0 = Date.now();
+    vig = setInterval(()=>{
+      if(mio !== vozSerie){ fin("reemplazada"); return; }
+      if(speechSynthesis.speaking || speechSynthesis.pending) arranco = true;
+      else if(arranco){ fin("vigilante"); return; }
+      /* Si el motor de voz nunca partió (pasa en iOS con el timbre en silencio),
+         se da igualmente el tiempo de lectura antes de continuar. */
+      if(!arranco && Date.now() - t0 > 1800){
+        clearInterval(vig); vig = null;
+        setTimeout(()=>fin("sin-voz"), Math.max(0, espera - 1800));
+        return;
+      }
+      if(Date.now() - t0 > 25000) fin("tope");
+    }, 220);
+  });
+}
+function hablar(txt, cb){ const p = dice(txt); if(cb) p.then(cb); return p; }
+function hablando(){
+  return !!(window.speechSynthesis && (speechSynthesis.speaking || speechSynthesis.pending));
+}
+/* Un solo AudioContext reutilizado: Safari en iPhone permite muy pocos. */
+let ctxAudio = null;
+function audio(){
+  try{
+    if(!ctxAudio) ctxAudio = new (window.AudioContext||window.webkitAudioContext)();
+    if(ctxAudio.state === "suspended") ctxAudio.resume();
+    return ctxAudio;
+  }catch(e){ return null; }
 }
 function pito(ok){
+  const ctx = audio(); if(!ctx) return;
   try{
-    const ctx = new (window.AudioContext||window.webkitAudioContext)();
     const notas = ok ? [523,659,784] : [330,262];
     notas.forEach((f,i)=>{
       const o = ctx.createOscillator(), g = ctx.createGain();
@@ -288,8 +347,8 @@ function pito(ok){
   }catch(e){}
 }
 function clic(){
+  const ctx = audio(); if(!ctx) return;
   try{
-    const ctx = new (window.AudioContext||window.webkitAudioContext)();
     const o = ctx.createOscillator(), g = ctx.createGain();
     o.type="sine"; o.frequency.value=880;
     g.gain.setValueAtTime(.09,ctx.currentTime);
@@ -333,7 +392,7 @@ function conectarVoz(){
     vozOn = !vozOn;
     b.textContent = vozOn ? "🔊 Voz" : "🔇 Voz";
     b.setAttribute("aria-pressed", vozOn);
-    if(!vozOn && window.speechSynthesis) speechSynthesis.cancel();
+    if(!vozOn && window.speechSynthesis){ vozSerie++; speechSynthesis.cancel(); }
   });
   if(window.speechSynthesis) speechSynthesis.onvoiceschanged = ()=>{};
 }
@@ -407,7 +466,7 @@ function pone(col){
     const v = $(col==="d" ? "varD" : "varU");
     v.classList.add("aviso-lleno"); setTimeout(()=>v.classList.remove("aviso-lleno"),450);
     aviso("ups","En una varilla caben hasta 9. Diez unidades se cambian por 1 decena.");
-    hablar("En una varilla caben hasta nueve argollas. Diez unidades se cambian por una decena.");
+    dice("En una varilla caben hasta nueve argollas. Diez unidades se cambian por una decena.");
     return;
   }
   if(col==="d") colD++; else colU++;
@@ -456,7 +515,7 @@ function nivel1(){
   $("borrar").onclick = ()=>{ if(!bloqueado){ colD=0; colU=0; clic(); pintaAbaco(); aviso(""); } };
   $("listo").onclick = ()=>revisa1(n,d,u);
   aviso("", "");
-  hablar(`Pon ${plu(d,"decena","decenas")} y ${plu(u,"unidad","unidades")} en el ábaco. Toca la varilla para poner una argolla.`);
+  dice(`Pon ${plu(d,"decena","decenas")} y ${plu(u,"unidad","unidades")} en el ábaco. Toca la varilla para poner una argolla.`);
 }
 function revisa1(n,d,u){
   if(bloqueado) return;
@@ -474,7 +533,7 @@ function revisa1(n,d,u){
     else if(colD!==d) pista = `Mira la varilla D: la tabla pide ${d} y tú pusiste ${colD}.`;
     else pista = `Mira la varilla U: la tabla pide ${u} y tú pusiste ${colU}.`;
     aviso("ups", `${casi()} ${pista}`);
-    hablar(`${casi()} ${pista}`);
+    dice(`${casi()} ${pista}`);
   }
 }
 
@@ -499,7 +558,7 @@ function nivel2(){
     `</div><div class="controles" style="margin-top:9px">
        <button class="ctrl audio" id="repetir">🔊 Escuchar otra vez</button></div>`;
 
-  const decir = () => hablar(`¿Qué número dice el ábaco? Tiene ${plu(d,"decena","decenas")} y ${plu(u,"unidad","unidades")}. Las opciones son: ` +
+  const decir = () => dice(`¿Qué número dice el ábaco? Tiene ${plu(d,"decena","decenas")} y ${plu(u,"unidad","unidades")}. Las opciones son: ` +
       ops.map(o=>palabra(o)).join(", ") + ".");
   $("repetir").onclick = decir;
   document.querySelectorAll("#respuesta .opcion").forEach(b=>{
@@ -523,7 +582,7 @@ function revisa2(btn, elegido, n, d, u){
       ? `Cuenta las argollas: ${d} en la D y ${u} en la U. La D vale decenas.`
       : `Cuenta primero las argollas de la varilla D.`;
     aviso("ups", `${casi()} ${pista}`);
-    hablar(`${casi()} ${pista}`);
+    dice(`${casi()} ${pista}`);
   }
 }
 
@@ -547,7 +606,7 @@ function nivel3(){
        <button class="ctrl audio" id="repetir">🔊 Escuchar otra vez</button></div>`;
 
   const enPalabras = t => t.split(" + ").map(x=>palabra(+x)).join(" más ");
-  const decir = () => hablar(`¿Cómo se forma el ${palabra(n)}? Las opciones son: ` +
+  const decir = () => dice(`¿Cómo se forma el ${palabra(n)}? Las opciones son: ` +
       ops.map(o=>enPalabras(o)).join(", ") + ".");
   $("repetir").onclick = decir;
   document.querySelectorAll("#respuesta .opcion").forEach(b=>{
@@ -572,16 +631,25 @@ function revisa3(btn, elegido, bien, n, d, u){
       ? `El ${n} tiene ${d} decenas, o sea ${d*10}, y ${u} unidades.`
       : `Fíjate en la primera cifra: dice cuántas decenas hay.`;
     aviso("ups", `${casi()} ${pista}`);
-    hablar(`${casi()} ${pista}`);
+    dice(`${casi()} ${pista}`);
   }
 }
 
 /* ==================== FLUJO ==================== */
-let cerrado = false;
+let cerrado = false, serie = 0;
 function cierra(txtVoz){
   cerrado = true;
-  hablar(txtVoz, siguiente);
-  setTimeout(siguiente, 9000);
+  const s = serie;
+  $("avanzar").innerHTML = `<button class="btn hoja" id="btnSig">Siguiente ▶️</button>`;
+  $("btnSig").onclick = ()=>{ if(window.speechSynthesis) speechSynthesis.cancel(); siguiente(); };
+  const t0 = Date.now();
+  /* Tiempo mínimo en pantalla, por si el motor de voz no funciona o va muy rápido */
+  const minimo = Math.min(9000, 2200 + txtVoz.length*45);
+  dice(txtVoz).then(r=>{
+    if(r === "reemplazada" || s !== serie || !cerrado) return;
+    const falta = Math.max(1200, minimo - (Date.now() - t0));
+    setTimeout(()=>{ if(s === serie && cerrado && !hablando()) siguiente(); }, falta);
+  });
 }
 function siguiente(){
   if(!cerrado) return;
@@ -593,18 +661,22 @@ function siguiente(){
   render();
 }
 function render(){
+  serie++;
   cerrado = false;
+  $("avanzar").innerHTML = "";
   window.scrollTo(0,0);
   if(nivel===1) nivel1(); else if(nivel===2) nivel2(); else nivel3();
 }
 function terminar(){
+  serie++;
+  $("avanzar").innerHTML = "";
   pantalla("final");
   const total = N1.length + N2.length + N3.length;
   $("resumen").textContent = `Ganaste ${estrellas} de ${total} estrellas. Ahora sabes poner, leer y armar números con decenas y unidades. 🧮`;
   $("album").innerHTML = album.map(e=>`<span>${e}</span>`).join("");
   confeti(["🧮","⭐","🌟","🐒","🍌"]);
   pito(true);
-  hablar(`${animo()} Ganaste ${estrellas} estrellas. Recuerda: la primera cifra dice las decenas y la segunda las unidades.`);
+  dice(`${animo()} Ganaste ${estrellas} estrellas. Recuerda: la primera cifra dice las decenas y la segunda las unidades.`);
 }
 
 /* ==================== ARRANQUE ==================== */
