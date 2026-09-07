@@ -4,8 +4,8 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
 <meta name="theme-color" content="#0E3B2E">
-<meta name="description" content="Actividad de lenguaje de 1&deg; b&aacute;sico: trazar letras ligadas con el dedo, escribir palabras al dictado tocando letras y distinguir palabras que suenan parecido.">
-<title>Escribo al dictado · Letras ligadas, sonidos y palabras</title>
+<meta name="description" content="Actividad de lenguaje de 1&deg; b&aacute;sico: reconocer al o&iacute;do las doce letras del dictado, escribirlas con el dedo en letra ligada y descubrir con qu&eacute; letra empieza cada palabra.">
+<title>El dictado de las 12 letras · M L P S T D B F C R G Y</title>
 <style>
 /* Baloo 2 (SIL Open Font License 1.1) subconjunto latino, incrustado en base64 */
 @font-face{font-family:'Baloo 2';font-style:normal;font-weight:400;font-display:swap;
@@ -209,24 +209,6 @@ h1 span{display:block;color:var(--crema);font-size:.4em;letter-spacing:1px}
   background:rgba(14,59,46,.08);border-radius:12px;padding:3px 16px;
 }
 
-/* ---------- visor de palabra ---------- */
-.visor{
-  background:#fff;color:var(--selva);border-radius:20px;
-  font-family:'Baloo 2',sans-serif;font-size:clamp(1.8rem,8vw,2.4rem);
-  padding:6px 14px;margin:0 auto;min-width:200px;max-width:95%;
-  box-shadow:inset 0 0 0 3px rgba(14,59,46,.10);letter-spacing:.10em;min-height:1.5em;
-  word-break:break-word;
-}
-.visor .vacia{color:#c2b79f}
-.visor .err{color:var(--coral)}
-.silabas{display:flex;gap:6px;justify-content:center;flex-wrap:wrap;margin-top:6px}
-.silabas span{
-  background:var(--sol);color:var(--selva);border-radius:12px;padding:3px 12px;
-  font-family:'Baloo 2',sans-serif;font-size:1.25rem;
-}
-.opcion .emo{font-size:2.6rem}
-.opcion b{font-size:1.35rem}
-
 </style>
 </head>
 <body>
@@ -240,9 +222,9 @@ h1 span{display:block;color:var(--crema);font-size:.4em;letter-spacing:1px}
 
   <!-- INICIO -->
   <section class="pantalla activa" id="inicio">
-    <div class="iconos"><span>✏️</span><span>🌙</span><span>🐬</span></div>
-    <h1>Escribo al dictado<span>Letras ligadas, sonidos y palabras</span></h1>
-    <p class="intro">Tres desaf&iacute;os: <b>trazar</b> la letra con el dedo, <b>escuchar y escribir</b> la palabra tocando las letras, y <b>distinguir</b> palabras que suenan parecido. ¡Equivocarse no quita estrellas!</p>
+    <div class="iconos"><span>✏️</span><span>👂</span><span>🍅</span></div>
+    <h1>El dictado de las 12 letras<span>M L P S T D B F C R G Y</span></h1>
+    <p class="intro">Tres desaf&iacute;os: <b>escuchar</b> la letra y tocarla, <b>escribirla</b> con el dedo sin salirte de la l&iacute;nea, y descubrir <b>con qu&eacute; letra empieza</b> cada palabra. ¡Equivocarse no quita estrellas!</p>
     <button class="btn" id="btnEmpezar">¡Empezar!</button>
   </section>
 
@@ -788,34 +770,40 @@ const LETRAS = {
   n:{ son:"ene", ej:"nube",   emo:"☁️", tip:"La ene tiene una montañita.", d:'M 56 178 C 60 148 66 118 72 104 C 74 98 80 100 78 110 C 84 96 104 92 114 106 C 122 118 118 150 116 166 C 114 178 128 184 144 176 C 154 171 162 164 168 156' }
 };
 
-/* ==================== LETRAS QUE SE TRAZAN ==================== */
-const ORDEN_LETRAS = ["l","d","b","p","f","n","m","s"];
-
-/* ==================== PALABRAS DEL DICTADO ==================== */
-const PALS = [
-  { p:"luna",   emo:"🌙", sil:["lu","na"] },
-  { p:"pino",   emo:"🌲", sil:["pi","no"] },
-  { p:"balde",  emo:"🪣", sil:["bal","de"] },
-  { p:"delfín", emo:"🐬", sil:["del","fín"] },
-  { p:"lupa",   emo:"🔍", sil:["lu","pa"] },
-  { p:"sandía", emo:"🍉", sil:["san","dí","a"] },
-  { p:"tomate", emo:"🍅", sil:["to","ma","te"] },
-  { p:"pelota", emo:"⚽", sil:["pe","lo","ta"] }
+/* Nivel 1: escucho el nombre de la letra y la toco. Los distractores son
+   justo las letras que se le parecen. */
+const OIR = [
+  { l:"d", op:["d","b","p","g"] },
+  { l:"b", op:["b","d","p","l"] },
+  { l:"f", op:["f","t","l","b"] },
+  { l:"l", op:["l","t","f","b"] },
+  { l:"t", op:["t","f","l","d"] },
+  { l:"c", op:["c","s","g","r"] },
+  { l:"r", op:["r","s","m","t"] },
+  { l:"g", op:["g","c","y","p"] },
+  { l:"y", op:["y","g","p","r"] },
+  { l:"m", op:["m","n","s","r"] }
 ];
 
-/* ==================== PARES QUE SUENAN PARECIDO ==================== */
-const PARES = [
-  { a:{p:"luna",emo:"🌙"}, b:{p:"lupa",emo:"🔍"}, clave:"El final: lu-NA termina con na." },
-  { a:{p:"dado",emo:"🎲"}, b:{p:"dedo",emo:"☝️"}, clave:"El medio: da-do lleva a; de-do lleva e." },
-  { a:{p:"foca",emo:"🦭"}, b:{p:"boca",emo:"👄"}, clave:"El comienzo: la efe sopla, la be suena con los labios." },
-  { a:{p:"pato",emo:"🦆"}, b:{p:"gato",emo:"🐱"}, clave:"El comienzo: pa suena con los labios, ga suena atrás." },
-  { a:{p:"mano",emo:"✋"}, b:{p:"mono",emo:"🐒"}, clave:"El medio: ma-no lleva a; mo-no lleva o." },
-  { a:{p:"sopa",emo:"🍲"}, b:{p:"ropa",emo:"👕"}, clave:"El comienzo: la ese silba, la erre suena fuerte." },
-  { a:{p:"bota",emo:"👢"}, b:{p:"bola",emo:"⚽"}, clave:"El medio: bo-TA con te; bo-LA con ele." },
-  { a:{p:"pino",emo:"🌲"}, b:{p:"piña",emo:"🍍"}, clave:"El medio: pi-NO con ene; pi-ÑA con eñe." }
+/* Nivel 2: las que escribe con el dedo. Van las tres que falló en el dictado
+   de agosto (d, b, f) y las cinco nuevas del temario (t, c, r, g, y). */
+const ORDEN_TRAZO = ["d","b","f","t","c","r","g","y"];
+
+/* Nivel 3: ¿con qué letra empieza? */
+const INICIALES = [
+  { p:"mano",   emo:"✋", l:"m", op:["m","n","p"] },
+  { p:"sol",    emo:"☀️", l:"s", op:["s","c","r"] },
+  { p:"pelota", emo:"⚽", l:"p", op:["p","b","d"] },
+  { p:"tomate", emo:"🍅", l:"t", op:["t","l","f"] },
+  { p:"casa",   emo:"🏠", l:"c", op:["c","s","g"] },
+  { p:"gato",   emo:"🐱", l:"g", op:["g","c","y"] },
+  { p:"ratón",  emo:"🐭", l:"r", op:["r","s","m"] },
+  { p:"yogur",  emo:"🥛", l:"y", op:["y","g","l"] },
+  { p:"foca",   emo:"🦭", l:"f", op:["f","t","b"] },
+  { p:"balde",  emo:"🪣", l:"b", op:["b","d","p"] }
 ];
 
-const PREMIOS = ["🌙","🐬","🪣","🌲","🦭","☁️","✋","🍉","🔍","🍅","⚽","🎲","👄","🦆","🐒","🍲","👢","🍍","⭐","🌟","✏️","📖","🌈","🦋"];
+const PREMIOS = ["🌙","🐬","🪣","🌲","🦭","✋","🍉","🍅","🏠","🐭","🐱","🥛","⚽","☀️","⭐","🌟","✏️","📖","🌈","🦋","🎈","🍀","🐞","🌻"];
 
 let nivel = 1, idx = 0, estrellas = 0, album = [], intentos = 0, cerrado = false, serie = 0;
 
@@ -829,8 +817,6 @@ function sumaEstrella(){
   $("puntaje").textContent = "⭐ " + estrellas;
   album.push(PREMIOS[(estrellas-1) % PREMIOS.length]);
 }
-/* Cierra el ítem: muestra el botón Siguiente y espera a que la voz TERMINE
-   antes de avanzar sola. Nunca corta la narración a la mitad. */
 function cierra(txtVoz){
   cerrado = true;
   const s = serie;
@@ -848,17 +834,68 @@ function siguiente(){
   if(!cerrado) return;
   cerrado = false;
   idx++;
-  const largo = nivel===1 ? ORDEN_LETRAS.length : nivel===2 ? PALS.length : PARES.length;
+  const largo = nivel===1 ? OIR.length : nivel===2 ? ORDEN_TRAZO.length : INICIALES.length;
   if(idx >= largo){ idx = 0; nivel++; }
   if(nivel > 3){ terminar(); return; }
   render();
 }
 
-/* ==================== NIVEL 1: TRAZO LA LETRA (estricto) ==================== */
+/* botón de letra: minúscula grande y mayúscula chica, como en el cuaderno */
+function botonLetra(l){
+  return `<button class="letraBtn" data-l="${l}" aria-label="letra ${LETRAS[l] ? LETRAS[l].son : l}">
+      ${l}<small>${l.toUpperCase()}</small></button>`;
+}
+
+/* ==================== NIVEL 1: ESCUCHO Y TOCO LA LETRA ==================== */
 function nivel1(){
-  const k = ORDEN_LETRAS[idx], L = LETRAS[k];
-  $("chip").textContent = `Nivel 1 · ${idx+1} de ${ORDEN_LETRAS.length}`;
-  $("pregunta").textContent = "Traza la letra sin salirte de la línea";
+  const it = OIR[idx], L = LETRAS[it.l];
+  $("chip").textContent = `Nivel 1 · ${idx+1} de ${OIR.length}`;
+  $("pregunta").textContent = "Escucha y toca la letra";
+  $("escena").className = "escena";
+  $("escena").innerHTML = `
+    <div class="oreja">👂</div>
+    <div class="pista-escucha">Toca 🔁 si quieres escucharla otra vez</div>`;
+  $("respuesta").innerHTML = `
+    <div class="banco">${mezclar(it.op).map(botonLetra).join("")}</div>
+    <div class="controles" style="margin-top:10px">
+      <button class="ctrl audio" id="repetir">🔁 Escuchar otra vez</button>
+    </div>`;
+  $("avanzar").innerHTML = "";
+  aviso("", "");
+  intentos = 0;
+  const frase = `Escribe la letra ${L.son}. La ${L.son} de ${L.ej}.`;
+  $("repetir").onclick = ()=>dice(frase);
+  document.querySelectorAll(".letraBtn").forEach(b=>{
+    b.onclick = ()=>revisa1(b, b.dataset.l, it.l);
+  });
+  dice(frase);
+}
+function revisa1(btn, elegida, correcta){
+  if(cerrado || btn.disabled) return;
+  const L = LETRAS[correcta];
+  if(elegida === correcta){
+    btn.classList.add("bien"); clic(); pito(true); sumaEstrella();
+    document.querySelectorAll(".letraBtn").forEach(b=>b.disabled = true);
+    $("escena").classList.add("bien");
+    const txt = `${animo()} Esa es la ${L.son}, la ${L.son} de ${L.ej}. ${L.tip}`;
+    aviso("ok", txt);
+    cierra(txt);
+  }else{
+    btn.classList.add("mal"); btn.disabled = true; pito(false);
+    intentos++;
+    const E = LETRAS[elegida];
+    const pista = E ? `Esa es la ${E.son}, la de ${E.ej}. Busca la ${L.son}, la de ${L.ej}.`
+                    : `Busca la ${L.son}, la de ${L.ej}.`;
+    aviso("ups", `${casi()} ${pista}`);
+    dice(`${casi()} ${pista}`);
+  }
+}
+
+/* ==================== NIVEL 2: ESCRIBO LA LETRA CON EL DEDO ==================== */
+function nivel2(){
+  const k = ORDEN_TRAZO[idx], L = LETRAS[k];
+  $("chip").textContent = `Nivel 2 · ${idx+1} de ${ORDEN_TRAZO.length}`;
+  $("pregunta").textContent = "Escribe la letra con el dedo";
   $("escena").className = "escena";
   $("escena").innerHTML = `
     <div class="filaTrazo">
@@ -876,188 +913,71 @@ function nivel1(){
   $("verComo").onclick = ()=>demo(true);
   $("limpiar").onclick = ()=>{ reiniciaTrazo(); aviso("", ""); };
   const s = serie;
-  dice(`Vamos a escribir la ${L.son}, la ${L.son} de ${L.ej}. Mira cómo se hace y después hazlo tú. Empieza en el punto verde y no te salgas de la línea.`)
+  const dosPartes = (L.ds && L.ds.length > 1) ? " Esta letra se escribe en dos partes." : "";
+  dice(`Vamos a escribir la ${L.son}, la ${L.son} de ${L.ej}.${dosPartes} Mira cómo se hace y después hazlo tú. Empieza en el punto verde y no te salgas de la línea.`)
     .then(r=>{ if(r !== "reemplazada" && s === serie) demo(false); });
 }
 
-/* ==================== NIVEL 2: ESCUCHO Y ESCRIBO ==================== */
-let escrito = [];
-function nivel2(){
-  const W = PALS[idx];
-  const letras = Array.from(W.p);
-  escrito = []; intentos = 0;
-  $("chip").textContent = `Nivel 2 · ${idx+1} de ${PALS.length}`;
-  $("pregunta").textContent = "Escucha y escribe la palabra";
+/* ==================== NIVEL 3: ¿CON QUÉ LETRA EMPIEZA? ==================== */
+function nivel3(){
+  const it = INICIALES[idx], L = LETRAS[it.l];
+  $("chip").textContent = `Nivel 3 · ${idx+1} de ${INICIALES.length}`;
+  $("pregunta").textContent = "¿Con qué letra empieza?";
   $("escena").className = "escena";
   $("escena").innerHTML = `
-    <div class="emojote">${W.emo}</div>
-    <div class="visor" id="visor"><span class="vacia">${"_ ".repeat(letras.length).trim()}</span></div>
-    <div id="ayuda"></div>`;
-
-  const distractoras = mezclar(["b","d","f","l","p","n","m","t"].filter(x=>!letras.includes(x))).slice(0,3);
-  const banco = mezclar(letras.concat(distractoras));
-
-  $("respuesta").innerHTML =
-    `<div class="banco" id="banco">` +
-    banco.map((c,i)=>`<button class="letraBtn" data-c="${c}" data-i="${i}">${c}</button>`).join("") +
-    `</div>
-     <div class="controles" style="margin-top:10px">
-       <button class="ctrl audio" id="repetir">🔊 Escuchar</button>
-       <button class="ctrl" id="porSilabas">🐢 Por sílabas</button>
-       <button class="ctrl" id="verPal">👀 Ver la palabra</button>
-       <button class="ctrl quitar" id="borrar">⬅️ Borrar</button>
-     </div>`;
+    <div class="emojote">${it.emo}</div>
+    <div class="modelo">${it.p}</div>`;
+  $("respuesta").innerHTML = `<div class="banco">${mezclar(it.op).map(botonLetra).join("")}</div>`;
   $("avanzar").innerHTML = "";
-
-  document.querySelectorAll("#banco .letraBtn").forEach(b=>{
-    b.onclick = ()=>{
-      if(b.disabled || cerrado || escrito.length >= letras.length) return;
-      b.disabled = true; clic();
-      escrito.push({c:b.dataset.c, btn:b});
-      pintaVisor(letras.length);
-      if(escrito.length === letras.length) revisa2(W);
-    };
-  });
-  $("repetir").onclick = ()=>dice(W.p);
-  $("porSilabas").onclick = ()=>{ dice(W.sil.join(", ")); pintaSilabas(W); };
-  $("verPal").onclick = ()=>{
-    pistaModelo(W); dice(W.p);
-    const s0 = serie;
-    setTimeout(()=>{ if(s0===serie && $("ayuda") && !$("ayuda").querySelector(".silabas")) $("ayuda").innerHTML=""; }, 3500);
-  };
-  $("borrar").onclick = ()=>{
-    if(cerrado) return;
-    const u = escrito.pop();
-    if(u){ u.btn.disabled = false; clic(); pintaVisor(letras.length); aviso("",""); }
-  };
   aviso("", "");
-  pintaVisor(letras.length);
-  const s = serie;
-  dice(`Escucha bien y escribe: ${W.p}. ${W.p}.`)
-    .then(r=>{ if(r !== "reemplazada" && s === serie && !vozOn && $("ayuda")) pistaModelo(W); });
-  if(!vozOn) pistaModelo(W);
-}
-function pintaVisor(n){
-  const v = $("visor");
-  if(!v) return;
-  const puestas = escrito.map(e=>e.c).join(" ");
-  const faltan = n - escrito.length;
-  v.innerHTML = (puestas ? puestas : "") + (faltan>0 ? `<span class="vacia"> ${"_ ".repeat(faltan).trim()}</span>` : "");
-}
-function pintaSilabas(W){
-  if($("ayuda")) $("ayuda").innerHTML = `<div class="silabas">${W.sil.map(s=>`<span>${s}</span>`).join("")}</div>`;
-}
-function pistaModelo(W){
-  if($("ayuda")) $("ayuda").innerHTML = `<div class="modelo">${W.p}</div>`;
-}
-function revisa2(W){
-  const escritaTxt = escrito.map(e=>e.c).join("");
-  if(escritaTxt === W.p){
-    document.querySelectorAll("#banco .letraBtn").forEach(b=>b.disabled=true);
-    pito(true); sumaEstrella();
-    $("escena").classList.add("bien");
-    $("visor").innerHTML = `<b style="color:var(--hoja)">${W.p}</b>`;
-    pintaSilabas(W);
-    aviso("ok", `${animo()} ${W.p.toUpperCase()} se escribe ${W.sil.join(" - ")}.`);
-    cierra(`${animo()} ${W.p} se escribe ${W.sil.join(", ")}.`);
-  }else{
-    intentos++; pito(false);
-    $("escena").classList.remove("bien"); $("escena").classList.add("mal");
-    setTimeout(()=>{ if($("escena")) $("escena").classList.remove("mal"); }, 450);
-    let i = 0; while(i < escritaTxt.length && escritaTxt[i] === W.p[i]) i++;
-    const buena = W.p.slice(0, i);
-    $("visor").innerHTML = (buena ? buena.split("").join(" ") + " " : "") +
-      `<span class="err">${escritaTxt.slice(i).split("").join(" ")}</span>`;
-    pintaSilabas(W);
-    const pista = i === 0
-      ? `Escucha el comienzo: ${W.sil[0]}...`
-      : `Hasta "${buena}" vas bien. Escucha lo que sigue: ${W.sil.join(", ")}.`;
-    aviso("ups", `${casi()} ${pista}`);
-    const s = serie;
-    dice(`${casi()} ${pista}`).then(r=>{
-      if(r === "reemplazada" || s !== serie || !$("visor")) return;
-      escrito.forEach(e=>{ e.btn.disabled = false; });
-      escrito = [];
-      pintaVisor(W.p.length);
-      dice(W.p);
-      if(intentos >= 2) pistaModelo(W);
-    });
-  }
-}
-
-/* ==================== NIVEL 3: ¿CUÁL ESCUCHASTE? ==================== */
-function nivel3(){
-  const P = PARES[idx];
-  const cual = Math.random() < .5 ? P.a : P.b;
-  const ops = mezclar([P.a, P.b]);
   intentos = 0;
-  $("chip").textContent = `Nivel 3 · ${idx+1} de ${PARES.length}`;
-  $("pregunta").textContent = "¿Cuál de las dos escuchaste?";
-  $("escena").className = "escena";
-  $("escena").innerHTML = `<div class="emojote">👂</div><div id="ayuda"></div>`;
-  $("respuesta").innerHTML =
-    `<div class="opciones dos">` +
-    ops.map(o=>`<button class="opcion" data-p="${o.p}"><span class="emo">${o.emo}</span><b>${o.p}</b></button>`).join("") +
-    `</div>
-     <div class="controles" style="margin-top:10px">
-       <button class="ctrl audio" id="repetir">🔊 Escuchar otra vez</button>
-       <button class="ctrl" id="verPal">👀 Ver la palabra</button>
-     </div>`;
-  $("avanzar").innerHTML = "";
-  const decir = () => dice(`Escucha: ${cual.p}. ${cual.p}. ¿Cuál es?`);
-  $("repetir").onclick = decir;
-  $("verPal").onclick = ()=>{
-    $("ayuda").innerHTML = `<div class="modelo">${cual.p}</div>`;
-    const s0 = serie;
-    setTimeout(()=>{ if(s0===serie && $("ayuda")) $("ayuda").innerHTML=""; }, 3000);
-  };
-  document.querySelectorAll("#respuesta .opcion").forEach(b=>{
-    b.onclick = ()=>revisa3(b, b.dataset.p, cual, P);
+  document.querySelectorAll(".letraBtn").forEach(b=>{
+    b.onclick = ()=>revisa3(b, b.dataset.l, it);
   });
-  aviso("", "");
-  decir();
-  if(!vozOn) $("ayuda").innerHTML = `<div class="modelo">${cual.p}</div>`;
+  dice(`${it.p}. ¿Con qué letra empieza ${it.p}?`);
 }
-function revisa3(btn, elegido, cual, P){
-  if(btn.disabled || cerrado) return;
-  if(elegido === cual.p){
-    document.querySelectorAll("#respuesta .opcion").forEach(b=>b.disabled=true);
-    btn.classList.add("bien"); pito(true); sumaEstrella();
+function revisa3(btn, elegida, it){
+  if(cerrado || btn.disabled) return;
+  const L = LETRAS[it.l];
+  if(elegida === it.l){
+    btn.classList.add("bien"); clic(); pito(true); sumaEstrella();
+    document.querySelectorAll(".letraBtn").forEach(b=>b.disabled = true);
     $("escena").classList.add("bien");
-    $("escena").querySelector(".emojote").textContent = cual.emo;
-    aviso("ok", `${animo()} Era ${cual.p}. ${P.clave}`);
-    cierra(`${animo()} Era ${cual.p}. ${P.clave}`);
+    const txt = `${animo()} ${it.p} empieza con ${L.son}. ${L.tip}`;
+    aviso("ok", txt);
+    cierra(txt);
   }else{
     btn.classList.add("mal"); btn.disabled = true; pito(false);
     intentos++;
-    aviso("ups", `${casi()} ${P.clave}`);
-    dice(`${casi()} ${P.clave} Escucha otra vez: ${cual.p}.`);
-    setTimeout(()=>{ if(btn.isConnected){ btn.classList.remove("mal"); btn.disabled = false; } }, 3000);
+    const E = LETRAS[elegida];
+    const pista = `Escucha el comienzo: ${it.p.charAt(0)}... ${it.p}.` + (E ? ` Esa es la ${E.son}.` : "");
+    aviso("ups", `${casi()} ${pista}`);
+    dice(`${casi()} ${pista}`);
   }
 }
 
 /* ==================== FLUJO ==================== */
 function render(){
   serie++;
-  cerrado = false;
-  window.scrollTo(0,0);
-  if(nivel===1) nivel1(); else if(nivel===2) nivel2(); else nivel3();
+  if(nivel === 1) nivel1();
+  else if(nivel === 2) nivel2();
+  else nivel3();
 }
 function terminar(){
   serie++;
   pantalla("final");
-  const total = ORDEN_LETRAS.length + PALS.length + PARES.length;
-  $("resumen").textContent = `Ganaste ${estrellas} de ${total} estrellas. Ya trazaste 8 letras ligadas y escribiste 8 palabras al dictado. ✏️`;
   $("album").innerHTML = album.map(e=>`<span>${e}</span>`).join("");
-  confeti(["✏️","⭐","🌟","📖","✨"]);
-  pito(true);
-  dice(`${animo()} Ganaste ${estrellas} estrellas. Cada vez escribes mejor.`);
+  const total = OIR.length + ORDEN_TRAZO.length + INICIALES.length;
+  $("resumen").textContent = `Juntaste ${estrellas} estrellas de ${total}. Reconociste las letras al escucharlas, las escribiste con el dedo y descubriste con cuál empieza cada palabra. ¡Estás lista para el dictado!`;
+  confeti(["⭐","✏️","🎉","📖"]);
+  dice(`${animo()} Juntaste ${estrellas} estrellas. Ya sabes las doce letras del dictado. Si quieres, juega de nuevo.`);
 }
 function arranca(){
   audio();
-  nivel = 1; idx = 0; estrellas = 0; album = []; trazo = null; cerrado = false;
+  nivel = 1; idx = 0; estrellas = 0; album = []; cerrado = false;
   $("puntaje").textContent = "⭐ 0";
-  pantalla("juego"); render();
+  pantalla("juego");
+  render();
 }
 conectarVoz();
 $("btnEmpezar").onclick = arranca;

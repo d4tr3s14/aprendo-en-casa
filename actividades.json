@@ -131,6 +131,50 @@
       "archivo": "1-basico/semestre-2/lenguaje/escribo-al-dictado.html",
       "emoji": "✏️",
       "fecha": "2026-08-28"
+    },
+    {
+      "id": "mat-dictado-de-numeros",
+      "titulo": "El dictado de números",
+      "curso": "1-basico",
+      "semestre": 2,
+      "asignatura": "matematica",
+      "objetivo": "Escribir al dictado los números del 0 al 59 separando decena y unidad, distinguir los números con las cifras invertidas (47 y 74) y completar series contando, en especial los saltos de decena.",
+      "archivo": "1-basico/semestre-2/matematica/dictado-de-numeros.html",
+      "emoji": "🔢",
+      "fecha": "2026-09-07"
+    },
+    {
+      "id": "len-dictado-de-letras",
+      "titulo": "El dictado de las 12 letras",
+      "curso": "1-basico",
+      "semestre": 2,
+      "asignatura": "lenguaje",
+      "objetivo": "Reconocer al oído las doce letras del dictado (m, l, p, s, t, d, b, f, c, r, g, y), escribirlas con el dedo en letra ligada y reconocer con qué letra empieza cada palabra.",
+      "archivo": "1-basico/semestre-2/lenguaje/dictado-de-letras.html",
+      "emoji": "✏️",
+      "fecha": "2026-09-07"
+    },
+    {
+      "id": "mat-sumas-y-problemas",
+      "titulo": "Sumas de la selva",
+      "curso": "1-basico",
+      "semestre": 2,
+      "asignatura": "matematica",
+      "objetivo": "Resolver adiciones de un dígito contando objetos, adiciones de dos dígitos juntando decenas y unidades, y ocho problemas narrados de la vida diaria.",
+      "archivo": "1-basico/semestre-2/matematica/sumas-y-problemas.html",
+      "emoji": "➕",
+      "fecha": "2026-09-07"
+    },
+    {
+      "id": "len-articulos-el-la-un-una",
+      "titulo": "El, la, un, una",
+      "curso": "1-basico",
+      "semestre": 2,
+      "asignatura": "lenguaje",
+      "objetivo": "Elegir el artículo definido o indefinido que corresponde según el género y el número, y distinguir cuándo se usa un/una/unos/unas y cuándo el/la/los/las.",
+      "archivo": "1-basico/semestre-2/lenguaje/articulos-el-la-un-una.html",
+      "emoji": "📖",
+      "fecha": "2026-09-07"
     }
   ]
 }

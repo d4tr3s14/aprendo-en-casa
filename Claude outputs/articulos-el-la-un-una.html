@@ -4,8 +4,8 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
 <meta name="theme-color" content="#0E3B2E">
-<meta name="description" content="Actividad de lenguaje de 1&deg; b&aacute;sico: trazar letras ligadas con el dedo, escribir palabras al dictado tocando letras y distinguir palabras que suenan parecido.">
-<title>Escribo al dictado · Letras ligadas, sonidos y palabras</title>
+<meta name="description" content="Actividad de lenguaje de 1&deg; b&aacute;sico: elegir el art&iacute;culo definido o indefinido que corresponde seg&uacute;n el g&eacute;nero, el n&uacute;mero y si el objeto aparece por primera vez.">
+<title>El, la, un, una · Artículos definidos e indefinidos</title>
 <style>
 /* Baloo 2 (SIL Open Font License 1.1) subconjunto latino, incrustado en base64 */
 @font-face{font-family:'Baloo 2';font-style:normal;font-weight:400;font-display:swap;
@@ -139,93 +139,30 @@ h1 span{display:block;color:var(--crema);font-size:.4em;letter-spacing:1px}
   *{animation:none !important;transition:none !important}
 }
 
-/* ---------- pizarra de trazo ---------- */
-.pizarra{
-  width:min(330px,86vw);background:#fff;border-radius:22px;
-  box-shadow:inset 0 0 0 3px rgba(14,59,46,.10);touch-action:none;position:relative;
+.emojote{font-size:clamp(3.4rem,16vw,4.8rem);line-height:1.15}
+.emojote.chico{font-size:clamp(2.2rem,10vw,3.2rem);letter-spacing:.05em}
+.frase{
+  font-family:'Baloo 2',sans-serif;font-size:clamp(1.7rem,8vw,2.3rem);color:var(--selva);
+  letter-spacing:.03em;
 }
-/* el viewBox del svg da la proporción: no se depende de aspect-ratio */
-.pizarra svg{display:block;width:100%;height:auto;touch-action:none}
-.pauta{stroke:#e3d9c2;stroke-width:2}
-.pauta.base{stroke:#FF6B5A;stroke-width:2.5}
-.pauta.media{stroke-dasharray:7 7}
-.pizarra.mal{animation:tiembla .45s}
-.pizarra.mal .guia{stroke:#FFC0B6}
-
-.barraTrazo{width:min(330px,86vw);height:12px;background:rgba(14,59,46,.12);border-radius:999px;overflow:hidden}
-.barraTrazo i{display:block;height:100%;width:0%;background:var(--hoja);border-radius:999px;transition:width .08s linear}
-
-.guia{fill:none;stroke:#ded4bf;stroke-width:30;stroke-linecap:round;stroke-linejoin:round;transition:stroke .2s,opacity .2s}
-.guia.tenue{opacity:.3}
-.guia.hecha{stroke:#cfe3c9}
-/* marcador: translúcido y por trocitos, así el cruce se ve más oscuro */
-.marca{fill:none;stroke:#3FC1E0;stroke-opacity:.42;stroke-width:24;stroke-linecap:butt;stroke-linejoin:round}
-#marcas.ok .marca{stroke:#7ED957;stroke-opacity:.6}
-/* la línea punteada va SIEMPRE encima del marcador: nunca se pierde el camino */
-.guiaPunteada{fill:none;stroke:#fff;stroke-width:5;stroke-linecap:round;stroke-dasharray:2 16}
-.demo{fill:none;stroke:var(--hoja);stroke-width:22;stroke-linecap:round;stroke-linejoin:round;opacity:.85}
-.puntoInicio{fill:var(--hoja);stroke:#0E3B2E;stroke-width:3}
-.puntoInicio.pulsa{animation:latido 1.3s ease-in-out infinite}
-@keyframes latido{0%,100%{r:13}50%{r:18}}
-/* punto que va un poco adelante del dedo: dice hacia dónde sigue el camino */
-.proximo{fill:var(--coral);stroke:#fff;stroke-width:3;opacity:.9;animation:tic 1.1s ease-in-out infinite}
-@keyframes tic{0%,100%{r:9}50%{r:6}}
-.lapiz{fill:none;stroke:var(--coral);stroke-width:4;pointer-events:none;opacity:.85}
-
-.filaTrazo{display:flex;flex-direction:column;align-items:center;gap:8px}
-.chipLetra{
-  background:rgba(14,59,46,.10);border-radius:14px;padding:3px 16px;
-  font-family:'Baloo 2',sans-serif;font-size:1.5rem;color:var(--selva);
+.hueco{
+  display:inline-block;min-width:2.4em;border-bottom:6px solid var(--coral);
+  border-radius:4px;color:var(--coral);text-align:center;
 }
-.chipLetra .emo{font-size:1.6rem}
-
-/* ---------- banco de letras ---------- */
-.banco{display:flex;flex-wrap:wrap;gap:8px;justify-content:center;max-width:460px;margin:0 auto}
-.letraBtn{
-  background:var(--crema);color:var(--selva);border:none;border-radius:16px;
-  width:64px;height:64px;font-size:2.1rem;font-weight:800;cursor:pointer;
-  box-shadow:var(--sombra);transition:transform .1s;font-family:'Baloo 2',sans-serif;
-  display:flex;flex-direction:column;align-items:center;justify-content:center;line-height:1;
+.hueco.puesta{color:var(--selva);border-bottom-color:var(--hoja)}
+.cuento{
+  background:#fff;border-radius:18px;padding:10px 12px;color:var(--selva);
+  font-family:'Baloo 2',sans-serif;font-size:1.25rem;line-height:1.5;max-width:30ch;
+  box-shadow:inset 0 0 0 3px rgba(14,59,46,.08);
 }
-.letraBtn small{font-size:.8rem;font-family:'Nunito',sans-serif;color:#3d6b57;font-weight:800}
-.letraBtn:active{transform:translateY(5px);box-shadow:0 3px 0 rgba(0,0,0,.18)}
-.letraBtn.bien{background:var(--hoja)}
-.letraBtn.mal{background:#FFD7D2;opacity:.8}
-.letraBtn[disabled]{cursor:default}
-.letraBtn:focus-visible{outline:4px solid var(--agua);outline-offset:3px}
-@media (max-width:400px){ .letraBtn{width:56px;height:56px;font-size:1.8rem} }
-
-.emojote{font-size:clamp(3.6rem,17vw,5rem);line-height:1}
-.dato{font-size:1rem;font-weight:800;color:#3d6b57;max-width:34ch;line-height:1.35}
-.par{display:flex;gap:10px;justify-content:center;align-items:center;flex-wrap:wrap}
-.formas{display:flex;gap:14px;align-items:baseline;justify-content:center;
-  font-family:'Baloo 2',sans-serif;font-size:2.2rem;color:var(--selva)}
-.formas b{font-size:2.6rem}
-
-.oreja{font-size:clamp(3.2rem,15vw,4.6rem);line-height:1;animation:flota 2.6s ease-in-out infinite}
-.pista-escucha{font-size:1rem;font-weight:800;color:#3d6b57}
-.modelo{
-  font-family:'Baloo 2',sans-serif;font-size:1.6rem;color:var(--selva);letter-spacing:.10em;
-  background:rgba(14,59,46,.08);border-radius:12px;padding:3px 16px;
+.cuento .hueco{min-width:2.6em}
+.opcion.art{
+  font-family:'Baloo 2',sans-serif;font-size:2.2rem;padding:14px 6px;letter-spacing:.04em;
 }
-
-/* ---------- visor de palabra ---------- */
-.visor{
-  background:#fff;color:var(--selva);border-radius:20px;
-  font-family:'Baloo 2',sans-serif;font-size:clamp(1.8rem,8vw,2.4rem);
-  padding:6px 14px;margin:0 auto;min-width:200px;max-width:95%;
-  box-shadow:inset 0 0 0 3px rgba(14,59,46,.10);letter-spacing:.10em;min-height:1.5em;
-  word-break:break-word;
+.regla{
+  background:rgba(255,201,60,.18);border-radius:16px;padding:8px 12px;
+  font-size:.98rem;font-weight:800;color:var(--crema);max-width:36ch;margin:10px auto 0;line-height:1.4;
 }
-.visor .vacia{color:#c2b79f}
-.visor .err{color:var(--coral)}
-.silabas{display:flex;gap:6px;justify-content:center;flex-wrap:wrap;margin-top:6px}
-.silabas span{
-  background:var(--sol);color:var(--selva);border-radius:12px;padding:3px 12px;
-  font-family:'Baloo 2',sans-serif;font-size:1.25rem;
-}
-.opcion .emo{font-size:2.6rem}
-.opcion b{font-size:1.35rem}
 
 </style>
 </head>
@@ -240,9 +177,9 @@ h1 span{display:block;color:var(--crema);font-size:.4em;letter-spacing:1px}
 
   <!-- INICIO -->
   <section class="pantalla activa" id="inicio">
-    <div class="iconos"><span>✏️</span><span>🌙</span><span>🐬</span></div>
-    <h1>Escribo al dictado<span>Letras ligadas, sonidos y palabras</span></h1>
-    <p class="intro">Tres desaf&iacute;os: <b>trazar</b> la letra con el dedo, <b>escuchar y escribir</b> la palabra tocando las letras, y <b>distinguir</b> palabras que suenan parecido. ¡Equivocarse no quita estrellas!</p>
+    <div class="iconos"><span>📖</span><span>☀️</span><span>🌸</span></div>
+    <h1>El, la, un, una<span>Artículos definidos e indefinidos</span></h1>
+    <p class="intro">Tres desaf&iacute;os: <b>el o la</b> cuando hay uno solo, <b>los o las</b> cuando son muchos, y descubrir cu&aacute;ndo se dice <b>un</b> y cu&aacute;ndo se dice <b>el</b>.</p>
     <button class="btn" id="btnEmpezar">¡Empezar!</button>
   </section>
 
@@ -411,411 +348,62 @@ function conectarVoz(){
   if(window.speechSynthesis) speechSynthesis.onvoiceschanged = ()=>{};
 }
 
-/* ==================== TRAZO DE LETRA LIGADA ====================
-   Marco 240x240 · techo 30 · media 105 · base 180 · pie 232
-   - Acepta letras de una o de dos partes (la te lleva el palito aparte).
-   - El trazo hecho se pinta como MARCADOR: translúcido y en trocitos, así
-     cuando la letra se cruza a sí misma (la pe, la ge, la ye) se ve el
-     cruce más oscuro y no se pierde de vista por dónde iba el dedo.
-   - La línea punteada blanca va SIEMPRE por encima del marcador, y un
-     punto coral marca hacia dónde sigue el camino. */
+/* ==================== ARTÍCULOS DEFINIDOS E INDEFINIDOS ==================== */
 
-const TOL      = 15;   // desviación máxima respecto al centro de la guía (el camino gris mide 30 de ancho)
-const TOL_INI  = 24;   // margen para empezar sobre el punto verde
-const META     = 0.97; // hay que recorrer el 97% del trazo
-const VENTANA  = 40;   // cuántos puntos hacia adelante se pueden avanzar de una vez
-const CHUNK    = 14;   // puntos por trocito de marcador (los trocitos se superponen y oscurecen)
-const ADELANTE = 18;   // cuántos puntos más adelante se muestra el punto "sigue por aquí"
-
-let trazo = null;
-
-const partesDe = L => L.ds || [L.d];
-const dist = (a,b) => Math.hypot(a.x-b.x, a.y-b.y);
-/* distancia de un punto al segmento a-b: sirve para detectar atajos */
-function distSeg(p, a, b){
-  const vx = b.x-a.x, vy = b.y-a.y;
-  const len2 = vx*vx + vy*vy;
-  if(len2 === 0) return dist(p, a);
-  let t = ((p.x-a.x)*vx + (p.y-a.y)*vy) / len2;
-  t = Math.max(0, Math.min(1, t));
-  return Math.hypot(p.x - (a.x + t*vx), p.y - (a.y + t*vy));
-}
-
-function pizarraHTML(L, etiqueta){
-  const ds = partesDe(L);
-  const guias = ds.map((d,i)=>`<path class="guia${i ? " tenue" : ""}" id="guia${i}" d="${d}"/>`).join("");
-  const punts = ds.map((d,i)=>`<path class="guiaPunteada" id="punt${i}" d="${d}"${i ? ' style="display:none"' : ""}/>`).join("");
-  return `
-    <div class="pizarra" id="pizarra">
-      <svg id="svgLetra" viewBox="0 0 240 240" aria-label="${etiqueta}">
-        <line class="pauta" x1="6" y1="30" x2="234" y2="30"/>
-        <line class="pauta media" x1="6" y1="105" x2="234" y2="105"/>
-        <line class="pauta base" x1="6" y1="180" x2="234" y2="180"/>
-        <line class="pauta" x1="6" y1="232" x2="234" y2="232"/>
-        ${guias}
-        <g id="marcas"></g>
-        ${punts}
-        <path id="demoPath" class="demo" d="${ds[0]}"/>
-        <circle id="proximo" class="proximo" r="9" style="display:none"/>
-        <circle id="pIni" class="puntoInicio pulsa" r="13"/>
-        <circle id="lapiz" class="lapiz" r="10" style="display:none"/>
-      </svg>
-    </div>
-    <div class="barraTrazo"><i id="barra"></i></div>`;
-}
-
-function iniciaTrazo(L, k){
-  const svg = $("svgLetra");
-  trazo = {
-    svg, L, k, ds: partesDe(L), parte: 0,
-    pts: [], N: 0, largo: 0, i: 0, prev: null,
-    dibujando: false, listo: false, demoOn: false, demoTok: 0,
-    chunk: null, chunkIni: 0, ultimo: 0, chunksParte: []
-  };
-
-  const aSvg = ev => {
-    const m = svg.getScreenCTM().inverse();
-    try { return new DOMPoint(ev.clientX, ev.clientY).matrixTransform(m); }
-    catch(_){ const q = svg.createSVGPoint(); q.x=ev.clientX; q.y=ev.clientY; return q.matrixTransform(m); }
-  };
-
-  svg.addEventListener("pointerdown", e=>{
-    if(!trazo || trazo.listo || cerrado) return;
-    e.preventDefault();
-    if(trazo.demoOn){ cancelaDemo(); }
-    const p = aSvg(e);
-    if(trazo.i === 0 && dist(p, trazo.pts[0]) > TOL_INI){
-      $("pIni").classList.add("pulsa");
-      aviso("ups", "Empieza justo en el punto verde 🟢");
-      dice("Empieza justo en el punto verde.");
-      return;
-    }
-    if(trazo.i > 0 && dist(p, trazo.pts[trazo.i]) > TOL){
-      aviso("ups", "Sigue desde donde ibas, sin saltarte nada.");
-      return;
-    }
-    trazo.dibujando = true;
-    trazo.prev = p;
-    try{ svg.setPointerCapture(e.pointerId); }catch(_){ }
-    $("lapiz").style.display = "";
-    mueveLapiz(p);
-  });
-
-  svg.addEventListener("pointermove", e=>{
-    if(!trazo || !trazo.dibujando || trazo.listo) return;
-    e.preventDefault();
-    let evs = [e];
-    if(e.getCoalescedEvents){
-      const c = e.getCoalescedEvents();
-      if(c && c.length) evs = c;
-    }
-    for(const ev of evs){ if(!avanza(aSvg(ev))) break; }
-  });
-
-  const soltar = () => {
-    if(!trazo || !trazo.dibujando) return;
-    trazo.dibujando = false;
-    const l = $("lapiz"); if(l) l.style.display = "none";
-    if(trazo.listo) return;
-    if(trazo.i/trazo.N >= META) exitoParte();
-    else falla("levanto");
-  };
-  svg.addEventListener("pointerup", soltar);
-  svg.addEventListener("pointercancel", soltar);
-  svg.addEventListener("pointerleave", soltar);
-
-  preparaParte(0);
-}
-
-/* Deja lista la parte p de la letra: puntos, punto verde, guía activa. */
-function preparaParte(p){
-  trazo.parte = p;
-  const guia = $("guia"+p);
-  const largo = guia.getTotalLength();
-  const N = Math.max(60, Math.round(largo/2));
-  const pts = [];
-  for(let i=0;i<=N;i++) pts.push(guia.getPointAtLength(largo*i/N));
-  trazo.pts = pts; trazo.N = N; trazo.largo = largo;
-  trazo.i = 0; trazo.prev = null; trazo.dibujando = false;
-  trazo.chunk = null; trazo.chunkIni = 0; trazo.ultimo = 0; trazo.chunksParte = [];
-
-  trazo.ds.forEach((_,i)=>{
-    const g = $("guia"+i), pu = $("punt"+i);
-    if(g) g.classList.toggle("tenue", i !== p);
-    if(pu) pu.style.display = (i === p) ? "" : "none";
-  });
-  const dp = $("demoPath");
-  if(dp){ dp.setAttribute("d", trazo.ds[p]); dp.style.strokeDasharray = largo; dp.style.strokeDashoffset = largo; }
-  const ini = $("pIni");
-  ini.style.display = "";
-  ini.setAttribute("cx", pts[0].x);
-  ini.setAttribute("cy", pts[0].y);
-  ini.classList.add("pulsa");
-  pintaBarra();
-  muestraProximo(true);
-}
-
-/* ---------- marcador ---------- */
-function nuevoChunk(desde){
-  const g = $("marcas"); if(!g) return;
-  const el = document.createElementNS("http://www.w3.org/2000/svg","path");
-  el.setAttribute("class","marca");
-  g.appendChild(el);
-  trazo.chunk = el;
-  trazo.chunkIni = desde;
-  trazo.chunksParte.push(el);
-}
-/* Los trocitos comparten sólo el punto de unión, nunca un tramo entero:
-   si compartieran tramo se pintaría dos veces y aparecerían bandas oscuras. */
-function pintaMarca(){
-  if(!trazo.chunk || trazo.i - trazo.chunkIni >= CHUNK) nuevoChunk(trazo.ultimo);
-  let d = "";
-  for(let k = trazo.chunkIni; k <= trazo.i; k++){
-    const p = trazo.pts[k];
-    d += (k === trazo.chunkIni ? "M " : " L ") + p.x.toFixed(1) + " " + p.y.toFixed(1);
-  }
-  trazo.chunk.setAttribute("d", d);
-  trazo.ultimo = trazo.i;
-  const ini = $("pIni");
-  if(ini && trazo.i > 2){ ini.classList.remove("pulsa"); ini.style.display = "none"; }
-}
-function borraMarcasParte(){
-  trazo.chunksParte.forEach(el=>el.remove());
-  trazo.chunksParte = [];
-  trazo.chunk = null; trazo.chunkIni = 0; trazo.ultimo = 0;
-}
-function pintaBarra(){
-  const barra = $("barra"); if(!barra) return;
-  const pc = (trazo.parte + trazo.i/trazo.N) / trazo.ds.length;
-  barra.style.width = Math.round(pc*100) + "%";
-}
-/* Punto coral un poco más adelante: se ve más allá del dedo y dice hacia dónde sigue. */
-function muestraProximo(ver){
-  const c = $("proximo"); if(!c) return;
-  if(!ver || trazo.listo){ c.style.display = "none"; return; }
-  const j = Math.min(trazo.N, trazo.i + ADELANTE);
-  c.setAttribute("cx", trazo.pts[j].x);
-  c.setAttribute("cy", trazo.pts[j].y);
-  c.style.display = "";
-}
-
-/* Devuelve false cuando el intento terminó (por acierto o por falla) */
-function avanza(p){
-  mueveLapiz(p);
-
-  /* 1) Se avanza punto a punto mientras el dedo se vaya ACERCANDO al siguiente.
-        Así nunca se salta un pico ni el cruce de un bucle, aunque los dos
-        tramos de la letra pasen uno al lado del otro. */
-  let j = trazo.i;
-  let dj = dist(p, trazo.pts[j]);
-  const lim = Math.min(trazo.N, trazo.i + VENTANA);
-  while(j < lim){
-    const dn = dist(p, trazo.pts[j+1]);
-    if(dn <= dj + 0.4){ j++; dj = dn; } else break;
-  }
-
-  /* ¿se salió del camino? Se permite dudar y retroceder un poco. */
-  if(dj > TOL){
-    let atras = dj;
-    for(let q = Math.max(0, trazo.i - 12); q < trazo.i; q++){
-      const d2 = dist(p, trazo.pts[q]);
-      if(d2 < atras) atras = d2;
-    }
-    if(atras > TOL){ falla("fuera"); return false; }
-    trazo.prev = p;
-    return true;
-  }
-
-  /* 2) No se puede avanzar por la letra más de lo que se movió el dedo.
-        Esto evita que en las puntas (donde el trazo de subida y el de bajada
-        quedan pegados) salte de un lado al otro sin recorrer la curva.
-        Aquí no se falla: simplemente no avanza. */
-  if(j > trazo.i && trazo.prev){
-    const arcoPaso = trazo.largo / trazo.N;
-    const maxPasos = Math.ceil((dist(trazo.prev, p) + 14) / arcoPaso);
-    if(j - trazo.i > maxPasos) j = trazo.i + maxPasos;
-  }
-
-  /* 3) ¿pasó por encima de todos los puntos intermedios? Nada de cortar camino. */
-  if(j > trazo.i && trazo.prev){
-    for(let k = trazo.i + 1; k <= j; k++){
-      if(distSeg(trazo.pts[k], trazo.prev, p) > TOL){ falla("atajo"); return false; }
-    }
-  }
-  trazo.prev = p;
-
-  if(j > trazo.i){
-    trazo.i = j;
-    pintaMarca();
-    pintaBarra();
-    muestraProximo(true);
-    if(trazo.i/trazo.N >= META){ exitoParte(); return false; }
-  }
-  return true;
-}
-
-function mueveLapiz(p){
-  const l = $("lapiz");
-  if(l){ l.setAttribute("cx", p.x); l.setAttribute("cy", p.y); }
-}
-function reiniciaTrazo(){
-  if(!trazo || !trazo.svg || !trazo.svg.isConnected) return;
-  borraMarcasParte();
-  trazo.i = 0; trazo.prev = null; trazo.listo = false; trazo.dibujando = false;
-  const l = $("lapiz"); if(l) l.style.display = "none";
-  const ini = $("pIni");
-  ini.style.display = "";
-  ini.setAttribute("cx", trazo.pts[0].x);
-  ini.setAttribute("cy", trazo.pts[0].y);
-  ini.classList.add("pulsa");
-  pintaBarra();
-  muestraProximo(true);
-}
-
-/* Terminó una parte: si la letra tiene otra (el palito de la te), sigue con ella. */
-function exitoParte(){
-  if(trazo.listo) return;
-  trazo.dibujando = false;
-  const l = $("lapiz"); if(l) l.style.display = "none";
-  if(trazo.parte < trazo.ds.length - 1){
-    pito(true);
-    const g = $("guia"+trazo.parte); if(g) g.classList.add("hecha");
-    const txt = trazo.L.paso2 || "¡Muy bien! Ahora la segunda parte: empieza otra vez en el punto verde.";
-    aviso("ok", txt);
-    const s = serie;
-    preparaParte(trazo.parte + 1);
-    dice(txt).then(()=>{ if(s === serie && trazo && !trazo.listo) $("pIni").classList.add("pulsa"); });
-    return;
-  }
-  exitoTrazo();
-}
-
-function exitoTrazo(){
-  trazo.listo = true; trazo.dibujando = false;
-  const m = $("marcas"); if(m) m.classList.add("ok");
-  muestraProximo(false);
-  const barra = $("barra"); if(barra) barra.style.width = "100%";
-  const l = $("lapiz"); if(l) l.style.display = "none";
-  $("pIni").classList.remove("pulsa");
-  $("pIni").style.display = "none";
-  pito(true); sumaEstrella();
-  $("escena").classList.add("bien");
-  const L = trazo.L;
-  const txt = `${animo()} Trazaste la ${L.son} completa y sin salirte. La ${L.son} de ${L.ej}.`;
-  aviso("ok", txt);
-  cierra(txt);
-}
-
-function falla(motivo){
-  if(trazo.listo) return;
-  trazo.dibujando = false;
-  const l = $("lapiz"); if(l) l.style.display = "none";
-  const piz = $("pizarra");
-  if(piz){ piz.classList.add("mal"); setTimeout(()=>piz.classList.remove("mal"), 600); }
-  pito(false);
-  intentos++;
-  reiniciaTrazo();
-  const pistas = {
-    fuera:  "Te saliste de la línea. Empieza otra vez desde el punto verde y mantén el dedo dentro del camino gris.",
-    atajo:  "No cortes camino: hay que recorrer toda la línea, sin saltarse las curvas.",
-    levanto:"Te faltó llegar al final. No levantes el dedo hasta terminar."
-  };
-  const pista = pistas[motivo] || pistas.fuera;
-  aviso("ups", `${casi()} ${pista}`);
-  const s = serie;
-  dice(`${casi()} ${pista}`).then(r=>{
-    if(r !== "reemplazada" && s === serie && intentos >= 2) demo(false);
-  });
-}
-
-function cancelaDemo(){
-  if(!trazo || !trazo.demoOn) return;
-  trazo.demoTok++;
-  trazo.demoOn = false;
-  const dp = $("demoPath"); if(dp) dp.style.strokeDashoffset = trazo.largo;
-  const l = $("lapiz"); if(l) l.style.display = "none";
-  aviso("", "");
-  muestraProximo(true);
-}
-function demo(conVoz){
-  if(!trazo || trazo.listo || !trazo.svg.isConnected) return;
-  const s = serie;
-  const reduce = window.matchMedia && window.matchMedia("(prefers-reduced-motion: reduce)").matches;
-  if(conVoz) dice(`Mira cómo se escribe la ${trazo.L.son}.`);
-  if(reduce){ aviso("", "Empieza en el punto verde y sigue la línea hasta el final."); return; }
-  trazo.demoOn = true;
-  const tok = ++trazo.demoTok;
-  const dp = $("demoPath"), lap = $("lapiz"), guia = $("guia"+trazo.parte);
-  dp.style.strokeDashoffset = trazo.largo;
-  lap.style.display = "";
-  const t0 = performance.now(), dur = 2600;
-  function paso(t){
-    if(s !== serie || !trazo || trazo.demoTok !== tok || !trazo.svg.isConnected) return;
-    const k = Math.min(1, (t - t0)/dur);
-    dp.style.strokeDashoffset = trazo.largo * (1 - k);
-    const p = guia.getPointAtLength(trazo.largo * k);
-    lap.setAttribute("cx", p.x); lap.setAttribute("cy", p.y);
-    if(k < 1) requestAnimationFrame(paso);
-    else setTimeout(()=>{
-      if(s !== serie || !trazo || trazo.demoTok !== tok || !trazo.svg.isConnected) return;
-      lap.style.display = "none";
-      dp.style.strokeDashoffset = trazo.largo;
-      trazo.demoOn = false;
-      aviso("", "Ahora hazlo tú: empieza en el punto verde 🟢");
-      muestraProximo(true);
-    }, 600);
-  }
-  requestAnimationFrame(paso);
-}
-
-/* ==================== LAS 12 LETRAS DEL DICTADO ==================== */
-const LETRAS = {
-  m:{ son:"eme", ej:"mano",   emo:"✋", tip:"La eme tiene dos montañitas.", d:'M 44 178 C 48 148 54 118 60 104 C 62 98 68 100 66 110 C 72 96 90 92 98 106 C 104 116 100 146 98 164 C 100 138 104 112 110 102 C 116 92 134 94 140 108 C 146 120 142 150 140 166 C 138 178 152 184 168 176 C 178 172 186 165 192 157' },
-  l:{ son:"ele", ej:"luna",   emo:"🌙", tip:"La ele es alta y lleva un bucle arriba.", d:'M 60 180 C 64 136 76 58 94 36 C 108 19 122 30 114 60 C 106 92 90 126 86 152 C 82 173 98 185 118 178 C 134 172 146 164 156 152' },
-  p:{ son:"pe", ej:"pino",    emo:"🌲", tip:"La pe baja bajo la línea y sube.", d:'M 80 98 C 70 146 60 194 54 220 C 52 232 42 231 45 218 C 53 174 66 124 80 98 C 94 72 132 82 132 114 C 132 146 104 172 72 172 C 66 172 64 168 66 164 C 74 180 102 184 126 174 C 140 168 150 160 158 150' },
-  s:{ son:"ese", ej:"sandía", emo:"🍉", tip:"La ese silba: sssss.", d:'M 58 178 C 74 156 92 126 104 102 C 108 93 115 97 111 107 C 116 130 110 154 94 168 C 84 176 70 178 62 172 C 72 184 102 184 124 174 C 138 168 148 161 156 152' },
-  t:{ son:"te", ej:"tomate",  emo:"🍅", tip:"La te lleva un palito atravesado.",
-      paso2:"¡Muy bien el palo de la te! Ahora el palito que la cruza: empieza en el punto verde de la izquierda.",
-      ds:['M 60 178 C 68 152 84 100 96 60 C 99 50 108 52 105 64 C 96 100 88 140 84 162 C 81 177 100 185 120 176 C 130 172 138 165 144 157',
-          'M 58 98 C 84 91 112 90 134 94'] },
-  d:{ son:"de", ej:"delfín",  emo:"🐬", tip:"La de: primero la panza, después el palito.", d:'M 124 112 C 118 96 94 94 80 110 C 64 128 72 160 92 166 C 110 171 124 158 126 140 L 146 40 C 149 28 159 31 156 44 L 134 152 C 130 172 149 182 171 170' },
-  b:{ son:"be", ej:"balde",   emo:"🪣", tip:"La be: primero el palito alto, después la panza.", d:'M 60 180 C 64 136 76 58 94 36 C 108 19 122 30 114 60 C 106 92 90 128 86 154 C 83 174 102 186 124 176 C 146 166 158 138 146 122 C 134 107 108 114 106 136 C 104 156 122 168 146 160 C 158 156 168 149 176 140' },
-  f:{ son:"efe", ej:"foca",   emo:"🦭", tip:"La efe sopla: fffff. Sube alto y baja bajo la línea.", d:'M 58 178 C 64 138 76 62 94 38 C 106 22 120 34 112 62 C 102 98 82 158 72 198 C 66 222 52 232 42 224 C 34 218 40 206 54 206 C 78 206 112 196 134 182' },
-  c:{ son:"ce", ej:"casa",    emo:"🏠", tip:"La ce es una panza abierta, sin palito.", d:'M 134 122 C 126 104 98 98 82 116 C 62 138 70 170 94 176 C 116 181 138 170 152 154' },
-  r:{ son:"erre", ej:"ratón", emo:"🐭", tip:"La erre tiene un hombrito arriba y baja derecho.", d:'M 56 178 C 62 150 74 116 86 98 C 90 92 96 95 94 104 C 104 96 122 92 132 98 C 136 101 132 108 124 106 C 116 104 110 112 108 126 C 106 142 104 158 104 168 C 103 180 120 186 138 177 C 146 173 153 166 158 158' },
-  g:{ son:"ge", ej:"gato",    emo:"🐱", tip:"La ge es una ce con una colita que baja y da la vuelta.", d:'M 130 122 C 124 104 98 98 82 114 C 64 132 70 164 92 170 C 108 175 124 166 128 152 C 130 176 128 192 124 206 C 118 226 100 234 86 226 C 74 219 82 204 102 196 C 120 189 134 180 144 169' },
-  y:{ son:"ye", ej:"yogur",   emo:"🥛", tip:"La ye tiene una colita que baja y da la vuelta.", d:'M 56 176 C 60 148 68 118 74 104 C 77 97 84 100 81 110 C 76 136 72 160 80 168 C 90 176 106 168 112 152 C 116 138 120 116 122 104 C 124 96 131 99 128 110 C 124 138 118 170 114 192 C 110 220 96 234 82 226 C 70 219 78 204 98 196 C 116 189 132 180 142 169' },
-  n:{ son:"ene", ej:"nube",   emo:"☁️", tip:"La ene tiene una montañita.", d:'M 56 178 C 60 148 66 118 72 104 C 74 98 80 100 78 110 C 84 96 104 92 114 106 C 122 118 118 150 116 166 C 114 178 128 184 144 176 C 154 171 162 164 168 156' }
-};
-
-/* ==================== LETRAS QUE SE TRAZAN ==================== */
-const ORDEN_LETRAS = ["l","d","b","p","f","n","m","s"];
-
-/* ==================== PALABRAS DEL DICTADO ==================== */
-const PALS = [
-  { p:"luna",   emo:"🌙", sil:["lu","na"] },
-  { p:"pino",   emo:"🌲", sil:["pi","no"] },
-  { p:"balde",  emo:"🪣", sil:["bal","de"] },
-  { p:"delfín", emo:"🐬", sil:["del","fín"] },
-  { p:"lupa",   emo:"🔍", sil:["lu","pa"] },
-  { p:"sandía", emo:"🍉", sil:["san","dí","a"] },
-  { p:"tomate", emo:"🍅", sil:["to","ma","te"] },
-  { p:"pelota", emo:"⚽", sil:["pe","lo","ta"] }
+/* Nivel 1: el o la (definidos, singular) */
+const SINGULAR = [
+  { p:"sol",     emo:"☀️", art:"el", tip:"Decimos EL sol." },
+  { p:"luna",    emo:"🌙", art:"la", tip:"Decimos LA luna." },
+  { p:"gato",    emo:"🐱", art:"el", tip:"Decimos EL gato." },
+  { p:"casa",    emo:"🏠", art:"la", tip:"Decimos LA casa." },
+  { p:"pan",     emo:"🍞", art:"el", tip:"Decimos EL pan." },
+  { p:"pelota",  emo:"⚽", art:"la", tip:"Decimos LA pelota." },
+  { p:"árbol",   emo:"🌳", art:"el", tip:"Decimos EL árbol." },
+  { p:"flor",    emo:"🌸", art:"la", tip:"Decimos LA flor." }
 ];
 
-/* ==================== PARES QUE SUENAN PARECIDO ==================== */
-const PARES = [
-  { a:{p:"luna",emo:"🌙"}, b:{p:"lupa",emo:"🔍"}, clave:"El final: lu-NA termina con na." },
-  { a:{p:"dado",emo:"🎲"}, b:{p:"dedo",emo:"☝️"}, clave:"El medio: da-do lleva a; de-do lleva e." },
-  { a:{p:"foca",emo:"🦭"}, b:{p:"boca",emo:"👄"}, clave:"El comienzo: la efe sopla, la be suena con los labios." },
-  { a:{p:"pato",emo:"🦆"}, b:{p:"gato",emo:"🐱"}, clave:"El comienzo: pa suena con los labios, ga suena atrás." },
-  { a:{p:"mano",emo:"✋"}, b:{p:"mono",emo:"🐒"}, clave:"El medio: ma-no lleva a; mo-no lleva o." },
-  { a:{p:"sopa",emo:"🍲"}, b:{p:"ropa",emo:"👕"}, clave:"El comienzo: la ese silba, la erre suena fuerte." },
-  { a:{p:"bota",emo:"👢"}, b:{p:"bola",emo:"⚽"}, clave:"El medio: bo-TA con te; bo-LA con ele." },
-  { a:{p:"pino",emo:"🌲"}, b:{p:"piña",emo:"🍍"}, clave:"El medio: pi-NO con ene; pi-ÑA con eñe." }
+/* Nivel 2: los o las (definidos, plural) */
+const PLURAL = [
+  { p:"perros",    emo:"🐶🐶🐶", art:"los", uno:"el perro",   tip:"Uno es EL perro; muchos son LOS perros." },
+  { p:"flores",    emo:"🌸🌸🌸", art:"las", uno:"la flor",    tip:"Una es LA flor; muchas son LAS flores." },
+  { p:"libros",    emo:"📕📗📘", art:"los", uno:"el libro",   tip:"Uno es EL libro; muchos son LOS libros." },
+  { p:"manos",     emo:"✋✋",   art:"las", uno:"la mano",    tip:"Una es LA mano; dos son LAS manos." },
+  { p:"zapatos",   emo:"👟👟",   art:"los", uno:"el zapato",  tip:"Uno es EL zapato; dos son LOS zapatos." },
+  { p:"estrellas", emo:"⭐⭐⭐", art:"las", uno:"la estrella", tip:"Una es LA estrella; muchas son LAS estrellas." },
+  { p:"huevos",    emo:"🥚🥚🥚", art:"los", uno:"el huevo",   tip:"Uno es EL huevo; muchos son LOS huevos." },
+  { p:"casas",     emo:"🏠🏠🏠", art:"las", uno:"la casa",    tip:"Una es LA casa; muchas son LAS casas." }
 ];
 
-const PREMIOS = ["🌙","🐬","🪣","🌲","🦭","☁️","✋","🍉","🔍","🍅","⚽","🎲","👄","🦆","🐒","🍲","👢","🍍","⭐","🌟","✏️","📖","🌈","🦋"];
+/* Nivel 3: definido o indefinido. La frase dice si es la primera vez que
+   aparece (un, una, unos, unas) o si ya sabemos cuál es (el, la, los, las). */
+const CONTEXTO = [
+  { emo:"🐶", ini:"Mira, por la calle viene", fin:"perro que no conozco.",
+    r:"un", otro:"el", clase:"indef",
+    tip:"Es la primera vez que aparece, así que decimos UN perro." },
+  { emo:"🐶", ini:"", fin:"perro de mi vecina se llama Lola.",
+    r:"El", otro:"Un", clase:"def",
+    tip:"Ya sabemos de qué perro hablamos, así que decimos EL perro." },
+  { emo:"🌸", ini:"En el patio creció", fin:"flor amarilla.",
+    r:"una", otro:"la", clase:"indef",
+    tip:"Aparece por primera vez, así que decimos UNA flor." },
+  { emo:"🌸", ini:"", fin:"flor que planté ayer ya creció.",
+    r:"La", otro:"Una", clase:"def",
+    tip:"Es una flor que ya conocemos, así que decimos LA flor." },
+  { emo:"📚", ini:"Me prestaron", fin:"libros nuevos.",
+    r:"unos", otro:"los", clase:"indef",
+    tip:"Son varios y aparecen por primera vez: UNOS libros." },
+  { emo:"📚", ini:"", fin:"libros de la sala están ordenados.",
+    r:"Los", otro:"Unos", clase:"def",
+    tip:"Sabemos cuáles son, los de la sala: LOS libros." },
+  { emo:"⭐", ini:"Anoche vi", fin:"estrellas muy brillantes.",
+    r:"unas", otro:"las", clase:"indef",
+    tip:"Aparecen por primera vez: UNAS estrellas." },
+  { emo:"⭐", ini:"", fin:"estrellas que vimos anoche eran brillantes.",
+    r:"Las", otro:"Unas", clase:"def",
+    tip:"Son las de anoche, ya sabemos cuáles: LAS estrellas." }
+];
+
+const PREMIOS = ["☀️","🌙","🐱","🏠","🍞","⚽","🌳","🌸","🐶","📚","✋","👟","⭐","🥚","📖","🌈","🦋","🍀","🎈","🌻","🐞","🎯","🏅","🧩"];
 
 let nivel = 1, idx = 0, estrellas = 0, album = [], intentos = 0, cerrado = false, serie = 0;
 
@@ -829,8 +417,6 @@ function sumaEstrella(){
   $("puntaje").textContent = "⭐ " + estrellas;
   album.push(PREMIOS[(estrellas-1) % PREMIOS.length]);
 }
-/* Cierra el ítem: muestra el botón Siguiente y espera a que la voz TERMINE
-   antes de avanzar sola. Nunca corta la narración a la mitad. */
 function cierra(txtVoz){
   cerrado = true;
   const s = serie;
@@ -848,216 +434,122 @@ function siguiente(){
   if(!cerrado) return;
   cerrado = false;
   idx++;
-  const largo = nivel===1 ? ORDEN_LETRAS.length : nivel===2 ? PALS.length : PARES.length;
+  const largo = nivel===1 ? SINGULAR.length : nivel===2 ? PLURAL.length : CONTEXTO.length;
   if(idx >= largo){ idx = 0; nivel++; }
   if(nivel > 3){ terminar(); return; }
   render();
 }
 
-/* ==================== NIVEL 1: TRAZO LA LETRA (estricto) ==================== */
+function botonesArt(ops){
+  return `<div class="opciones dos">${ops.map(a=>`<button class="opcion art" data-a="${a}">${a}</button>`).join("")}</div>`;
+}
+
+/* ==================== NIVEL 1: EL O LA ==================== */
 function nivel1(){
-  const k = ORDEN_LETRAS[idx], L = LETRAS[k];
-  $("chip").textContent = `Nivel 1 · ${idx+1} de ${ORDEN_LETRAS.length}`;
-  $("pregunta").textContent = "Traza la letra sin salirte de la línea";
+  const it = SINGULAR[idx];
+  const ops = mezclar(["el","la"]);
+  $("chip").textContent = `Nivel 1 · ${idx+1} de ${SINGULAR.length}`;
+  $("pregunta").textContent = "¿El o la?";
   $("escena").className = "escena";
   $("escena").innerHTML = `
-    <div class="filaTrazo">
-      <div class="chipLetra"><span class="emo">${L.emo}</span> la ${L.son} de <b>${L.ej}</b></div>
-      ${pizarraHTML(L, "Pizarra para trazar la letra "+L.son)}
-    </div>`;
-  $("respuesta").innerHTML = `<div class="controles">
-      <button class="ctrl audio" id="verComo">👀 Ver cómo se hace</button>
-      <button class="ctrl quitar" id="limpiar">↩️ Empezar de nuevo</button>
-    </div>`;
+    <div class="emojote">${it.emo}</div>
+    <div class="frase"><span class="hueco">___</span> ${it.p}</div>`;
+  $("respuesta").innerHTML = botonesArt(ops);
   $("avanzar").innerHTML = "";
   aviso("", "");
   intentos = 0;
-  iniciaTrazo(L, k);
-  $("verComo").onclick = ()=>demo(true);
-  $("limpiar").onclick = ()=>{ reiniciaTrazo(); aviso("", ""); };
-  const s = serie;
-  dice(`Vamos a escribir la ${L.son}, la ${L.son} de ${L.ej}. Mira cómo se hace y después hazlo tú. Empieza en el punto verde y no te salgas de la línea.`)
-    .then(r=>{ if(r !== "reemplazada" && s === serie) demo(false); });
+  document.querySelectorAll(".opcion").forEach(b=>{
+    b.onclick = ()=>revisa(b, b.dataset.a, it.art, it, `${it.art} ${it.p}`);
+  });
+  dice(`¿Decimos ${ops[0]} ${it.p} o ${ops[1]} ${it.p}?`);
 }
 
-/* ==================== NIVEL 2: ESCUCHO Y ESCRIBO ==================== */
-let escrito = [];
+/* ==================== NIVEL 2: LOS O LAS ==================== */
 function nivel2(){
-  const W = PALS[idx];
-  const letras = Array.from(W.p);
-  escrito = []; intentos = 0;
-  $("chip").textContent = `Nivel 2 · ${idx+1} de ${PALS.length}`;
-  $("pregunta").textContent = "Escucha y escribe la palabra";
+  const it = PLURAL[idx];
+  const ops = mezclar(["los","las"]);
+  $("chip").textContent = `Nivel 2 · ${idx+1} de ${PLURAL.length}`;
+  $("pregunta").textContent = "Ahora son muchos: ¿los o las?";
   $("escena").className = "escena";
   $("escena").innerHTML = `
-    <div class="emojote">${W.emo}</div>
-    <div class="visor" id="visor"><span class="vacia">${"_ ".repeat(letras.length).trim()}</span></div>
-    <div id="ayuda"></div>`;
-
-  const distractoras = mezclar(["b","d","f","l","p","n","m","t"].filter(x=>!letras.includes(x))).slice(0,3);
-  const banco = mezclar(letras.concat(distractoras));
-
-  $("respuesta").innerHTML =
-    `<div class="banco" id="banco">` +
-    banco.map((c,i)=>`<button class="letraBtn" data-c="${c}" data-i="${i}">${c}</button>`).join("") +
-    `</div>
-     <div class="controles" style="margin-top:10px">
-       <button class="ctrl audio" id="repetir">🔊 Escuchar</button>
-       <button class="ctrl" id="porSilabas">🐢 Por sílabas</button>
-       <button class="ctrl" id="verPal">👀 Ver la palabra</button>
-       <button class="ctrl quitar" id="borrar">⬅️ Borrar</button>
-     </div>`;
+    <div class="emojote chico">${it.emo}</div>
+    <div class="frase"><span class="hueco">___</span> ${it.p}</div>`;
+  $("respuesta").innerHTML = botonesArt(ops);
   $("avanzar").innerHTML = "";
-
-  document.querySelectorAll("#banco .letraBtn").forEach(b=>{
-    b.onclick = ()=>{
-      if(b.disabled || cerrado || escrito.length >= letras.length) return;
-      b.disabled = true; clic();
-      escrito.push({c:b.dataset.c, btn:b});
-      pintaVisor(letras.length);
-      if(escrito.length === letras.length) revisa2(W);
-    };
-  });
-  $("repetir").onclick = ()=>dice(W.p);
-  $("porSilabas").onclick = ()=>{ dice(W.sil.join(", ")); pintaSilabas(W); };
-  $("verPal").onclick = ()=>{
-    pistaModelo(W); dice(W.p);
-    const s0 = serie;
-    setTimeout(()=>{ if(s0===serie && $("ayuda") && !$("ayuda").querySelector(".silabas")) $("ayuda").innerHTML=""; }, 3500);
-  };
-  $("borrar").onclick = ()=>{
-    if(cerrado) return;
-    const u = escrito.pop();
-    if(u){ u.btn.disabled = false; clic(); pintaVisor(letras.length); aviso("",""); }
-  };
   aviso("", "");
-  pintaVisor(letras.length);
-  const s = serie;
-  dice(`Escucha bien y escribe: ${W.p}. ${W.p}.`)
-    .then(r=>{ if(r !== "reemplazada" && s === serie && !vozOn && $("ayuda")) pistaModelo(W); });
-  if(!vozOn) pistaModelo(W);
-}
-function pintaVisor(n){
-  const v = $("visor");
-  if(!v) return;
-  const puestas = escrito.map(e=>e.c).join(" ");
-  const faltan = n - escrito.length;
-  v.innerHTML = (puestas ? puestas : "") + (faltan>0 ? `<span class="vacia"> ${"_ ".repeat(faltan).trim()}</span>` : "");
-}
-function pintaSilabas(W){
-  if($("ayuda")) $("ayuda").innerHTML = `<div class="silabas">${W.sil.map(s=>`<span>${s}</span>`).join("")}</div>`;
-}
-function pistaModelo(W){
-  if($("ayuda")) $("ayuda").innerHTML = `<div class="modelo">${W.p}</div>`;
-}
-function revisa2(W){
-  const escritaTxt = escrito.map(e=>e.c).join("");
-  if(escritaTxt === W.p){
-    document.querySelectorAll("#banco .letraBtn").forEach(b=>b.disabled=true);
-    pito(true); sumaEstrella();
-    $("escena").classList.add("bien");
-    $("visor").innerHTML = `<b style="color:var(--hoja)">${W.p}</b>`;
-    pintaSilabas(W);
-    aviso("ok", `${animo()} ${W.p.toUpperCase()} se escribe ${W.sil.join(" - ")}.`);
-    cierra(`${animo()} ${W.p} se escribe ${W.sil.join(", ")}.`);
-  }else{
-    intentos++; pito(false);
-    $("escena").classList.remove("bien"); $("escena").classList.add("mal");
-    setTimeout(()=>{ if($("escena")) $("escena").classList.remove("mal"); }, 450);
-    let i = 0; while(i < escritaTxt.length && escritaTxt[i] === W.p[i]) i++;
-    const buena = W.p.slice(0, i);
-    $("visor").innerHTML = (buena ? buena.split("").join(" ") + " " : "") +
-      `<span class="err">${escritaTxt.slice(i).split("").join(" ")}</span>`;
-    pintaSilabas(W);
-    const pista = i === 0
-      ? `Escucha el comienzo: ${W.sil[0]}...`
-      : `Hasta "${buena}" vas bien. Escucha lo que sigue: ${W.sil.join(", ")}.`;
-    aviso("ups", `${casi()} ${pista}`);
-    const s = serie;
-    dice(`${casi()} ${pista}`).then(r=>{
-      if(r === "reemplazada" || s !== serie || !$("visor")) return;
-      escrito.forEach(e=>{ e.btn.disabled = false; });
-      escrito = [];
-      pintaVisor(W.p.length);
-      dice(W.p);
-      if(intentos >= 2) pistaModelo(W);
-    });
-  }
-}
-
-/* ==================== NIVEL 3: ¿CUÁL ESCUCHASTE? ==================== */
-function nivel3(){
-  const P = PARES[idx];
-  const cual = Math.random() < .5 ? P.a : P.b;
-  const ops = mezclar([P.a, P.b]);
   intentos = 0;
-  $("chip").textContent = `Nivel 3 · ${idx+1} de ${PARES.length}`;
-  $("pregunta").textContent = "¿Cuál de las dos escuchaste?";
-  $("escena").className = "escena";
-  $("escena").innerHTML = `<div class="emojote">👂</div><div id="ayuda"></div>`;
-  $("respuesta").innerHTML =
-    `<div class="opciones dos">` +
-    ops.map(o=>`<button class="opcion" data-p="${o.p}"><span class="emo">${o.emo}</span><b>${o.p}</b></button>`).join("") +
-    `</div>
-     <div class="controles" style="margin-top:10px">
-       <button class="ctrl audio" id="repetir">🔊 Escuchar otra vez</button>
-       <button class="ctrl" id="verPal">👀 Ver la palabra</button>
-     </div>`;
-  $("avanzar").innerHTML = "";
-  const decir = () => dice(`Escucha: ${cual.p}. ${cual.p}. ¿Cuál es?`);
-  $("repetir").onclick = decir;
-  $("verPal").onclick = ()=>{
-    $("ayuda").innerHTML = `<div class="modelo">${cual.p}</div>`;
-    const s0 = serie;
-    setTimeout(()=>{ if(s0===serie && $("ayuda")) $("ayuda").innerHTML=""; }, 3000);
-  };
-  document.querySelectorAll("#respuesta .opcion").forEach(b=>{
-    b.onclick = ()=>revisa3(b, b.dataset.p, cual, P);
+  document.querySelectorAll(".opcion").forEach(b=>{
+    b.onclick = ()=>revisa(b, b.dataset.a, it.art, it, `${it.art} ${it.p}`);
   });
-  aviso("", "");
-  decir();
-  if(!vozOn) $("ayuda").innerHTML = `<div class="modelo">${cual.p}</div>`;
+  dice(`¿Decimos ${ops[0]} ${it.p} o ${ops[1]} ${it.p}?`);
 }
-function revisa3(btn, elegido, cual, P){
-  if(btn.disabled || cerrado) return;
-  if(elegido === cual.p){
-    document.querySelectorAll("#respuesta .opcion").forEach(b=>b.disabled=true);
-    btn.classList.add("bien"); pito(true); sumaEstrella();
+
+/* ==================== NIVEL 3: ¿YA SABEMOS CUÁL ES? ==================== */
+function nivel3(){
+  const it = CONTEXTO[idx];
+  const ops = mezclar([it.r, it.otro]);
+  $("chip").textContent = `Nivel 3 · ${idx+1} de ${CONTEXTO.length}`;
+  $("pregunta").textContent = "Escucha la frase y completa";
+  $("escena").className = "escena";
+  $("escena").innerHTML = `
+    <div class="emojote">${it.emo}</div>
+    <div class="cuento">${it.ini} <span class="hueco">___</span> ${it.fin}</div>`;
+  $("respuesta").innerHTML = botonesArt(ops) + `
+    <div class="controles" style="margin-top:10px">
+      <button class="ctrl audio" id="repetir">🔁 Escuchar otra vez</button>
+    </div>`;
+  $("avanzar").innerHTML = "";
+  aviso("", "");
+  intentos = 0;
+  const frase = `${it.ini} ${ops[0]}... o ${ops[1]}... ${it.fin}`;
+  $("repetir").onclick = ()=>dice(frase);
+  document.querySelectorAll(".opcion").forEach(b=>{
+    b.onclick = ()=>revisa(b, b.dataset.a, it.r, it, `${it.ini} ${it.r} ${it.fin}`.trim());
+  });
+  dice(frase);
+}
+
+/* ==================== REVISIÓN COMÚN ==================== */
+function revisa(btn, elegido, correcto, it, completa){
+  if(cerrado || btn.disabled) return;
+  const h = $("escena").querySelector(".hueco");
+  if(elegido === correcto){
+    btn.classList.add("bien"); clic(); pito(true); sumaEstrella();
+    document.querySelectorAll(".opcion").forEach(b=>b.disabled = true);
+    if(h){ h.textContent = correcto; h.classList.add("puesta"); }
     $("escena").classList.add("bien");
-    $("escena").querySelector(".emojote").textContent = cual.emo;
-    aviso("ok", `${animo()} Era ${cual.p}. ${P.clave}`);
-    cierra(`${animo()} Era ${cual.p}. ${P.clave}`);
+    const txt = `${animo()} ${completa}. ${it.tip}`;
+    aviso("ok", txt);
+    cierra(txt);
   }else{
-    btn.classList.add("mal"); btn.disabled = true; pito(false);
-    intentos++;
-    aviso("ups", `${casi()} ${P.clave}`);
-    dice(`${casi()} ${P.clave} Escucha otra vez: ${cual.p}.`);
-    setTimeout(()=>{ if(btn.isConnected){ btn.classList.remove("mal"); btn.disabled = false; } }, 3000);
+    btn.classList.add("mal"); btn.disabled = true; pito(false); intentos++;
+    aviso("ups", `${casi()} Escucha cómo suena: ${completa}.`);
+    dice(`${casi()} Escucha cómo suena: ${completa}.`);
   }
 }
 
 /* ==================== FLUJO ==================== */
 function render(){
   serie++;
-  cerrado = false;
-  window.scrollTo(0,0);
-  if(nivel===1) nivel1(); else if(nivel===2) nivel2(); else nivel3();
+  if(nivel === 1) nivel1();
+  else if(nivel === 2) nivel2();
+  else nivel3();
 }
 function terminar(){
   serie++;
   pantalla("final");
-  const total = ORDEN_LETRAS.length + PALS.length + PARES.length;
-  $("resumen").textContent = `Ganaste ${estrellas} de ${total} estrellas. Ya trazaste 8 letras ligadas y escribiste 8 palabras al dictado. ✏️`;
   $("album").innerHTML = album.map(e=>`<span>${e}</span>`).join("");
-  confeti(["✏️","⭐","🌟","📖","✨"]);
-  pito(true);
-  dice(`${animo()} Ganaste ${estrellas} estrellas. Cada vez escribes mejor.`);
+  const total = SINGULAR.length + PLURAL.length + CONTEXTO.length;
+  $("resumen").textContent = `Juntaste ${estrellas} estrellas de ${total}. Ya sabes la regla: el, la, los y las son para lo que ya conocemos; un, una, unos y unas son para lo que aparece por primera vez.`;
+  confeti(["⭐","📖","🎉","🌸"]);
+  dice(`${animo()} Juntaste ${estrellas} estrellas. Recuerda: el, la, los y las cuando ya sabemos cuál es. Un, una, unos y unas cuando aparece por primera vez.`);
 }
 function arranca(){
   audio();
-  nivel = 1; idx = 0; estrellas = 0; album = []; trazo = null; cerrado = false;
+  nivel = 1; idx = 0; estrellas = 0; album = []; cerrado = false;
   $("puntaje").textContent = "⭐ 0";
-  pantalla("juego"); render();
+  pantalla("juego");
+  render();
 }
 conectarVoz();
 $("btnEmpezar").onclick = arranca;
