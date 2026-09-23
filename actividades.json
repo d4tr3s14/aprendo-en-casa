@@ -175,6 +175,17 @@
       "archivo": "1-basico/semestre-2/lenguaje/articulos-el-la-un-una.html",
       "emoji": "📖",
       "fecha": "2026-09-07"
+    },
+    {
+      "id": "len-la-cama-de-mama",
+      "titulo": "La cama de mamá",
+      "curso": "1-basico",
+      "semestre": 2,
+      "asignatura": "lenguaje",
+      "objetivo": "Preparar la prueba de lectura domiciliaria de «La cama de mamá»: autora, ilustradora y personajes, juegos y escenas de la noche, verdadero o falso, secuencia inicio-desarrollo-final, sílabas de palabras del cuento y respuestas orales de opinión.",
+      "archivo": "1-basico/semestre-2/lenguaje/la-cama-de-mama.html",
+      "emoji": "🛏️",
+      "fecha": "2026-09-23"
     }
   ]
 }
