@@ -33,6 +33,10 @@ Queda un ícono igual que una app y se abre a pantalla completa.
 ```
 ├─ index.html            Portada: el menú que usa la niña
 ├─ actividades.json      Catálogo de todas las actividades
+├─ manifest.webmanifest  Nombre e ícono al "Añadir a pantalla de inicio"
+├─ sw.js                 Permite abrir el sitio sin internet
+├─ diseno/               Sistema de diseño Selva v2 (fuente de verdad)
+├─ herramientas/         sincronizar.py: copia el diseño dentro de cada actividad
 ├─ plantilla/base.html   Esqueleto para crear actividades nuevas
 └─ 1-basico/
    ├─ semestre-1/
@@ -46,11 +50,27 @@ Queda un ícono igual que una app y se abre a pantalla completa.
 Para el año siguiente basta con agregar `2-basico/` al lado, con la misma forma.
 Nada de lo anterior se mueve ni se rompe.
 
+### Diseño Selva v2
+
+Cada actividad sigue siendo **un solo archivo**, pero el diseño común (barra
+superior, botones, avisos, diálogo de salida, progreso) vive en `diseno/` y se
+copia dentro de cada HTML entre los comentarios `<!-- selva:css -->` y
+`<!-- selva:js -->`. Para cambiar algo en todas las actividades a la vez:
+
+```
+python herramientas/sincronizar.py
+```
+
+No edites a mano lo que está entre esos comentarios: se sobrescribe.
+Las estrellas ganadas se guardan solo en el dispositivo (localStorage) y la
+portada las muestra en cada tarjeta.
+
 ---
 
 ## 3. Agregar una actividad nueva
 
-1. Copia `plantilla/base.html` a la carpeta que corresponda y renómbralo.
+1. Copia `plantilla/base.html` a la carpeta que corresponda y renómbralo
+   (ya trae el diseño v2 incrustado; corre `sincronizar.py` al final por si cambió).
    Ejemplo: `1-basico/semestre-1/matematica/sumar-hasta-20.html`
 2. Edita en el archivo: el título, el texto de la pregunta y el arreglo `PREGUNTAS`.
 3. Agrega la entrada en `actividades.json`, dentro de `"actividades"`:
