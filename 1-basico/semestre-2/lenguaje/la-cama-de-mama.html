@@ -138,6 +138,18 @@ button{font:inherit;color:inherit}
 .escena .mini{position:absolute;top:-6px;right:-6px;width:44px;height:44px;border-radius:50%;border:0;background:var(--agua);font-size:1.2rem;box-shadow:0 3px 0 #1f8aa3;cursor:pointer}
 .escena.usada{visibility:hidden}
 
+/* cuento */
+.escenario{background:var(--crema);border-radius:22px;min-height:150px;display:flex;align-items:center;justify-content:center;
+  font-size:4.2rem;line-height:1.1;gap:6px;flex-wrap:wrap;padding:12px;box-shadow:inset 0 -6px 0 #eadcc0;text-align:center}
+.escenario.noche{background:#26325a;box-shadow:inset 0 -6px 0 #19223f}
+.pagina{margin:10px 0 4px;font-weight:800;opacity:.8;font-size:.95rem}
+.relato{font-size:1.3rem;font-weight:700;line-height:1.45;margin:0}
+.relato span{border-radius:8px;padding:0 2px;transition:background .2s}
+.relato span.leyendo{background:var(--sol);color:var(--selva)}
+.aclara{font-size:.95rem;opacity:.8;margin:12px 0 0;text-align:center}
+.acciones .btn.chico{flex:0 0 68px;padding:12px 0;font-size:1.5rem}
+.acciones .btn{white-space:nowrap}
+
 /* final */
 .final{text-align:center}
 .final .lamina{font-size:6rem;line-height:1;margin:8px auto;width:150px;height:150px;border-radius:28px;display:flex;align-items:center;justify-content:center}
@@ -205,6 +217,23 @@ button{font:inherit;color:inherit}
 "use strict";
 /* ================== DATOS ================== */
 const MISIONES = [
+{ id:"cuento", e:"🎧", nombre:"Escucho el cuento", tipo:"cuento", largo:true,
+  intro:"Primero, escucha el cuento. Mira los dibujos y sigue las palabras amarillas con los ojos.",
+  items:[
+  {e:"👧👦🛏️",t:"Zoila y su hermano chico, Zacarías, tienen un lugar favorito para jugar: la cama de mamá. Con imaginación, esa cama puede ser muchas cosas."},
+  {e:"⛺🔦🧸",t:"Primero, ponen frazadas encima y arman una carpa de exploradores. ¡Se esconden adentro!"},
+  {e:"⚽👧👦",t:"Después, la cama es un campo de fútbol. Zoila le lanza la pelota a Zacarías."},
+  {e:"🤸🛏️🤸",t:"También es un trampolín olímpico. ¡Los dos saltan altísimo!"},
+  {e:"🚀🔦🪣",t:"Con sábanas y una linterna, la cama es una estación espacial. Zacarías se pone un balde como casco de astronauta."},
+  {e:"👫🛏️🧹",t:"A los amigos también les gusta jugar en la cama de mamá. Pero después, mamá quiere encontrar todo en orden. Las niñas estiran la sábana."},
+  {e:"👩‍👧‍👦💬🐈",t:"Algunas veces, toda la familia se sube a la cama de mamá para conversar. Es una reunión de familia."},
+  {e:"👩📖🐈",t:"Y de vez en cuando, mamá se queda sola y tranquila en su cama, leyendo un libro. El gato duerme a sus pies."},
+  {e:"🌙👩‍🦱🎧",n:1,t:"Llega la hora de dormir. Zoila y Zacarías se acuestan y mamá les da las buenas noches. Jessica, la hermana grande, sigue despierta con sus audífonos. Mamá le dice que se vaya a la cama."},
+  {e:"👦🧸🚽",n:1,t:"En la noche, Zacarías va donde mamá. Tiene ganas de hacer pipí. Mamá lo acompaña al baño."},
+  {e:"👧😱🛏️",n:1,t:"Después llega Zoila, abrazada a su almohada. Tuvo un sueño horrible y no puede dormir. Se mete a la cama de mamá."},
+  {e:"👩‍🦱🤒🍋",n:1,t:"Al final llega Jessica. Le duele mucho la garganta y le pide a mamá una limonada caliente. Esa noche, todos terminan durmiendo juntos."},
+  {e:"😴❤️🛏️",t:"Y así, los tres hermanos piensan lo mismo: no hay ninguna cama mejor que la cama de mamá. Fin."}
+  ]},
 { id:"libro", e:"📖", nombre:"Conozco el libro", tipo:"elige",
   intro:"Misión uno. Vamos a recordar el nombre del libro, quién lo escribió y quiénes son los personajes.",
   items:[
@@ -440,7 +469,7 @@ function pantalla(id){
   window.scrollTo(0,0);
 }
 
-const UNIDAD={elige:"preguntas",vf:"frases",orden:"escenas",silabas:"palabras",ensayo:"preguntas para decir"};
+const UNIDAD={cuento:"páginas",elige:"preguntas",vf:"frases",orden:"escenas",silabas:"palabras",ensayo:"preguntas para decir"};
 function pintaInicio(){
   const f=$("#frazada"); f.textContent="";
   MISIONES.forEach((m,i)=>{
@@ -478,7 +507,8 @@ function render(conIntro){
   clearTimeout(avanceTimer); resuelto=false; errores=0;
   zona().textContent=""; puntos();
   const pre=conIntro?M.intro+" ":"";
-  if(M.tipo==="elige") rElige(pre);
+  if(M.tipo==="cuento") rCuento(pre);
+  else if(M.tipo==="elige") rElige(pre);
   else if(M.tipo==="vf") rVF(pre);
   else if(M.tipo==="silabas") rSil(pre);
   else if(M.tipo==="orden") rOrden(pre);
@@ -526,6 +556,7 @@ function cierra(txtVoz){
 function siguiente(){
   clearTimeout(avanceTimer); calla();
   if(M.tipo==="orden"){ termina(); return; }
+  if(M.tipo==="cuento"&&idx+1>estrellas){ estrellas++; totalEstrellas++; pintaCuenta(); }
   idx++;
   if(idx>=M.items.length) termina(); else render(false);
 }
@@ -542,6 +573,42 @@ function termina(){
   dice("¡Misión cumplida! Ganaste "+estrellas+" estrellas y tejiste el cuadrito "+M.nombre+"."+
     (todas?" ¡Completaste toda la frazada! Estás lista para la prueba.":" Vuelve a la frazada para seguir."));
   $("#btnVolver").focus({preventScroll:true});
+}
+
+/* ---- escucho el cuento ---- */
+let cuentoAuto=true, hoja=0;
+function rCuento(pre){
+  const it=M.items[idx], ultima=idx===M.items.length-1, mia=++hoja;
+  const frases=it.t.match(/[^.!?]+[.!?]+/g)||[it.t];
+  const txt=el("p",{class:"relato",id:"txtPreg"});
+  const spans=frases.map(f=>{const sp=el("span",{},f.trim()); txt.append(sp," "); return sp;});
+  const card=el("div",{class:"tarjeta"},
+    el("div",{class:"escenario"+(it.n?" noche":""),"aria-hidden":"true"},it.e),
+    el("p",{class:"pagina"},"Página "+(idx+1)+" de "+M.items.length),
+    txt);
+  const bAtras=el("button",{class:"btn agua chico","aria-label":"Página anterior",onclick:()=>{ if(idx>0){ calla(); clearTimeout(avanceTimer); idx--; render(false);} }},"◀️");
+  if(idx===0) bAtras.disabled=true;
+  const bOir=el("button",{class:"btn agua chico","aria-label":"Escuchar otra vez",onclick:()=>{ clearTimeout(avanceTimer); lee(""); }},"🔊");
+  const bSig=el("button",{class:"btn hoja",id:"sig",onclick:siguiente},ultima?"Terminar ✔️":"Siguiente ▶️");
+  const bAuto=el("button",{class:"btn ancho","aria-pressed":String(cuentoAuto),style:"margin-top:12px;background:var(--crema);box-shadow:0 6px 0 #c9b99a"},"");
+  const pintaAuto=()=>{ bAuto.textContent=cuentoAuto?"⏸️ Pasar las páginas yo":"▶️ Que las páginas pasen solas"; bAuto.setAttribute("aria-pressed",String(cuentoAuto)); };
+  bAuto.addEventListener("click",()=>{ cuentoAuto=!cuentoAuto; pintaAuto(); if(!cuentoAuto) clearTimeout(avanceTimer); });
+  pintaAuto();
+  card.append(el("div",{class:"acciones"},bAtras,bOir,bSig),bAuto);
+  if(idx===0) card.append(el("p",{class:"aclara"},"El cuento está contado con otras palabras. Para la prueba, lee también el libro."));
+  zona().append(card);
+  async function lee(antes){
+    if(antes){ const r=await dice(antes); if(r!=="ok"||mia!==hoja) return; }
+    for(const sp of spans){
+      if(mia!==hoja) return;
+      spans.forEach(x=>x.classList.remove("leyendo")); sp.classList.add("leyendo");
+      const r=await dice(sp.textContent);
+      if(r!=="ok"||mia!==hoja){ sp.classList.remove("leyendo"); return; }
+    }
+    spans.forEach(x=>x.classList.remove("leyendo"));
+    if(cuentoAuto&&mia===hoja&&!$("#pJuego").hidden) avanceTimer=setTimeout(()=>{ if(mia===hoja&&!$("#pJuego").hidden) siguiente(); },1300);
+  }
+  lee(pre);
 }
 
 /* ---- elige ---- */
@@ -687,7 +754,7 @@ $("#sonido").addEventListener("click",()=>{
   $("#sonido").setAttribute("aria-pressed",String(vozOn));
   $("#sonido").setAttribute("aria-label",vozOn?"Silenciar voz y sonidos":"Activar voz y sonidos");
 });
-$("#btnInstr").addEventListener("click",()=>{ audio(); dice("Vamos a preparar la prueba del libro La cama de mamá. Hay siete cuadritos. Cada uno es una misión. Cuando terminas una misión, el cuadrito se teje de colores. ¡Completa toda la frazada!"); });
+$("#btnInstr").addEventListener("click",()=>{ audio(); dice("Vamos a preparar la prueba del libro La cama de mamá. Primero, escucha el cuento en el cuadrito de arriba. Después hay siete misiones. Cuando terminas una, el cuadrito se teje de colores. ¡Completa toda la frazada!"); });
 $("#btnVolver").addEventListener("click",()=>{ calla(); pintaInicio(); pantalla("pInicio"); });
 $("#btnRepetir").addEventListener("click",()=>{ calla(); abrir(mi); });
 $("#borrar").addEventListener("click",()=>{ if(confirm("¿Borrar el avance y empezar la frazada de nuevo?")){ prog={}; guarda(); pintaInicio(); } });
