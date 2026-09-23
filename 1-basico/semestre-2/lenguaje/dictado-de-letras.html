@@ -210,6 +210,175 @@ h1 span{display:block;color:var(--crema);font-size:.4em;letter-spacing:1px}
 }
 
 </style>
+<!-- selva:css modo=juego · generado por herramientas/sincronizar.py, no editar aquí -->
+<style id="selva">
+/* ==========================================================================
+   SELVA v2 · base común (tokens, tipografía, accesibilidad)
+   Fuente de verdad: diseno/. No edites el bloque dentro de cada actividad:
+   edita aquí y corre  python herramientas/sincronizar.py
+   ========================================================================== */
+:root{
+  /* marca (sin cambios) */
+  --selva:#0E3B2E; --selva-claro:#17513E; --selva-hondo:#08251C; --crema:#FFF6E5;
+  --sol:#FFC93C; --coral:#FF6B5A; --agua:#3FC1E0; --hoja:#7ED957;
+  /* borde inferior "3D" de cada color: el botón parece una pieza que se hunde */
+  --sol-borde:#B3861B; --coral-borde:#B8453A; --agua-borde:#1F8AA3;
+  --hoja-borde:#4C9A2F; --crema-borde:#C9B99A; --selva-borde:#061C15;
+  /* texto sobre crema */
+  --tinta:#0E3B2E;          /* 13,4:1 sobre crema */
+  --tinta-suave:#3D6B57;    /*  5,7:1 sobre crema */
+  --coral-texto:#C8412F;    /*  4,6:1 sobre crema (el coral puro da 2,6:1) */
+  --casi-fondo:#FFF0D6; --casi-texto:#7A3B00;
+  /* tipografía: Baloo 2 incrustada para títulos; SF Pro Rounded del sistema para texto */
+  --tit:'Baloo 2', ui-rounded, "Arial Rounded MT Bold", system-ui, sans-serif;
+  --txt:ui-rounded, 'Nunito', -apple-system, system-ui, "Segoe UI", sans-serif;
+  --radio:24px;
+}
+html{-webkit-text-size-adjust:100%;text-size-adjust:100%}
+/* iPad: se mira a más distancia, todo crece un 12 % */
+@media (min-width:700px) and (min-height:600px){ html{font-size:112.5%} }
+*{-webkit-tap-highlight-color:transparent}
+button,a{touch-action:manipulation}
+@media (prefers-reduced-motion: reduce){
+  *,*::before,*::after{animation:none !important;transition:none !important;scroll-behavior:auto !important}
+  .confeti{display:none !important}
+}
+
+/* diálogo "¿Quieres salir?" (lo crea selva.js) */
+.selva-dialogo{
+  border:0;border-radius:28px;padding:22px 20px 18px;width:min(360px, calc(100vw - 32px));
+  background:var(--crema);color:var(--tinta);text-align:center;box-shadow:0 10px 0 var(--crema-borde);
+  font-family:var(--txt);
+}
+.selva-dialogo::backdrop{background:rgba(8,37,28,.72)}
+.selva-dialogo-emo{font-size:3.4rem;line-height:1}
+.selva-dialogo h2{font:800 1.7rem/1.1 var(--tit);margin:8px 0 6px}
+.selva-dialogo p{font-size:1.1rem;line-height:1.4;margin:0 0 16px}
+.selva-dialogo button{
+  display:block;width:100%;min-height:56px;border:0;border-radius:20px;cursor:pointer;
+  font:800 1.3rem/1 var(--tit);
+}
+.selva-seguir{background:var(--sol);color:var(--selva);box-shadow:0 5px 0 var(--sol-borde);margin-bottom:12px}
+.selva-salir{background:transparent;color:var(--tinta-suave);text-decoration:underline}
+/* ==========================================================================
+   SELVA v2 · capa para actividades de juego (pantallas inicio / juego / final)
+   Se carga DESPUÉS del estilo propio de cada archivo, así que lo reemplaza
+   sin tocar la lógica del juego.
+   ========================================================================== */
+
+/* ---------- escenario a pantalla completa (antes: tarjeta flotante con borde) ---------- */
+body{
+  display:block;min-height:100vh;min-height:100dvh;margin:0;
+  padding:0 max(16px, env(safe-area-inset-right)) calc(32px + env(safe-area-inset-bottom)) max(16px, env(safe-area-inset-left));
+  font-family:var(--txt);color:var(--crema);
+  background:
+    radial-gradient(120% 60% at 0% 0%, rgba(126,217,87,.16), transparent 60%),
+    radial-gradient(120% 60% at 100% 100%, rgba(63,193,224,.16), transparent 60%),
+    var(--selva) fixed;
+}
+.marco{
+  width:min(720px,100%);margin:0 auto;padding:0 0 8px;
+  background:none;border:0;border-radius:0;box-shadow:none;overflow:visible;
+}
+
+/* ---------- barra superior fija, respeta el notch ---------- */
+.marco > .barra,.marco > .barra-sup{
+  position:sticky;top:0;z-index:30;
+  display:flex;align-items:center;justify-content:space-between;gap:10px;
+  margin:0 -16px 14px;padding:calc(env(safe-area-inset-top) + 10px) 16px 14px;
+  background:linear-gradient(to bottom, var(--selva) 72%, rgba(14,59,46,0));
+}
+.marco > .barra .mini,.marco > .barra-sup .mini{
+  min-height:48px;padding:0 16px;border:0;border-radius:18px;
+  display:inline-flex;align-items:center;justify-content:center;gap:6px;
+  background:var(--selva-claro);color:var(--crema);box-shadow:0 4px 0 var(--selva-borde);
+  font:800 1.05rem/1 var(--tit);text-decoration:none;cursor:pointer;
+}
+.marco > .barra .mini:active,.marco > .barra-sup .mini:active{transform:translateY(3px);box-shadow:0 1px 0 var(--selva-borde)}
+.marco > .barra .mini[aria-pressed="false"],.marco > .barra-sup .mini[aria-pressed="false"]{background:var(--selva-hondo);color:rgba(255,246,229,.8)}
+.puntaje{
+  min-height:48px;padding:0 16px;border-radius:18px;display:inline-flex;align-items:center;gap:6px;
+  background:var(--sol);color:var(--selva);box-shadow:0 4px 0 var(--sol-borde);
+  font:800 1.3rem/1 var(--tit);letter-spacing:0;white-space:nowrap;
+}
+.puntaje.salta{animation:selva-salta .45s}
+@keyframes selva-salta{0%{transform:scale(1)}40%{transform:scale(1.18)}100%{transform:scale(1)}}
+
+/* ---------- títulos y texto ---------- */
+.pantalla{padding-top:4px}
+h1{font-family:var(--tit);line-height:1.02}
+h1 span{font-size:max(.42em, 1rem) !important;letter-spacing:.02em !important;opacity:.95;margin-top:4px}
+.intro{font-size:1.15rem;line-height:1.5;max-width:40ch}
+.nivel-chip,.nivelChip{font-size:1rem !important;padding:6px 14px !important}
+.pregunta{line-height:1.2}
+
+/* ---------- botón principal: pieza 3D; texto selva (blanco sobre coral daba 2,8:1) ---------- */
+.btn{
+  min-height:60px;padding:12px 30px;border:0;border-radius:var(--radio);
+  font-family:var(--tit);font-weight:800;font-size:1.4rem;line-height:1.15;
+  background:var(--coral);color:var(--selva);box-shadow:0 6px 0 var(--coral-borde);cursor:pointer;
+}
+.btn:active{transform:translateY(4px);box-shadow:0 2px 0 var(--coral-borde)}
+.btn.sol{background:var(--sol);color:var(--selva);box-shadow:0 6px 0 var(--sol-borde)}
+.btn.sol:active{box-shadow:0 2px 0 var(--sol-borde)}
+.btn.agua{background:var(--agua);color:var(--selva);box-shadow:0 6px 0 var(--agua-borde)}
+.btn.agua:active{box-shadow:0 2px 0 var(--agua-borde)}
+.btn.hoja{background:var(--hoja);color:var(--selva);box-shadow:0 6px 0 var(--hoja-borde)}
+.btn.hoja:active{box-shadow:0 2px 0 var(--hoja-borde)}
+
+/* ---------- respuestas, controles y teclas: tamaño mínimo 56 px ---------- */
+.opcion,.ctrl,.tecla{
+  min-height:56px;border-radius:22px;cursor:pointer;
+  box-shadow:0 5px 0 var(--crema-borde);
+}
+.opcion:active,.ctrl:active,.tecla:active{transform:translateY(4px);box-shadow:0 1px 0 var(--crema-borde)}
+.ctrl{font-family:var(--txt)}
+.ctrl.audio{box-shadow:0 5px 0 var(--agua-borde)}
+.ctrl.listo{box-shadow:0 5px 0 var(--hoja-borde)}
+.ctrl.quitar{box-shadow:0 5px 0 #D9A39B}
+.opcion.bien,.opcion.correcta{box-shadow:0 5px 0 var(--hoja-borde)}
+.opcion[disabled],.ctrl[disabled],.tecla[disabled]{cursor:default}
+
+/* ---------- aviso: el dato para repetir en la prueba, ahora como tarjeta ---------- */
+.aviso{border-radius:22px;line-height:1.35}
+.aviso.ok:not(:empty){background:var(--crema);color:var(--tinta);border:4px solid var(--hoja);padding:10px 14px}
+.aviso.ups:not(:empty){background:var(--casi-fondo);color:var(--casi-texto);border:4px solid var(--sol);padding:10px 14px}
+
+/* ---------- detalles que no se leían ---------- */
+.ecuacion .hueco,.escena .hueco,.cuento .hueco{color:var(--coral-texto);border-bottom-color:var(--coral-texto)}
+.rot small,.letraBtn small{font-size:.9rem}          /* "decenas", "unidades", letra mayúscula */
+.base10 .rot,.casilla b{font-size:.95rem}
+.pantalla .mini{min-height:48px;padding:0 16px;border-radius:18px;display:inline-flex;align-items:center;gap:6px}
+.pista-escucha{color:var(--tinta-suave)}
+
+/* ---------- celebración ---------- */
+.confeti{position:fixed !important;z-index:50}
+.album{border-radius:var(--radio)}
+
+/* ---------- iPad: más aire, mismas funciones ---------- */
+@media (min-width:700px){
+  .marco > .barra,.marco > .barra-sup{margin-bottom:22px}
+  .opciones{gap:14px}
+}
+
+/* ---------- Aumentar contraste (Ajustes › Accesibilidad) ---------- */
+@media (prefers-contrast: more){
+  .marco > .barra .mini,.marco > .barra-sup .mini{outline:2px solid var(--crema)}
+  .opcion,.ctrl,.tecla{outline:3px solid var(--selva);outline-offset:-3px}
+  .intro,h1 span{opacity:1}
+}
+
+/* ---------- portada y cierre de cada actividad: ocupan la pantalla ---------- */
+#inicio.activa,#final.activa{
+  display:flex;flex-direction:column;justify-content:center;
+  min-height:calc(100dvh - 110px - env(safe-area-inset-top) - env(safe-area-inset-bottom));
+}
+#inicio h1,#final h1{font-size:clamp(2.4rem,10vw,3.4rem)}
+#inicio .iconos,#inicio .bichos{font-size:clamp(3rem,14vw,4.4rem);margin-bottom:6px}
+#inicio .btn,#final .btn{align-self:center;width:min(100%,420px);margin-top:6px}
+#inicio .intro{margin-bottom:22px}
+</style>
+<!-- /selva:css -->
 </head>
 <body>
 <div class="marco">
@@ -984,5 +1153,123 @@ $("btnEmpezar").onclick = arranca;
 $("btnOtraVez").onclick = arranca;
 
 </script>
+<!-- selva:js -->
+<script id="selva-js">
+/* ==========================================================================
+   SELVA v2 · comportamiento común
+   1. Guarda el progreso (veces jugada y mejor puntaje) para que la portada
+      muestre las estrellas ganadas. Solo en este dispositivo, sin internet.
+   2. Si ya hay estrellas en la ronda, "Inicio" pregunta antes de salir.
+   3. Hace saltar el contador cuando se gana una estrella.
+   4. Etiqueta los botones que solo tienen un ícono.
+   ========================================================================== */
+(function(){
+  var CLAVE = "aprendo:progreso";
+  var ruta = decodeURIComponent(location.pathname).replace(/^.*?(\d+-basico\/)/, "$1");
+  var $ = function(s){ return document.querySelector(s); };
+
+  function estrellas(){
+    var el = $("#puntaje, #cuenta");
+    var m = el && el.textContent.match(/\d+/);
+    return m ? +m[0] : 0;
+  }
+  function registrar(){
+    var d = {};
+    try{ d = JSON.parse(localStorage.getItem(CLAVE)) || {}; }catch(e){}
+    var r = d[ruta] || { veces:0, mejor:0 };
+    r.veces++;
+    r.mejor = Math.max(r.mejor || 0, estrellas());
+    r.ultima = new Date().toISOString().slice(0, 10);
+    d[ruta] = r;
+    try{ localStorage.setItem(CLAVE, JSON.stringify(d)); }catch(e){}
+  }
+
+  /* 1. fin de la actividad: pantalla #final (juegos) o #pFinal (misiones) */
+  var fin = $("#final, #pFinal");
+  if(fin){
+    var visto = false;
+    new MutationObserver(function(){
+      var ve = fin.classList.contains("activa") || (fin.id === "pFinal" && !fin.hidden);
+      if(ve && !visto){ visto = true; setTimeout(registrar, 400); }
+      if(!ve) visto = false;
+    }).observe(fin, { attributes:true, attributeFilter:["class", "hidden"] });
+  }
+  /* presentaciones: cuenta como vista al llegar a la última diapositiva */
+  var cont = $("#contador");
+  if(cont && !fin){
+    var vista = false;
+    new MutationObserver(function(){
+      var p = cont.textContent.match(/(\d+)\s*\/\s*(\d+)/);
+      if(p && p[1] === p[2] && !vista){ vista = true; registrar(); }
+    }).observe(cont, { childList:true, characterData:true, subtree:true });
+  }
+
+  /* 2. confirmar antes de salir a mitad de una ronda */
+  function enRonda(){
+    return !!$("#juego.activa, #ensayo.activa, #pJuego:not([hidden])") && estrellas() > 0;
+  }
+  var dlg = null;
+  function preguntarSalida(destino){
+    if(!window.HTMLDialogElement){ location.href = destino; return; }
+    if(!dlg){
+      dlg = document.createElement("dialog");
+      dlg.className = "selva-dialogo";
+      dlg.innerHTML =
+        '<div class="selva-dialogo-emo" aria-hidden="true">🏠</div>' +
+        '<h2>¿Quieres salir?</h2>' +
+        '<p>Si sales ahora, se pierden las estrellas de esta ronda.</p>' +
+        '<button class="selva-seguir" value="seguir">▶️ Seguir jugando</button>' +
+        '<button class="selva-salir" value="salir">Salir</button>';
+      dlg.addEventListener("click", function(e){
+        var b = e.target.closest("button");
+        if(!b) return;
+        dlg.close();
+        if(b.value === "salir") location.href = dlg.dataset.destino;
+      });
+      document.body.appendChild(dlg);
+    }
+    dlg.dataset.destino = destino;
+    dlg.showModal();
+    try{
+      if(window.speechSynthesis){
+        speechSynthesis.cancel();
+        var u = new SpeechSynthesisUtterance("¿Quieres salir? Si sales ahora, se pierden las estrellas de esta ronda.");
+        u.lang = "es-ES"; speechSynthesis.speak(u);
+      }
+    }catch(e){}
+    dlg.querySelector(".selva-seguir").focus();
+  }
+  document.addEventListener("click", function(e){
+    var a = e.target.closest && e.target.closest('a[href$="index.html"]');
+    if(!a || !enRonda()) return;
+    e.preventDefault();
+    preguntarSalida(a.href);
+  }, true);
+
+  /* 3. el contador salta al ganar una estrella */
+  var pts = $("#puntaje");
+  if(pts){
+    var antes = estrellas();
+    new MutationObserver(function(){
+      var ahora = estrellas();
+      if(ahora > antes){
+        pts.classList.remove("salta"); void pts.offsetWidth; pts.classList.add("salta");
+      }
+      antes = ahora;
+    }).observe(pts, { childList:true, characterData:true, subtree:true });
+  }
+
+  /* 4. etiquetas para lectores de pantalla */
+  var nombres = { btnGeneral:"Ver todas las diapositivas", btnPantalla:"Pantalla completa", btnVoz:"Voz", sonido:"Voz y sonidos" };
+  Object.keys(nombres).forEach(function(id){
+    var b = document.getElementById(id);
+    if(b && !b.getAttribute("aria-label") && !/[a-záéíóú]{3}/i.test(b.textContent)) b.setAttribute("aria-label", nombres[id]);
+  });
+  /* el iPhone no permite pantalla completa en páginas web: se oculta el botón */
+  var d = document.documentElement;
+  if(!(document.fullscreenEnabled || document.webkitFullscreenEnabled)) d.classList.add("selva-sin-pantalla-completa");
+})();
+</script>
+<!-- /selva:js -->
 </body>
 </html>

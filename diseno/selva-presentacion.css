@@ -1,0 +1,13 @@
+/* ==========================================================================
+   SELVA v2 · capa para presentaciones (diapositivas)
+   ========================================================================== */
+.barra{padding:calc(env(safe-area-inset-top) + 8px) max(12px, env(safe-area-inset-right)) 8px max(12px, env(safe-area-inset-left))}
+.barra .mini{
+  min-height:44px;min-width:44px;padding:0 12px;border:0;border-radius:16px;
+  display:inline-flex;align-items:center;justify-content:center;gap:4px;
+  background:#123F31;color:var(--crema);box-shadow:0 3px 0 var(--selva-borde);font-size:1rem;
+}
+.barra .mini:active{transform:translateY(2px);box-shadow:0 1px 0 var(--selva-borde)}
+.barra .mini[aria-pressed="true"]{background:var(--sol);color:var(--selva);box-shadow:0 3px 0 var(--sol-borde)}
+.pie{padding-bottom:calc(10px + env(safe-area-inset-bottom)) !important}
+.selva-sin-pantalla-completa #btnPantalla{display:none}

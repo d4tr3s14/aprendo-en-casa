@@ -38,11 +38,24 @@ CRITERIOS PEDAGÓGICOS
 - Máximo 8 a 10 ítems por nivel para no cansarla.
 - Cierre con logro visible (álbum, trofeo, estrellas) y opción de repetir.
 
-IDENTIDAD VISUAL (mantener consistente entre actividades)
+IDENTIDAD VISUAL · SELVA v2 (mantener consistente entre actividades)
 - Fondo selva #0E3B2E, tarjeta #17513E, crema #FFF6E5
 - Acentos: sol #FFC93C, coral #FF6B5A, agua #3FC1E0, hoja #7ED957
-- Tipografías: Baloo 2 para títulos, Nunito para texto
-- Esquinas muy redondeadas, botones con sombra sólida inferior
+- Tipografías: Baloo 2 (incrustada en base64) para títulos; texto con
+  ui-rounded (SF Pro Rounded en iPhone/iPad). Sin Google Fonts.
+- Botones como piezas 3D: sombra inferior sólida del mismo color más oscuro.
+- Texto sobre coral, sol, agua u hoja SIEMPRE en selva #0E3B2E, nunca blanco
+  (blanco sobre coral da 2,8:1 y no se lee bien). Texto coral sobre crema: #C8412F.
+- Escenario a pantalla completa (sin tarjeta con borde amarillo), barra superior
+  fija con 🏠 Inicio · ⭐ estrellas · 🔊 Voz, botones de al menos 48 px de alto,
+  respuestas de al menos 56 px, texto nunca bajo 15 px.
+- Respeta el notch: viewport-fit=cover y env(safe-area-inset-*).
+- El diseño común está en diseno/ y se incrusta con
+  python herramientas/sincronizar.py (reutiliza las clases de la plantilla:
+  .marco, .barra, .mini, .puntaje, .pantalla#inicio/#juego/#final, .btn,
+  .opcion, .ctrl, .tecla, .aviso.ok / .aviso.ups).
+- La pantalla final debe llamarse #final (o #pFinal) y el contador #puntaje:
+  así el progreso se guarda solo y aparece en la portada.
 
 CONVENCIONES DEL REPOSITORIO
 - Ruta: {curso}/semestre-{n}/{asignatura}/{nombre-actividad}.html

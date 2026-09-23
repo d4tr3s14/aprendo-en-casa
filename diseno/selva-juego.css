@@ -1,0 +1,117 @@
+/* ==========================================================================
+   SELVA v2 · capa para actividades de juego (pantallas inicio / juego / final)
+   Se carga DESPUÉS del estilo propio de cada archivo, así que lo reemplaza
+   sin tocar la lógica del juego.
+   ========================================================================== */
+
+/* ---------- escenario a pantalla completa (antes: tarjeta flotante con borde) ---------- */
+body{
+  display:block;min-height:100vh;min-height:100dvh;margin:0;
+  padding:0 max(16px, env(safe-area-inset-right)) calc(32px + env(safe-area-inset-bottom)) max(16px, env(safe-area-inset-left));
+  font-family:var(--txt);color:var(--crema);
+  background:
+    radial-gradient(120% 60% at 0% 0%, rgba(126,217,87,.16), transparent 60%),
+    radial-gradient(120% 60% at 100% 100%, rgba(63,193,224,.16), transparent 60%),
+    var(--selva) fixed;
+}
+.marco{
+  width:min(720px,100%);margin:0 auto;padding:0 0 8px;
+  background:none;border:0;border-radius:0;box-shadow:none;overflow:visible;
+}
+
+/* ---------- barra superior fija, respeta el notch ---------- */
+.marco > .barra,.marco > .barra-sup{
+  position:sticky;top:0;z-index:30;
+  display:flex;align-items:center;justify-content:space-between;gap:10px;
+  margin:0 -16px 14px;padding:calc(env(safe-area-inset-top) + 10px) 16px 14px;
+  background:linear-gradient(to bottom, var(--selva) 72%, rgba(14,59,46,0));
+}
+.marco > .barra .mini,.marco > .barra-sup .mini{
+  min-height:48px;padding:0 16px;border:0;border-radius:18px;
+  display:inline-flex;align-items:center;justify-content:center;gap:6px;
+  background:var(--selva-claro);color:var(--crema);box-shadow:0 4px 0 var(--selva-borde);
+  font:800 1.05rem/1 var(--tit);text-decoration:none;cursor:pointer;
+}
+.marco > .barra .mini:active,.marco > .barra-sup .mini:active{transform:translateY(3px);box-shadow:0 1px 0 var(--selva-borde)}
+.marco > .barra .mini[aria-pressed="false"],.marco > .barra-sup .mini[aria-pressed="false"]{background:var(--selva-hondo);color:rgba(255,246,229,.8)}
+.puntaje{
+  min-height:48px;padding:0 16px;border-radius:18px;display:inline-flex;align-items:center;gap:6px;
+  background:var(--sol);color:var(--selva);box-shadow:0 4px 0 var(--sol-borde);
+  font:800 1.3rem/1 var(--tit);letter-spacing:0;white-space:nowrap;
+}
+.puntaje.salta{animation:selva-salta .45s}
+@keyframes selva-salta{0%{transform:scale(1)}40%{transform:scale(1.18)}100%{transform:scale(1)}}
+
+/* ---------- títulos y texto ---------- */
+.pantalla{padding-top:4px}
+h1{font-family:var(--tit);line-height:1.02}
+h1 span{font-size:max(.42em, 1rem) !important;letter-spacing:.02em !important;opacity:.95;margin-top:4px}
+.intro{font-size:1.15rem;line-height:1.5;max-width:40ch}
+.nivel-chip,.nivelChip{font-size:1rem !important;padding:6px 14px !important}
+.pregunta{line-height:1.2}
+
+/* ---------- botón principal: pieza 3D; texto selva (blanco sobre coral daba 2,8:1) ---------- */
+.btn{
+  min-height:60px;padding:12px 30px;border:0;border-radius:var(--radio);
+  font-family:var(--tit);font-weight:800;font-size:1.4rem;line-height:1.15;
+  background:var(--coral);color:var(--selva);box-shadow:0 6px 0 var(--coral-borde);cursor:pointer;
+}
+.btn:active{transform:translateY(4px);box-shadow:0 2px 0 var(--coral-borde)}
+.btn.sol{background:var(--sol);color:var(--selva);box-shadow:0 6px 0 var(--sol-borde)}
+.btn.sol:active{box-shadow:0 2px 0 var(--sol-borde)}
+.btn.agua{background:var(--agua);color:var(--selva);box-shadow:0 6px 0 var(--agua-borde)}
+.btn.agua:active{box-shadow:0 2px 0 var(--agua-borde)}
+.btn.hoja{background:var(--hoja);color:var(--selva);box-shadow:0 6px 0 var(--hoja-borde)}
+.btn.hoja:active{box-shadow:0 2px 0 var(--hoja-borde)}
+
+/* ---------- respuestas, controles y teclas: tamaño mínimo 56 px ---------- */
+.opcion,.ctrl,.tecla{
+  min-height:56px;border-radius:22px;cursor:pointer;
+  box-shadow:0 5px 0 var(--crema-borde);
+}
+.opcion:active,.ctrl:active,.tecla:active{transform:translateY(4px);box-shadow:0 1px 0 var(--crema-borde)}
+.ctrl{font-family:var(--txt)}
+.ctrl.audio{box-shadow:0 5px 0 var(--agua-borde)}
+.ctrl.listo{box-shadow:0 5px 0 var(--hoja-borde)}
+.ctrl.quitar{box-shadow:0 5px 0 #D9A39B}
+.opcion.bien,.opcion.correcta{box-shadow:0 5px 0 var(--hoja-borde)}
+.opcion[disabled],.ctrl[disabled],.tecla[disabled]{cursor:default}
+
+/* ---------- aviso: el dato para repetir en la prueba, ahora como tarjeta ---------- */
+.aviso{border-radius:22px;line-height:1.35}
+.aviso.ok:not(:empty){background:var(--crema);color:var(--tinta);border:4px solid var(--hoja);padding:10px 14px}
+.aviso.ups:not(:empty){background:var(--casi-fondo);color:var(--casi-texto);border:4px solid var(--sol);padding:10px 14px}
+
+/* ---------- detalles que no se leían ---------- */
+.ecuacion .hueco,.escena .hueco,.cuento .hueco{color:var(--coral-texto);border-bottom-color:var(--coral-texto)}
+.rot small,.letraBtn small{font-size:.9rem}          /* "decenas", "unidades", letra mayúscula */
+.base10 .rot,.casilla b{font-size:.95rem}
+.pantalla .mini{min-height:48px;padding:0 16px;border-radius:18px;display:inline-flex;align-items:center;gap:6px}
+.pista-escucha{color:var(--tinta-suave)}
+
+/* ---------- celebración ---------- */
+.confeti{position:fixed !important;z-index:50}
+.album{border-radius:var(--radio)}
+
+/* ---------- iPad: más aire, mismas funciones ---------- */
+@media (min-width:700px){
+  .marco > .barra,.marco > .barra-sup{margin-bottom:22px}
+  .opciones{gap:14px}
+}
+
+/* ---------- Aumentar contraste (Ajustes › Accesibilidad) ---------- */
+@media (prefers-contrast: more){
+  .marco > .barra .mini,.marco > .barra-sup .mini{outline:2px solid var(--crema)}
+  .opcion,.ctrl,.tecla{outline:3px solid var(--selva);outline-offset:-3px}
+  .intro,h1 span{opacity:1}
+}
+
+/* ---------- portada y cierre de cada actividad: ocupan la pantalla ---------- */
+#inicio.activa,#final.activa{
+  display:flex;flex-direction:column;justify-content:center;
+  min-height:calc(100dvh - 110px - env(safe-area-inset-top) - env(safe-area-inset-bottom));
+}
+#inicio h1,#final h1{font-size:clamp(2.4rem,10vw,3.4rem)}
+#inicio .iconos,#inicio .bichos{font-size:clamp(3rem,14vw,4.4rem);margin-bottom:6px}
+#inicio .btn,#final .btn{align-self:center;width:min(100%,420px);margin-top:6px}
+#inicio .intro{margin-bottom:22px}
