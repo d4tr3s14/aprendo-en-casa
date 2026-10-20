@@ -38,17 +38,20 @@ CRITERIOS PEDAGÓGICOS
 - Máximo 8 a 10 ítems por nivel para no cansarla.
 - Cierre con logro visible (álbum, trofeo, estrellas) y opción de repetir.
 
-IDENTIDAD VISUAL · SELVA v2 (mantener consistente entre actividades)
-- Fondo selva #0E3B2E, tarjeta #17513E, crema #FFF6E5
-- Acentos: sol #FFC93C, coral #FF6B5A, agua #3FC1E0, hoja #7ED957
-- Tipografías: Baloo 2 (incrustada en base64) para títulos; texto con
-  ui-rounded (SF Pro Rounded en iPhone/iPad). Sin Google Fonts.
-- Botones como piezas 3D: sombra inferior sólida del mismo color más oscuro.
-- Texto sobre coral, sol, agua u hoja SIEMPRE en selva #0E3B2E, nunca blanco
-  (blanco sobre coral da 2,8:1 y no se lee bien). Texto coral sobre crema: #C8412F.
-- Escenario a pantalla completa (sin tarjeta con borde amarillo), barra superior
-  fija con 🏠 Inicio · ⭐ estrellas · 🔊 Voz, botones de al menos 48 px de alto,
-  respuestas de al menos 56 px, texto nunca bajo 15 px.
+IDENTIDAD VISUAL · DESIGN.md (mantener consistente entre actividades)
+- La fuente de verdad es DESIGN.md (raíz) y sus tokens en diseno/tokens.css.
+  Usa SOLO variables: --bg-page, --bg-elevated, --text-primary/-secondary/-tertiary,
+  --border-primary, --tint-*, --accent, --green, --red, --orange, --r-*, --shadow-*.
+  Nada de colores hex en el CSS de la actividad. Modo claro y oscuro automáticos.
+- Neutros casi blancos y UN solo acento azul. El color solo comunica estado:
+  verde = correcto, rojo = error, naranja = "casi", azul = en curso / por completar.
+  Excepción en matemática: decenas = --accent, unidades = --orange.
+- Tipografía Inter / la del sistema, pesos 400 y 500 (nunca 700/800). Sin Google Fonts.
+- Bordes de 1px en vez de sombras; tarjetas con --shadow-L1 y radio 8–12 px.
+  Nada de degradados, sombras 3D ni animaciones con rebote (transiciones de 120–160 ms).
+- Botón primario: --button-neutral (.btn, .btn.sol, .btn.hoja); secundario: .btn.agua.
+- Adaptación a su edad: barra superior fija con 🏠 Inicio · ⭐ estrellas · 🔊 Voz,
+  botones de al menos 48 px de alto, respuestas de al menos 56 px, texto nunca bajo 15 px.
 - Respeta el notch: viewport-fit=cover y env(safe-area-inset-*).
 - El diseño común está en diseno/ y se incrusta con
   python herramientas/sincronizar.py (reutiliza las clases de la plantilla:

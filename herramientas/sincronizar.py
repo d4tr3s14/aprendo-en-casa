@@ -1,4 +1,4 @@
-"""Copia el sistema de diseño Selva v2 (carpeta diseno/) dentro de cada actividad.
+"""Copia el sistema de diseño (carpeta diseno/, según DESIGN.md) dentro de cada actividad.
 
 Regla del proyecto: cada actividad es UN solo archivo HTML que funciona sin
 internet. Por eso el diseño común no se enlaza: se incrusta. Este script lo
@@ -23,7 +23,11 @@ DISENO = RAIZ / "diseno"
 CSS_RE = re.compile(r"\n?<!-- selva:css modo=(\w+)[^>]*-->.*?<!-- /selva:css -->\n?", re.S)
 JS_RE = re.compile(r"\n?<!-- selva:js -->.*?<!-- /selva:js -->\n?", re.S)
 GFONTS_RE = re.compile(r"[ \t]*<link[^>]+fonts\.(googleapis|gstatic)\.com[^>]*>\r?\n?")
-BALOO_RE = re.compile(r"@font-face\{font-family:['\"]Baloo 2['\"]")
+# la tipografía ahora es Inter / la del sistema: la Baloo 2 incrustada sobra
+BALOO_RE = re.compile(r"[ \t]*@font-face\{font-family:['\"]Baloo 2['\"][^}]*\}\r?\n?")
+THEME_RE = re.compile(r'[ \t]*<meta name="theme-color"[^>]*>\r?\n?')
+THEME = ('<meta name="theme-color" content="#FCFCFC" media="(prefers-color-scheme: light)">\n'
+         '<meta name="theme-color" content="#141414" media="(prefers-color-scheme: dark)">\n')
 
 
 def leer(nombre):
@@ -46,12 +50,11 @@ def procesar(ruta):
     modo = detectar_modo(original)
     html = JS_RE.sub("\n", CSS_RE.sub("\n", original))
 
-    partes = []
-    if not BALOO_RE.search(html):
-        # la fuente venía de Google Fonts: se incrusta para que funcione sin internet
-        html = GFONTS_RE.sub("", html)
-        partes.append(leer("baloo-2.css"))
-    partes.append(leer("selva-base.css"))
+    html = BALOO_RE.sub("", GFONTS_RE.sub("", html))
+    html = THEME_RE.sub("", html)
+    html = html.replace("<title>", THEME + "<title>", 1)
+
+    partes = [leer("tokens.css"), leer("selva-base.css")]
     if modo == "juego":
         partes.append(leer("selva-juego.css"))
     elif modo == "presentacion":
@@ -77,15 +80,15 @@ def procesar(ruta):
     return modo, False
 
 
-FUENTE_RE = re.compile(r"\n?<!-- selva:fuente -->.*?<!-- /selva:fuente -->\n?", re.S)
+TOKENS_RE = re.compile(r"\n?<!-- selva:(?:fuente|tokens) -->.*?<!-- /selva:(?:fuente|tokens) -->\n?", re.S)
 
 
 def portada():
-    """La portada tiene su propio estilo; solo se le incrusta la fuente."""
+    """La portada tiene su propio estilo; solo se le incrustan los tokens."""
     ruta = RAIZ / "index.html"
     original = ruta.read_text(encoding="utf-8")
-    html = GFONTS_RE.sub("", FUENTE_RE.sub("\n", original))
-    bloque = "<!-- selva:fuente -->\n<style>\n" + leer("baloo-2.css") + "\n</style>\n<!-- /selva:fuente -->\n"
+    html = GFONTS_RE.sub("", TOKENS_RE.sub("\n", original))
+    bloque = "<!-- selva:tokens -->\n<style>\n" + leer("tokens.css") + "\n</style>\n<!-- /selva:tokens -->\n"
     i = html.find("<style>")
     html = html[:i] + bloque + html[i:]
     if html != original:
