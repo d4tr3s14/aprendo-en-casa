@@ -1,13 +1,18 @@
 /* ==========================================================================
-   SELVA v2 · capa para presentaciones (diapositivas)
+   Capa para presentaciones (diapositivas) · barra y pie según DESIGN.md §4–5
    ========================================================================== */
-.barra{padding:calc(env(safe-area-inset-top) + 8px) max(12px, env(safe-area-inset-right)) 8px max(12px, env(safe-area-inset-left))}
-.barra .mini{
-  min-height:44px;min-width:44px;padding:0 12px;border:0;border-radius:16px;
-  display:inline-flex;align-items:center;justify-content:center;gap:4px;
-  background:#123F31;color:var(--crema);box-shadow:0 3px 0 var(--selva-borde);font-size:1rem;
+.barra{
+  min-height:48px;padding:calc(env(safe-area-inset-top) + 6px) max(12px, env(safe-area-inset-right)) 6px max(12px, env(safe-area-inset-left));
+  background:var(--bg-page);border-bottom:1px solid var(--border-primary);
 }
-.barra .mini:active{transform:translateY(2px);box-shadow:0 1px 0 var(--selva-borde)}
-.barra .mini[aria-pressed="true"]{background:var(--sol);color:var(--selva);box-shadow:0 3px 0 var(--sol-borde)}
-.pie{padding-bottom:calc(10px + env(safe-area-inset-bottom)) !important}
+.barra .mini{
+  min-height:40px;min-width:40px;padding:0 12px;border:1px solid var(--border-primary);border-radius:var(--r-xs);
+  display:inline-flex;align-items:center;justify-content:center;gap:4px;
+  background:var(--bg-elevated);color:var(--text-primary);box-shadow:var(--shadow-L1);
+  font:500 var(--fs-meta)/1 var(--font-ui);text-decoration:none;cursor:pointer;
+  transition:background var(--t-rapida);
+}
+.barra .mini:hover{background:var(--tint-strong)}
+.barra .mini[aria-pressed="true"]{background:var(--tint-soft);color:var(--text-primary);box-shadow:none}
+.pie{background:var(--bg-page);border-top:1px solid var(--border-primary);padding-bottom:calc(10px + env(safe-area-inset-bottom)) !important}
 .selva-sin-pantalla-completa #btnPantalla{display:none}

@@ -35,7 +35,8 @@ Queda un ícono igual que una app y se abre a pantalla completa.
 ├─ actividades.json      Catálogo de todas las actividades
 ├─ manifest.webmanifest  Nombre e ícono al "Añadir a pantalla de inicio"
 ├─ sw.js                 Permite abrir el sitio sin internet
-├─ diseno/               Sistema de diseño Selva v2 (fuente de verdad)
+├─ DESIGN.md             Guía visual: colores, tipografía, componentes
+├─ diseno/               Tokens y CSS/JS común según DESIGN.md
 ├─ herramientas/         sincronizar.py: copia el diseño dentro de cada actividad
 ├─ plantilla/base.html   Esqueleto para crear actividades nuevas
 └─ 1-basico/
@@ -50,10 +51,12 @@ Queda un ícono igual que una app y se abre a pantalla completa.
 Para el año siguiente basta con agregar `2-basico/` al lado, con la misma forma.
 Nada de lo anterior se mueve ni se rompe.
 
-### Diseño Selva v2
+### Diseño (DESIGN.md)
 
-Cada actividad sigue siendo **un solo archivo**, pero el diseño común (barra
-superior, botones, avisos, diálogo de salida, progreso) vive en `diseno/` y se
+La guía visual está en `DESIGN.md` y sus tokens (colores claro/oscuro, radios,
+sombras, tamaños) en `diseno/tokens.css`. Cada actividad sigue siendo **un solo
+archivo**, pero el diseño común (tokens, barra superior, botones, avisos,
+diálogo de salida, progreso) vive en `diseno/` y se
 copia dentro de cada HTML entre los comentarios `<!-- selva:css -->` y
 `<!-- selva:js -->`. Para cambiar algo en todas las actividades a la vez:
 

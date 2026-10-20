@@ -1,0 +1,61 @@
+/* ==========================================================================
+   TOKENS · DESIGN.md §9 (fuente de verdad: DESIGN.md en la raíz)
+   Neutros casi blancos, un solo acento azul, bordes de 1px y color solo para
+   comunicar estado. Se incrusta primero en cada actividad con
+   python herramientas/sincronizar.py
+   ========================================================================== */
+:root{
+  color-scheme:light dark;
+  --bg-page:#FCFCFC; --bg-wash:#F8F8F8; --bg-elevated:#FFFFFF;
+  --text-primary:#191919; --text-strong:#000;
+  --text-secondary:rgba(25,25,25,.56); --text-tertiary:rgba(25,25,25,.40);
+  --border-primary:rgba(0,0,0,.08); --border-secondary:rgba(0,0,0,.06); --border-hover:rgba(0,0,0,.12);
+  --tint-strong:rgba(0,0,0,.08); --tint-soft:rgba(0,0,0,.06); --tint-faint:rgba(0,0,0,.04);
+  --accent:#317CFF; --accent-tint:rgba(51,125,244,.10); --button-neutral:#363636; --button-neutral-text:#FFF;
+  --green:#00A558; --green-tint:rgba(62,237,155,.20);
+  --red:#F53B3A; --red-tint:rgba(245,59,58,.12);
+  --orange:#F58E3A; --orange-tint:rgba(245,142,58,.12);
+  --purple:#956CDE; --purple-tint:rgba(149,108,222,.12);
+  --font-ui:Inter, -apple-system, system-ui, "Segoe UI", sans-serif;
+  --font-mono:'Geist Mono','IBM Plex Mono',ui-monospace,monospace;
+  --r-xs:6px; --r-sm:8px; --r-md:10px; --r-lg:12px; --r-pill:999px;
+  --shadow-L1:0 1px 2px 0 rgba(0,0,0,.05);
+  --shadow-L2:0 1px 3px 0 rgba(0,0,0,.06),0 1px 2px 0 rgba(0,0,0,.06);
+  --shadow-ring:0 0 3px 0 rgba(0,0,0,.06),0 0 0 .5px rgba(0,0,0,.08);
+  --shadow-L3:0 10px 15px -3px rgba(0,0,0,.06);
+  --shadow-L4:0 25px 50px -12px rgba(0,0,0,.25);
+  --t-rapida:140ms ease-out;
+
+  /* Adaptación a 1° básico (INSTRUCCIONES-PROYECTO.md): la app se usa con el dedo
+     y por una niña que aún no lee fluido. Se mantiene el lenguaje visual de
+     DESIGN.md pero el texto nunca baja de 15 px y los toques miden ≥ 48 px. */
+  --fs-meta:15px; --fs-body:17px; --fs-label:17px; --fs-title:clamp(1.25rem,4.6vw,1.6rem);
+  --fs-display:clamp(2rem,8vw,3rem);
+  --toque:48px; --toque-respuesta:56px;
+}
+@media (prefers-color-scheme: dark){
+  :root:not([data-theme="light"]){
+    --bg-page:#141414; --bg-wash:#191919; --bg-elevated:#1F1F1F;
+    --text-primary:rgba(255,255,255,.90); --text-strong:#FFF;
+    --text-secondary:rgba(255,255,255,.52); --text-tertiary:rgba(255,255,255,.40);
+    --border-primary:rgba(255,255,255,.08); --border-secondary:rgba(255,255,255,.04); --border-hover:rgba(255,255,255,.16);
+    --tint-strong:rgba(255,255,255,.08); --tint-soft:rgba(255,255,255,.05); --tint-faint:rgba(255,255,255,.03);
+    --accent:#49B0FF; --button-neutral:#F9F9F9; --button-neutral-text:#000;
+    --green:#00EC7E; --green-tint:rgba(0,236,126,.08); --orange-tint:rgba(245,142,58,.08);
+    --shadow-L1:0 1px 2px 0 rgba(0,0,0,.20);
+    --shadow-L3:0 10px 15px -3px rgba(0,0,0,.64);
+    --shadow-L4:0 25px 50px -12px rgba(0,0,0,.50);
+  }
+}
+:root[data-theme="dark"]{
+  --bg-page:#141414; --bg-wash:#191919; --bg-elevated:#1F1F1F;
+  --text-primary:rgba(255,255,255,.90); --text-strong:#FFF;
+  --text-secondary:rgba(255,255,255,.52); --text-tertiary:rgba(255,255,255,.40);
+  --border-primary:rgba(255,255,255,.08); --border-secondary:rgba(255,255,255,.04); --border-hover:rgba(255,255,255,.16);
+  --tint-strong:rgba(255,255,255,.08); --tint-soft:rgba(255,255,255,.05); --tint-faint:rgba(255,255,255,.03);
+  --accent:#49B0FF; --button-neutral:#F9F9F9; --button-neutral-text:#000;
+  --green:#00EC7E; --green-tint:rgba(0,236,126,.08); --orange-tint:rgba(245,142,58,.08);
+  --shadow-L1:0 1px 2px 0 rgba(0,0,0,.20);
+  --shadow-L3:0 10px 15px -3px rgba(0,0,0,.64);
+  --shadow-L4:0 25px 50px -12px rgba(0,0,0,.50);
+}
