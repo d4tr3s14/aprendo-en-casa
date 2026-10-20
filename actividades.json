@@ -186,6 +186,17 @@
       "archivo": "1-basico/semestre-2/lenguaje/la-cama-de-mama.html",
       "emoji": "🛏️",
       "fecha": "2026-09-23"
+    },
+    {
+      "id": "len-sapo-y-sepo-son-amigos",
+      "titulo": "Sapo y Sepo son amigos",
+      "curso": "1-basico",
+      "semestre": 2,
+      "asignatura": "lenguaje",
+      "objetivo": "Preparar la prueba de lectura domiciliaria de «Sapo y Sepo son amigos» (Arnold Lobel): el libro página a página, los cinco cuentos narrados con voz natural, autor y personajes, en qué cuento pasó cada cosa, detalles de cada cuento, los botones de Sepo, verdadero o falso, secuencia de «La carta», los meses del calendario, sílabas y respuestas orales de opinión.",
+      "archivo": "1-basico/semestre-2/lenguaje/sapo-y-sepo-son-amigos.html",
+      "emoji": "🐸",
+      "fecha": "2026-10-20"
     }
   ]
 }
