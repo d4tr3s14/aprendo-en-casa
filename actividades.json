@@ -30,6 +30,12 @@
       "nombre": "Historia",
       "emoji": "🏘️",
       "color": "#FFC93C"
+    },
+    {
+      "id": "ingles",
+      "nombre": "Inglés",
+      "emoji": "🔤",
+      "color": "#9B7BE0"
     }
   ],
   "actividades": [
@@ -197,6 +203,28 @@
       "archivo": "1-basico/semestre-2/lenguaje/sapo-y-sepo-son-amigos.html",
       "emoji": "🐸",
       "fecha": "2026-10-20"
+    },
+    {
+      "id": "ing-my-menu-practica",
+      "titulo": "My Menu · Practico mi presentación",
+      "curso": "1-basico",
+      "semestre": 2,
+      "asignatura": "ingles",
+      "objetivo": "Preparar la presentación oral en inglés de su menú del día: nombrar breakfast, lunch y tea time, al menos tres alimentos y bebidas por comida, señalarlos con el puntero y ensayar la estructura completa con voz natural en inglés.",
+      "archivo": "1-basico/semestre-2/ingles/my-menu-practica.html",
+      "emoji": "🍓",
+      "fecha": "2026-11-11"
+    },
+    {
+      "id": "ing-my-menu-presentacion",
+      "titulo": "My Menu · Presentación para el curso",
+      "curso": "1-basico",
+      "semestre": 2,
+      "asignatura": "ingles",
+      "objetivo": "Cinco diapositivas para proyectar en la evaluación de Inglés: saludo, desayuno, almuerzo, once y despedida. Se descarga como PowerPoint para llevar en pendrive.",
+      "archivo": "1-basico/semestre-2/ingles/my-menu-presentacion.html",
+      "emoji": "📽️",
+      "fecha": "2026-11-11"
     }
   ]
 }

@@ -14,6 +14,8 @@ Uso (desde la raíz del repositorio):
 Opciones:
     --voz es-CL-LorenzoNeural   otra voz (ver: python -m edge_tts --list-voices)
     --velocidad -10%            más lento o más rápido (por defecto -6%)
+    --voz-en en-US-AnaNeural    voz para los textos en inglés (niña, por defecto)
+    --velocidad-en -15%         velocidad de los textos en inglés
     --rehacer                   vuelve a grabar todo, aunque ya exista
     --limpiar                   borra los audios que la actividad ya no usa
 
@@ -24,6 +26,12 @@ campos de la lista NO_SE_DICEN. Cada archivo se llama con la huella FNV-1a del
 texto limpio, la misma que calcula la actividad en JavaScript. Además se guarda
 tiempos.json con el momento en que se dice cada palabra, para irlas marcando.
 Es seguro correrlo muchas veces: solo graba lo que falta.
+
+Inglés: los textos guardados bajo una clave "en" o que termina en "_en" (por
+ejemplo {"en": "chocolate milk", "es": "leche con chocolate"}) se graban con la
+voz en inglés; todo lo demás, con la voz en español. Ojo: varias actividades
+pueden compartir carpeta de audio, así que --limpiar solo borra si la carpeta
+es de una sola actividad.
 """
 from pathlib import Path
 import argparse
@@ -38,7 +46,9 @@ DATOS_RE = re.compile(r'<script type="application/json" id="datos">(.*?)</script
 # emojis, selectores de variación y comillas angulares: no se leen (igual que limpia() en JS)
 FUERA_RE = re.compile("[\U0001F000-\U0001FAFF☀-➿️‍«»]")
 # campos que no son texto para decir: emojis, ids, abreviaturas, sílabas distractoras, atributos de dibujos
-NO_SE_DICEN = {"e", "id", "tipo", "c", "d", "a", "otros", "audio", "unidad", "titulo", "nombre"}
+NO_SE_DICEN = {"e", "id", "tipo", "c", "d", "a", "otros", "audio", "unidad", "titulo", "nombre",
+               "img", "ids", "pron"}
+# además, las claves que empiezan con "_" son notas para el adulto: se muestran, no se dicen
 
 
 def limpia(t):
@@ -54,19 +64,25 @@ def huella(t):
     return f"{h:08x}"
 
 
-def textos(nodo, clave=None):
-    if clave in NO_SE_DICEN:
+def es_ingles(clave):
+    return clave is not None and (clave == "en" or clave.endswith("_en"))
+
+
+def textos(nodo, clave=None, ingles=False):
+    """Entrega (texto, ingles) de todo lo que la actividad dice en voz alta."""
+    if clave in NO_SE_DICEN or (clave and clave.startswith("_")):
         return
+    ingles = ingles or es_ingles(clave)
     if isinstance(nodo, str):
         t = limpia(nodo)
         if re.search(r"\w", t):
-            yield t
+            yield t, ingles
     elif isinstance(nodo, list):
         for x in nodo:
-            yield from textos(x)
+            yield from textos(x, None, ingles)
     elif isinstance(nodo, dict):
         for k, v in nodo.items():
-            yield from textos(v, k)
+            yield from textos(v, k, ingles)
 
 
 async def graba(texto, destino, voz, velocidad, sem):
@@ -103,19 +119,25 @@ async def principal(args):
     carpeta = (html_ruta.parent / datos["audio"]).resolve()
     carpeta.mkdir(parents=True, exist_ok=True)
 
-    lista = list(dict.fromkeys(textos(datos)))
+    idioma = {}
+    for t, en in textos(datos):
+        idioma[t] = idioma.get(t, False) or en
+    lista = list(idioma)
     ruta_tiempos = carpeta / "tiempos.json"
     tiempos = json.loads(ruta_tiempos.read_text(encoding="utf-8")) if ruta_tiempos.exists() else {}
 
     faltan = [(t, huella(t)) for t in lista if args.rehacer or not (carpeta / f"{huella(t)}.mp3").exists()]
-    print(f"{len(lista)} frases · {len(faltan)} por grabar · voz {args.voz} · velocidad {args.velocidad}")
+    n_en = sum(1 for t, _ in faltan if idioma[t])
+    print(f"{len(lista)} frases · {len(faltan)} por grabar · voz {args.voz} · velocidad {args.velocidad}"
+          + (f" · {n_en} en inglés con {args.voz_en} ({args.velocidad_en})" if n_en else ""))
 
     sem = asyncio.Semaphore(4)
     hechas = 0
 
     async def una(t, h):
         nonlocal hechas
-        marcas = await graba(t, carpeta / f"{h}.mp3", args.voz, args.velocidad, sem)
+        voz, vel = (args.voz_en, args.velocidad_en) if idioma[t] else (args.voz, args.velocidad)
+        marcas = await graba(t, carpeta / f"{h}.mp3", voz, vel, sem)
         if marcas is not None:
             tiempos[h] = marcas
             hechas += 1
@@ -142,6 +164,8 @@ def main():
     p.add_argument("actividad", help="ruta del .html de la actividad")
     p.add_argument("--voz", default="es-CL-CatalinaNeural")
     p.add_argument("--velocidad", default="-6%")
+    p.add_argument("--voz-en", default="en-US-AnaNeural")
+    p.add_argument("--velocidad-en", default="-15%")
     p.add_argument("--rehacer", action="store_true")
     p.add_argument("--limpiar", action="store_true")
     asyncio.run(principal(p.parse_args()))
