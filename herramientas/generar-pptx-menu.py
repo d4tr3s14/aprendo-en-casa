@@ -179,11 +179,11 @@ def notas(sl, d, extra=""):
 # ---------------------------------------------------------------- diapositivas
 def d_portada(prs, d, nombre, faltan):
     sl = prs.slides.add_slide(prs.slide_layouts[6])
-    im, ok = foto(d["img"], "🍽️", 720, 900)
+    im, ok = foto(d["img"], "🍽️", 900, 900)
     faltan += [] if ok else [d["img"]]
-    imagen(sl, im, 880, 0, 720, 900)
-    texto(sl, 104, 250, 740, 40, "English · 1° Básico", 28, GRIS)
-    texto(sl, 104, 300, 760, 170, "My Menu", 150, NEGRO, negrita=True)
+    imagen(sl, im, 700, 0, 900, 900)
+    texto(sl, 104, 260, 580, 40, "English · 1° Básico", 28, GRIS)
+    texto(sl, 104, 310, 580, 150, "My Menu", 130, NEGRO, negrita=True)
     x = 104
     for etiqueta, ancho in (("Breakfast", 200), ("Lunch", 140), ("Tea time", 180)):
         s = caja(sl, x, 500, ancho, 64, BLANCO, BORDE, radio=32)
@@ -197,7 +197,7 @@ def d_portada(prs, d, nombre, faltan):
         tf.vertical_anchor = MSO_ANCHOR.MIDDLE
         x += ancho + 14
     if nombre:
-        texto(sl, 104, 620, 740, 60, f"by {nombre}", 40, GRIS)
+        texto(sl, 104, 620, 580, 60, f"by {nombre}", 40, GRIS)
     guion = dict(d)
     if nombre:
         guion["_guion"] = guion["_guion"].replace("___", nombre)
@@ -235,10 +235,10 @@ def d_comida(prs, d, ali, faltan):
 
 def d_cierre(prs, d, faltan):
     sl = prs.slides.add_slide(prs.slide_layouts[6])
-    im, ok = foto(d["img"], "💛", 720, 900)
+    im, ok = foto(d["img"], "💛", 900, 900)
     faltan += [] if ok else [d["img"]]
-    imagen(sl, im, 880, 0, 720, 900)
-    texto(sl, 104, 200, 720, 500, ["Thank you for", "your attention!"], 104, NEGRO, negrita=True,
+    imagen(sl, im, 700, 0, 900, 900)
+    texto(sl, 104, 200, 570, 500, ["Thank you for", "your attention!"], 84, NEGRO, negrita=True,
           vertical=MSO_ANCHOR.MIDDLE, interlineado=0.95)
     notas(sl, d, "Dilo fuerte, con una sonrisa, y espera los aplausos.")
 
