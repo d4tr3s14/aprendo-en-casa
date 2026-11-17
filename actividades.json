@@ -225,6 +225,28 @@
       "archivo": "1-basico/semestre-2/ingles/my-menu-presentacion.html",
       "emoji": "📽️",
       "fecha": "2026-11-11"
+    },
+    {
+      "id": "cn-flora-fauna-practica",
+      "titulo": "Flora y fauna de Chile · Practico mi disertación",
+      "curso": "1-basico",
+      "semestre": 2,
+      "asignatura": "ciencias-naturales",
+      "objetivo": "Preparar la disertación: reconocer plantas y animales de Chile, nombrar el copihue y el pudú con una característica de cada uno, explicar dos acciones para cuidarlos y ensayar con voz fuerte, según la rúbrica del colegio.",
+      "archivo": "1-basico/semestre-2/ciencias-naturales/flora-fauna-practica.html",
+      "emoji": "🌺",
+      "fecha": "2026-11-17"
+    },
+    {
+      "id": "cn-flora-fauna-presentacion",
+      "titulo": "Flora y fauna de Chile · Presentación para el curso",
+      "curso": "1-basico",
+      "semestre": 2,
+      "asignatura": "ciencias-naturales",
+      "objetivo": "Cinco diapositivas para proyectar en la disertación de Ciencias: saludo, el copihue, el pudú, cómo los cuidamos y despedida. Se descarga como PowerPoint para llevar en pendrive.",
+      "archivo": "1-basico/semestre-2/ciencias-naturales/flora-fauna-presentacion.html",
+      "emoji": "🦌",
+      "fecha": "2026-11-17"
     }
   ]
 }

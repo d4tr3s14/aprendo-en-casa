@@ -1,0 +1,1276 @@
+<!doctype html>
+<html lang="es-CL">
+<!--
+  Flora y fauna de Chile · Practico mi disertación
+  Aprendo en casa · 1° Básico · Ciencias Naturales
+
+  Archivo único autocontenido. Funciona sin conexión.
+  · Voz natural: audio/flora-fauna/ (lo crea herramientas/generar-audios.py),
+    voz chilena es-CL-CatalinaNeural. Si falta un audio, habla la voz del dispositivo.
+  · Imágenes: img-flora-fauna/ (prompts en img-flora-fauna/LEEME-fotos-flora-fauna.md).
+    Mientras no estén, se ven emojis.
+  · Todo lo que se dice está en el bloque <script id="datos">. Las diapositivas
+    son las mismas de flora-fauna-presentacion.html (comparten los audios).
+-->
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="theme-color" content="#FCFCFC" media="(prefers-color-scheme: light)">
+<meta name="theme-color" content="#141414" media="(prefers-color-scheme: dark)">
+<title>Flora y fauna de Chile · Practico mi disertación</title>
+<style>
+/* tokens y base común: bloque generado más abajo (diseno/). Componentes: DESIGN.md §5 */
+*{box-sizing:border-box}
+html,body{margin:0;-webkit-text-size-adjust:100%}
+body{min-height:100vh;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}
+button{font:inherit;color:inherit}
+.marco{max-width:560px;margin:0 auto;padding:0 16px 32px}
+[hidden]{display:none!important}
+
+/* barra superior */
+.barra{
+  position:sticky;top:0;z-index:30;display:flex;align-items:center;gap:8px;
+  margin:0 -16px 16px;padding:8px 16px;background:var(--bg-page);border-bottom:1px solid var(--border-primary);
+}
+.barra .esp{flex:1}
+.chip{
+  font:500 var(--fs-meta)/1 var(--font-ui);border:1px solid var(--border-primary);border-radius:var(--r-xs);
+  padding:0 14px;min-height:var(--toque);display:inline-flex;align-items:center;gap:6px;text-decoration:none;
+  background:var(--bg-elevated);color:var(--text-primary);box-shadow:var(--shadow-L1);cursor:pointer;touch-action:manipulation;
+  transition:background var(--t-rapida);
+}
+.chip:hover{background:var(--tint-strong)}
+.chip[aria-pressed="false"]{background:transparent;box-shadow:none;color:var(--text-secondary)}
+.contador{min-height:36px;border-radius:var(--r-pill);background:transparent;box-shadow:none}
+.contador.salta{animation:resalta 1s ease-out}
+@keyframes resalta{0%{background:var(--accent-tint);border-color:var(--accent)}100%{background:transparent}}
+
+/* botones */
+.btn{
+  font:500 1.125rem/1.2 var(--font-ui);border:1px solid transparent;border-radius:var(--r-sm);padding:0 18px;min-height:var(--toque-respuesta);
+  background:var(--button-neutral);color:var(--button-neutral-text);cursor:pointer;touch-action:manipulation;text-decoration:none;
+  display:inline-flex;align-items:center;justify-content:center;gap:8px;transition:opacity var(--t-rapida),background var(--t-rapida);
+}
+.btn:hover{opacity:.9}
+.btn:active{opacity:.8}
+.btn.agua{background:var(--bg-elevated);color:var(--text-primary);border-color:var(--border-primary);box-shadow:var(--shadow-L1)}
+.btn.agua:hover{opacity:1;background:var(--tint-strong)}
+.btn.ancho{width:100%}
+.btn:disabled{opacity:.4;cursor:default}
+.btn.grabando{background:var(--red);color:#FFF}
+
+/* portada */
+.portada h1{font:500 var(--fs-display)/1.05 var(--font-ui);letter-spacing:-.02em;margin:8px 0 6px;color:var(--text-strong)}
+.portada .sub{font-size:var(--fs-body);margin:0 0 12px;color:var(--text-secondary)}
+.leer{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:16px}
+.leer .btn{font-size:1rem;white-space:nowrap;padding:0 10px}
+.misiones{display:grid;grid-template-columns:1fr 1fr;gap:8px;padding:8px;border-radius:var(--r-lg);background:var(--bg-wash);box-shadow:var(--shadow-ring)}
+.cuadro{
+  position:relative;border:1px solid var(--border-primary);border-radius:var(--r-sm);min-height:124px;padding:12px 8px 10px;
+  cursor:pointer;touch-action:manipulation;background:var(--bg-elevated);color:var(--text-primary);box-shadow:var(--shadow-L1);
+  display:flex;flex-direction:column;align-items:center;justify-content:center;gap:4px;text-align:center;
+  transition:border-color var(--t-rapida);
+}
+.cuadro:hover{border-color:var(--border-hover)}
+.cuadro:active{background:var(--tint-faint)}
+.cuadro .emo{font-size:2.4rem;line-height:1}
+.cuadro .nom,.cuadro .est{display:block}
+.cuadro .nom{font:500 var(--fs-label)/1.2 var(--font-ui)}
+.cuadro .est{font-size:var(--fs-meta);color:var(--text-secondary)}
+.cuadro.hecha{border-color:var(--green);background:var(--green-tint)}
+.cuadro.hecha .est{display:inline-flex;align-items:center;gap:6px;color:var(--text-primary)}
+.cuadro.hecha .est::before{content:"";width:8px;height:8px;border-radius:9999px;background:var(--green)}
+.cuadro.largo{grid-column:1 / -1;min-height:96px;flex-direction:row;gap:12px}
+.trofeo{margin:16px 0 0;padding:16px;border-radius:var(--r-lg);text-align:center;background:var(--bg-elevated);border:1px solid var(--green);box-shadow:var(--shadow-L1)}
+.trofeo .emo{font-size:3rem}
+.trofeo h2{font:500 var(--fs-title)/1.25 var(--font-ui);margin:4px 0 0}
+.pie{margin-top:20px;font-size:var(--fs-meta);color:var(--text-secondary);text-align:center}
+.linkbtn{background:none;border:0;border-radius:var(--r-xs);padding:0 10px;color:var(--red);font-size:var(--fs-meta);cursor:pointer;min-height:44px;transition:background var(--t-rapida)}
+.linkbtn:hover{background:var(--red-tint)}
+
+/* guía para el adulto */
+.guia{margin-top:16px;border:1px solid var(--border-primary);border-radius:var(--r-lg);background:var(--bg-elevated);box-shadow:var(--shadow-L1)}
+.guia summary{cursor:pointer;padding:14px 16px;font:500 var(--fs-label)/1.3 var(--font-ui);min-height:var(--toque);list-style-position:inside}
+.guia .dentro{padding:0 16px 16px;font-size:var(--fs-body)}
+.guia h3{font:500 var(--fs-label)/1.3 var(--font-ui);margin:14px 0 6px}
+.guia p{margin:0 0 8px;color:var(--text-secondary)}
+.guia ul{margin:0 0 8px;padding-left:20px;color:var(--text-secondary)}
+.guia li{margin-bottom:4px}
+.guion-p{margin:0 0 10px;padding:10px 12px;border-radius:var(--r-sm);background:var(--tint-faint);border:1px solid var(--border-secondary)}
+.guion-p b{display:block;font-weight:500;color:var(--text-strong)}
+.guion-p span{display:block;font-size:var(--fs-meta);color:var(--text-secondary)}
+
+/* juego */
+.cabeza{display:flex;align-items:center;gap:10px;margin-bottom:8px}
+.cabeza h2{font:500 var(--fs-title)/1.25 var(--font-ui);margin:0;flex:1}
+.puntos{display:flex;gap:6px;flex-wrap:wrap;margin:0 0 12px}
+.puntos i{width:8px;height:8px;border-radius:9999px;background:var(--tint-strong);display:block}
+.puntos i.ok{background:var(--green)}
+.puntos i.ya{background:var(--accent)}
+.tarjeta{background:var(--bg-elevated);border:1px solid var(--border-primary);border-radius:var(--r-lg);padding:16px;box-shadow:var(--shadow-L1)}
+.pregunta{display:flex;gap:12px;align-items:center}
+.pregunta .grande{font-size:3rem;line-height:1;flex:none}
+.pregunta p{font:500 var(--fs-title)/1.3 var(--font-ui);margin:0;flex:1}
+.oir{
+  flex:none;width:var(--toque);height:var(--toque);border-radius:var(--r-xs);border:1px solid var(--border-primary);
+  background:var(--bg-elevated);font-size:1.3rem;box-shadow:var(--shadow-L1);cursor:pointer;transition:background var(--t-rapida);
+}
+.oir:hover{background:var(--tint-strong)}
+.opciones{display:grid;gap:8px;margin-top:14px}
+.opciones.dos{grid-template-columns:1fr 1fr}
+.opciones.fotos{grid-template-columns:repeat(3,1fr)}
+.op{
+  display:flex;align-items:center;gap:12px;width:100%;min-height:68px;border:1px solid var(--border-primary);border-radius:var(--r-sm);
+  padding:10px 14px;text-align:left;background:var(--bg-elevated);color:var(--text-primary);font:500 var(--fs-label)/1.3 var(--font-ui);
+  box-shadow:var(--shadow-L1);cursor:pointer;touch-action:manipulation;transition:background var(--t-rapida),border-color var(--t-rapida);
+}
+.op:hover{border-color:var(--border-hover)}
+.op:active{background:var(--tint-faint)}
+.op .e{font-size:2rem;line-height:1;flex:none}
+.opciones.dos .op{flex-direction:column;justify-content:center;text-align:center;min-height:104px;gap:6px}
+.opciones.dos .op .e{font-size:2.6rem}
+.opciones.fotos .op{flex-direction:column;justify-content:center;text-align:center;padding:6px;gap:6px}
+.opciones.fotos .op .ima{width:100%}
+.opciones.fotos .op .rot{min-height:1.3em;font-size:var(--fs-meta)}
+.op.bien{background:var(--green-tint);border-color:var(--green)}
+.op.no{opacity:.4;cursor:default;box-shadow:none}
+.op.pistaluz{border-color:var(--accent);box-shadow:0 0 0 3px var(--accent-tint)}
+
+/* imágenes: foto de img-flora-fauna/ o emoji de respaldo */
+.ima{
+  position:relative;display:flex;align-items:center;justify-content:center;aspect-ratio:1/1;width:100%;
+  border-radius:var(--r-sm);overflow:hidden;background:var(--tint-faint);
+}
+.ima .emo{font-size:2.6rem;line-height:1}
+.ima img{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;display:block}
+.foto-ser{max-width:240px;margin:14px auto 0}
+.foto-ser .emo{font-size:5rem}
+.nombre-ser{font:500 1.6rem/1.2 var(--font-ui);color:var(--text-strong);text-align:center;margin:10px 0 0}
+
+/* diapositiva de práctica (modelo y ensayo): la misma estructura que la presentación */
+.diapo{border:1px solid var(--border-primary);border-radius:var(--r-lg);padding:14px;background:var(--bg-page)}
+.diapo .ima.portada{max-width:240px;margin:0 auto}
+.diapo .ima.portada .emo{font-size:5rem}
+.titulo-d{font:500 1.7rem/1.15 var(--font-ui);letter-spacing:-.02em;color:var(--text-strong);text-align:center;margin:10px 0 4px}
+.eyebrow{display:table;margin:0 auto 10px;font:500 var(--fs-meta)/1 var(--font-ui);padding:8px 12px;border:1px solid var(--border-primary);border-radius:var(--r-pill);background:var(--bg-elevated);color:var(--text-secondary)}
+.ficha{display:flex;flex-direction:column;align-items:center;gap:8px}
+.ficha .foto{position:relative;width:min(240px,70vw);border-radius:var(--r-sm);border:1px solid transparent;transition:border-color var(--t-rapida),box-shadow var(--t-rapida)}
+.ficha .foto .emo{font-size:5rem}
+.ficha .nombre{font:500 2.2rem/1.1 var(--font-ui);letter-spacing:-.02em;color:var(--text-strong);border-radius:6px;padding:0 6px}
+.rasgos{display:grid;gap:8px;margin-top:12px}
+.rasgo{
+  position:relative;display:flex;align-items:center;gap:12px;padding:10px 12px;border:1px solid var(--border-primary);
+  border-radius:var(--r-sm);background:var(--bg-elevated);font:500 var(--fs-label)/1.3 var(--font-ui);
+  transition:border-color var(--t-rapida),box-shadow var(--t-rapida);
+}
+.rasgo .e{font-size:1.8rem;line-height:1;flex:none}
+.cuidados{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-top:8px}
+.accion{position:relative;border:1px solid var(--border-primary);border-radius:var(--r-sm);padding:6px 6px 8px;background:var(--bg-elevated);text-align:center;transition:border-color var(--t-rapida),box-shadow var(--t-rapida)}
+.accion b{display:block;font:500 var(--fs-label)/1.25 var(--font-ui);margin-top:6px;color:var(--text-strong)}
+.senala{border-color:var(--accent)!important;box-shadow:0 0 0 3px var(--accent-tint)!important}
+.ficha .foto.senala::after,.accion.senala::after{content:"👈";position:absolute;right:-8px;top:-14px;font-size:1.8rem;line-height:1}
+.frase{font:500 1.2rem/1.5 var(--font-ui);color:var(--text-strong);margin:14px 0 0}
+.frase span{border-radius:4px;padding:0 2px;transition:background var(--t-rapida)}
+.frase span.senala{background:var(--accent-tint);box-shadow:none!important}
+.frase .hueco{display:inline-block;min-width:4.5em;border-bottom:2px dashed var(--border-hover);color:var(--text-tertiary);font-weight:400}
+.consejo{margin:12px 0 0;padding:10px 12px;border-radius:var(--r-sm);background:var(--tint-faint);font-size:var(--fs-body);color:var(--text-primary)}
+.respuesta{margin:14px 0 0;padding:12px 14px;border-radius:var(--r-sm);border:1px dashed var(--border-hover);font:500 var(--fs-label)/1.4 var(--font-ui);color:var(--text-primary)}
+
+/* orden */
+.fila{display:grid;grid-template-columns:repeat(5,1fr);gap:6px;margin:12px 0}
+.fila span{
+  aspect-ratio:1;border-radius:var(--r-xs);border:1px dashed var(--border-hover);
+  display:flex;align-items:center;justify-content:center;font:500 1.1rem/1 var(--font-mono);color:var(--text-tertiary);
+}
+.fila span.lleno{border:1px solid var(--border-primary);background:var(--bg-elevated);font-size:1.6rem}
+.escenas{display:grid;grid-template-columns:1fr 1fr;gap:8px}
+.escena{position:relative}
+.escena .op{flex-direction:column;justify-content:center;text-align:center;min-height:118px;padding:10px 8px 12px}
+.escena .op .e{font-size:2.4rem}
+.escena .mini{
+  position:absolute;top:4px;right:4px;width:44px;height:44px;border-radius:var(--r-xs);border:0;
+  background:transparent;font-size:1.1rem;cursor:pointer;transition:background var(--t-rapida);
+}
+.escena .mini:hover{background:var(--tint-strong)}
+.escena.usada{visibility:hidden}
+
+/* aviso */
+.aviso{
+  position:relative;margin-top:14px;border-radius:var(--r-sm);padding:12px 14px 12px 32px;
+  font-weight:500;font-size:var(--fs-body);line-height:1.4;
+  background:var(--bg-elevated);color:var(--text-primary);border:1px solid var(--border-primary);box-shadow:var(--shadow-L1);
+}
+.aviso::before{content:"";position:absolute;left:14px;top:19px;width:8px;height:8px;border-radius:9999px;background:var(--green)}
+.aviso.dato b{display:block;font:500 var(--fs-title)/1.3 var(--font-ui);color:var(--text-strong)}
+.aviso.casi::before{background:var(--orange)}
+.acciones{display:flex;gap:8px;margin-top:14px;flex-wrap:wrap}
+.acciones .btn{flex:1 1 auto}
+.acciones .btn.chico{flex:0 0 64px;padding:0;font-size:1.4rem}
+.estado{font-size:var(--fs-meta);color:var(--text-secondary);margin:8px 0 0;text-align:center;min-height:1.2em}
+
+/* rúbrica */
+.nivel{flex-direction:column;align-items:flex-start;gap:2px}
+.nivel .pts{font:500 var(--fs-meta)/1 var(--font-mono);color:var(--text-secondary)}
+.nivel .desc{font-weight:400;font-size:var(--fs-body);line-height:1.35}
+
+/* final */
+.final{text-align:center}
+.final .lamina{font-size:5rem;line-height:1;margin:8px auto;width:140px;height:140px;border-radius:var(--r-lg);display:flex;align-items:center;justify-content:center;background:var(--tint-faint);border:1px solid var(--border-primary)}
+.final h2{font:500 var(--fs-display)/1.1 var(--font-ui);letter-spacing:-.02em;margin:10px 0 4px;color:var(--text-strong)}
+.final .estrellas{font-size:1.6rem;letter-spacing:2px;margin:6px 0 14px;word-break:break-all}
+.final .btn{margin-top:8px}
+.nota{font:500 3rem/1 var(--font-mono);color:var(--text-strong);margin:6px 0}
+
+@keyframes sacude{0%,100%{transform:translateX(0)}25%{transform:translateX(-6px)}75%{transform:translateX(6px)}}
+@keyframes salta{from{opacity:0}to{opacity:1}}
+.sacude{animation:sacude .3s ease-out}
+.salta{animation:salta .16s ease-out}
+.confeti{position:fixed;top:-40px;font-size:1.4rem;pointer-events:none;z-index:9;animation:cae 1.6s linear forwards}
+@keyframes cae{to{transform:translateY(110vh) rotate(360deg);opacity:.2}}
+@media (max-width:380px){ .ficha .nombre{font-size:1.8rem} .titulo-d{font-size:1.45rem} }
+</style>
+<!-- selva:css modo=moderno · generado por herramientas/sincronizar.py, no editar aquí -->
+<style id="selva">
+/* ==========================================================================
+   TOKENS · DESIGN.md §9 (fuente de verdad: DESIGN.md en la raíz)
+   Neutros casi blancos, un solo acento azul, bordes de 1px y color solo para
+   comunicar estado. Se incrusta primero en cada actividad con
+   python herramientas/sincronizar.py
+   ========================================================================== */
+:root{
+  color-scheme:light dark;
+  --bg-page:#FCFCFC; --bg-wash:#F8F8F8; --bg-elevated:#FFFFFF;
+  --text-primary:#191919; --text-strong:#000;
+  --text-secondary:rgba(25,25,25,.56); --text-tertiary:rgba(25,25,25,.40);
+  --border-primary:rgba(0,0,0,.08); --border-secondary:rgba(0,0,0,.06); --border-hover:rgba(0,0,0,.12);
+  --tint-strong:rgba(0,0,0,.08); --tint-soft:rgba(0,0,0,.06); --tint-faint:rgba(0,0,0,.04);
+  --accent:#317CFF; --accent-tint:rgba(51,125,244,.10); --button-neutral:#363636; --button-neutral-text:#FFF;
+  --green:#00A558; --green-tint:rgba(62,237,155,.20);
+  --red:#F53B3A; --red-tint:rgba(245,59,58,.12);
+  --orange:#F58E3A; --orange-tint:rgba(245,142,58,.12);
+  --purple:#956CDE; --purple-tint:rgba(149,108,222,.12);
+  --font-ui:Inter, -apple-system, system-ui, "Segoe UI", sans-serif;
+  --font-mono:'Geist Mono','IBM Plex Mono',ui-monospace,monospace;
+  --r-xs:6px; --r-sm:8px; --r-md:10px; --r-lg:12px; --r-pill:999px;
+  --shadow-L1:0 1px 2px 0 rgba(0,0,0,.05);
+  --shadow-L2:0 1px 3px 0 rgba(0,0,0,.06),0 1px 2px 0 rgba(0,0,0,.06);
+  --shadow-ring:0 0 3px 0 rgba(0,0,0,.06),0 0 0 .5px rgba(0,0,0,.08);
+  --shadow-L3:0 10px 15px -3px rgba(0,0,0,.06);
+  --shadow-L4:0 25px 50px -12px rgba(0,0,0,.25);
+  --t-rapida:140ms ease-out;
+
+  /* Adaptación a 1° básico (INSTRUCCIONES-PROYECTO.md): la app se usa con el dedo
+     y por una niña que aún no lee fluido. Se mantiene el lenguaje visual de
+     DESIGN.md pero el texto nunca baja de 15 px y los toques miden ≥ 48 px. */
+  --fs-meta:15px; --fs-body:17px; --fs-label:17px; --fs-title:clamp(1.25rem,4.6vw,1.6rem);
+  --fs-display:clamp(2rem,8vw,3rem);
+  --toque:48px; --toque-respuesta:56px;
+}
+@media (prefers-color-scheme: dark){
+  :root:not([data-theme="light"]){
+    --bg-page:#141414; --bg-wash:#191919; --bg-elevated:#1F1F1F;
+    --text-primary:rgba(255,255,255,.90); --text-strong:#FFF;
+    --text-secondary:rgba(255,255,255,.52); --text-tertiary:rgba(255,255,255,.40);
+    --border-primary:rgba(255,255,255,.08); --border-secondary:rgba(255,255,255,.04); --border-hover:rgba(255,255,255,.16);
+    --tint-strong:rgba(255,255,255,.08); --tint-soft:rgba(255,255,255,.05); --tint-faint:rgba(255,255,255,.03);
+    --accent:#49B0FF; --button-neutral:#F9F9F9; --button-neutral-text:#000;
+    --green:#00EC7E; --green-tint:rgba(0,236,126,.08); --orange-tint:rgba(245,142,58,.08);
+    --shadow-L1:0 1px 2px 0 rgba(0,0,0,.20);
+    --shadow-L3:0 10px 15px -3px rgba(0,0,0,.64);
+    --shadow-L4:0 25px 50px -12px rgba(0,0,0,.50);
+  }
+}
+:root[data-theme="dark"]{
+  --bg-page:#141414; --bg-wash:#191919; --bg-elevated:#1F1F1F;
+  --text-primary:rgba(255,255,255,.90); --text-strong:#FFF;
+  --text-secondary:rgba(255,255,255,.52); --text-tertiary:rgba(255,255,255,.40);
+  --border-primary:rgba(255,255,255,.08); --border-secondary:rgba(255,255,255,.04); --border-hover:rgba(255,255,255,.16);
+  --tint-strong:rgba(255,255,255,.08); --tint-soft:rgba(255,255,255,.05); --tint-faint:rgba(255,255,255,.03);
+  --accent:#49B0FF; --button-neutral:#F9F9F9; --button-neutral-text:#000;
+  --green:#00EC7E; --green-tint:rgba(0,236,126,.08); --orange-tint:rgba(245,142,58,.08);
+  --shadow-L1:0 1px 2px 0 rgba(0,0,0,.20);
+  --shadow-L3:0 10px 15px -3px rgba(0,0,0,.64);
+  --shadow-L4:0 25px 50px -12px rgba(0,0,0,.50);
+}
+/* ==========================================================================
+   BASE común (tipografía, superficie, accesibilidad) · ver DESIGN.md
+   Fuente de verdad: diseno/. No edites el bloque dentro de cada actividad:
+   edita aquí y corre  python herramientas/sincronizar.py
+   ========================================================================== */
+html{-webkit-text-size-adjust:100%;text-size-adjust:100%}
+/* iPad: se mira a más distancia, todo crece un 12 % */
+@media (min-width:700px) and (min-height:600px){ html{font-size:112.5%} }
+*{-webkit-tap-highlight-color:transparent}
+body{
+  background:var(--bg-page);color:var(--text-primary);
+  font:400 var(--fs-body)/1.45 var(--font-ui);
+  -webkit-font-smoothing:antialiased;
+}
+h1,h2,h3{font-family:var(--font-ui);font-weight:500;letter-spacing:-.01em}
+b,strong{font-weight:600}
+button,a{touch-action:manipulation}
+button{font-family:var(--font-ui)}
+:focus-visible{outline:2px solid var(--accent);outline-offset:2px}
+@media (prefers-reduced-motion: reduce){
+  *,*::before,*::after{animation:none !important;transition:none !important;scroll-behavior:auto !important}
+  .confeti{display:none !important}
+}
+
+/* diálogo "¿Quieres salir?" (lo crea selva.js) · modal: bg-elevated + sombra L4 */
+.selva-dialogo{
+  border:1px solid var(--border-primary);border-radius:var(--r-lg);padding:20px 20px 16px;
+  width:min(360px, calc(100vw - 32px));
+  background:var(--bg-elevated);color:var(--text-primary);text-align:center;box-shadow:var(--shadow-L4);
+  font-family:var(--font-ui);
+}
+.selva-dialogo::backdrop{background:rgba(0,0,0,.32)}
+.selva-dialogo-emo{font-size:2.6rem;line-height:1}
+.selva-dialogo h2{font:500 1.25rem/1.3 var(--font-ui);margin:10px 0 4px;color:var(--text-strong)}
+.selva-dialogo p{font-size:var(--fs-body);line-height:1.4;margin:0 0 16px;color:var(--text-secondary)}
+.selva-dialogo button{
+  display:flex;align-items:center;justify-content:center;width:100%;min-height:var(--toque);
+  border:1px solid transparent;border-radius:var(--r-xs);cursor:pointer;
+  font:500 var(--fs-label)/1 var(--font-ui);transition:background var(--t-rapida);
+}
+.selva-seguir{background:var(--button-neutral);color:var(--button-neutral-text);margin-bottom:8px}
+.selva-salir{background:transparent;color:var(--red)}
+.selva-salir:hover{background:var(--red-tint)}
+</style>
+<!-- /selva:css -->
+</head>
+<body>
+<div class="marco">
+  <nav class="barra" aria-label="Controles">
+    <a class="chip" href="../../../index.html">🏠 Inicio</a>
+    <span class="esp"></span>
+    <span class="chip contador" id="cuenta" aria-live="polite">⭐ 0</span>
+    <button class="chip" id="sonido" aria-pressed="true" aria-label="Silenciar voz y sonidos">🔊</button>
+  </nav>
+
+  <!-- PORTADA -->
+  <section id="pInicio" class="portada">
+    <h1>Flora y fauna de Chile</h1>
+    <p class="sub">Practico mi disertación de Ciencias: el copihue 🌺 y el pudú 🦌. Completa las misiones.</p>
+    <div class="leer">
+      <button class="btn agua" id="btnInstr">🔊 Qué hacer</button>
+      <a class="btn agua" href="flora-fauna-presentacion.html">📽️ Presentación</a>
+    </div>
+    <div class="misiones" id="misiones"></div>
+    <div class="trofeo" id="trofeo" hidden>
+      <div class="emo">🏆</div>
+      <h2>¡Misiones completas!</h2>
+      <p>Estás lista para presentar el copihue y el pudú.</p>
+    </div>
+
+    <details class="guia" id="guia">
+      <summary>📋 Para papá o mamá: guion, preguntas y datos</summary>
+      <div class="dentro" id="guiaDentro"></div>
+    </details>
+
+    <p class="pie"><button class="linkbtn" id="borrar">Empezar todo de nuevo</button></p>
+  </section>
+
+  <!-- JUEGO -->
+  <section id="pJuego" hidden>
+    <div class="cabeza"><h2 id="titMision"></h2></div>
+    <div class="puntos" id="puntos" aria-hidden="true"></div>
+    <div id="zona"></div>
+  </section>
+
+  <!-- FINAL DE MISIÓN -->
+  <section id="pFinal" class="final" hidden>
+    <div class="lamina salta" id="lamina" aria-hidden="true"></div>
+    <h2 id="finTit"></h2>
+    <p id="finTxt" style="font-size:1.15rem;margin:0 0 4px"></p>
+    <div class="nota" id="finNota" hidden></div>
+    <div class="estrellas" id="finEst" aria-hidden="true"></div>
+    <button class="btn ancho" id="btnVolver">🌿 Volver a mis misiones</button>
+    <button class="btn agua ancho" id="btnRepetir">🔁 Jugar esta otra vez</button>
+  </section>
+</div>
+
+<script type="application/json" id="datos">
+{
+"audio":"audio/flora-fauna/",
+"diapos":[
+ {"tipo":"portada","id":"hola","e":"👋","img":"portada","rotulo":"Saludo","orden_t":"El saludo",
+  "partes":[{"t":"¡Hola!","marca":"0"},{"t":"Me llamo","marca":"1"},{"pausa":1400,"marca":"2"},{"t":"Hoy les presento una planta y un animal de Chile.","marca":"3"}],
+  "consejo":"Mira a tus compañeros y sonríe. Cuando llegue la pausa, di tu nombre."},
+ {"tipo":"ficha","id":"copihue","e":"🌺","img":"copihue","grupo":"🌿 Planta de Chile","rotulo":"Copihue","orden_t":"La planta",
+  "filas":[{"marca":"c1","e":"🔔","rotulo":"Flores rojas con forma de campanita"},{"marca":"c2","e":"⭐","rotulo":"Flor nacional de Chile"}],
+  "partes":[{"t":"Esta planta es el copihue.","marca":"nombre"},{"t":"Tiene flores rojas con forma de campanita.","marca":"c1"},{"t":"Es la flor nacional de Chile.","marca":"c2"}],
+  "consejo":"Señala la foto del copihue con la mano mientras hablas. Si dices una característica, ya cumples."},
+ {"tipo":"ficha","id":"pudu","e":"🦌","img":"pudu","grupo":"🐾 Animal de Chile","rotulo":"Pudú","orden_t":"El animal",
+  "filas":[{"marca":"c1","e":"🐕","rotulo":"Pequeñito, del tamaño de un perrito"},{"marca":"c2","e":"🌎","rotulo":"El ciervo más pequeño del mundo"}],
+  "partes":[{"t":"Este animal es el pudú.","marca":"nombre"},{"t":"Es pequeñito, del tamaño de un perrito.","marca":"c1"},{"t":"Es el ciervo más pequeño del mundo.","marca":"c2"}],
+  "consejo":"Señala la foto del pudú. Habla fuerte, para que te escuchen hasta atrás."},
+ {"tipo":"cuidado","id":"cuidar","e":"💚","rotulo":"¿Cómo los cuidamos?","orden_t":"Cómo los cuidamos",
+  "acciones":[{"marca":"a1","img":"no-arrancar","e":"🌺","rotulo":"No arrancar las flores"},{"marca":"a2","img":"sin-basura","e":"🗑️","rotulo":"No dejar basura en el bosque"}],
+  "partes":[{"t":"Para cuidarlos:","marca":"titulo"},{"t":"Uno: no arrancar las flores.","marca":"a1"},{"t":"Dos: no dejar basura en el bosque.","marca":"a2"}],
+  "consejo":"Muestra un dedo y después dos: así no se te olvida ninguna de las dos acciones."},
+ {"tipo":"cierre","id":"gracias","e":"💛","img":"gracias","rotulo":"¡Muchas gracias!","orden_t":"Las gracias",
+  "partes":[{"t":"¡Muchas gracias!","marca":"0"}],
+  "consejo":"Dilo fuerte, con una sonrisa, y espera los aplausos."}
+],
+"seres":[
+ {"id":"copihue","e":"🌺","rotulo":"Copihue","grupo":"planta","q":"¿El copihue es una planta o un animal?","dato":"El copihue es una planta. Es la flor nacional de Chile."},
+ {"id":"pudu","e":"🦌","rotulo":"Pudú","grupo":"animal","q":"¿El pudú es una planta o un animal?","dato":"El pudú es un animal. Es el ciervo más pequeño del mundo."},
+ {"id":"araucaria","e":"🌲","rotulo":"Araucaria","grupo":"planta","q":"¿La araucaria es una planta o un animal?","dato":"La araucaria es una planta. Es un árbol muy alto que da piñones."},
+ {"id":"condor","e":"🦅","rotulo":"Cóndor","grupo":"animal","q":"¿El cóndor es una planta o un animal?","dato":"El cóndor es un animal. Es un ave enorme que vuela sobre la cordillera."},
+ {"id":"ananuca","e":"🌸","rotulo":"Añañuca","grupo":"planta","q":"¿La añañuca es una planta o un animal?","dato":"La añañuca es una planta. Florece en el desierto florido."},
+ {"id":"guina","e":"🐈","rotulo":"Güiña","grupo":"animal","q":"¿La güiña es una planta o un animal?","dato":"La güiña es un animal. Es un gatito salvaje con manchas, muy chiquitito."},
+ {"id":"palma","e":"🌴","rotulo":"Palma chilena","grupo":"planta","q":"¿La palma chilena es una planta o un animal?","dato":"La palma chilena es una planta. De ella salen los coquitos."},
+ {"id":"pinguino","e":"🐧","rotulo":"Pingüino de Humboldt","grupo":"animal","q":"¿El pingüino de Humboldt es una planta o un animal?","dato":"El pingüino es un animal. Vive en las costas de Chile y nada muy rápido."}
+],
+"misiones":[
+ {"id":"modelo","e":"🎧","nombre":"Mira la presentación","tipo":"modelo","largo":true,
+  "intro":"Primero, mira y escucha la presentación completa. Fíjate en la manito: así vas a señalar las fotos."},
+ {"id":"clasifica","e":"🌿","nombre":"¿Planta o animal?","tipo":"clasifica",
+  "intro":"Misión uno. Mira la foto y decide: ¿es una planta o un animal?"},
+ {"id":"copihue","e":"🌺","nombre":"Mi planta: el copihue","tipo":"elige",
+  "intro":"Misión dos. Vamos a conocer tu planta: el copihue.",
+  "items":[
+   {"e":"👀","q":"¿Cuál es el copihue? Tócalo.","ids":["copihue","araucaria","palma"],
+    "dato":"¡Ese es el copihue! Tiene flores rojas con forma de campanita.","pista":"Busca la flor roja que cuelga como una campanita."},
+   {"e":"🎨","q":"¿De qué color son las flores del copihue?","ops":[{"e":"🔴","t":"Rojas"},{"e":"🔵","t":"Azules"},{"e":"🟢","t":"Verdes"}],
+    "dato":"¡Sí! Las flores del copihue son rojas. También hay copihues blancos y rosados, pero el más conocido es el rojo.","pista":"Piensa en la foto del copihue. ¿De qué color era?"},
+   {"e":"🔔","q":"¿Qué forma tiene la flor del copihue?","ops":[{"e":"🔔","t":"De campanita"},{"e":"⭐","t":"De estrella"},{"e":"❤️","t":"De corazón"}],
+    "dato":"¡Muy bien! La flor del copihue tiene forma de campanita y cuelga hacia abajo.","pista":"Es una flor que cuelga, como las campanas."},
+   {"e":"🇨🇱","q":"¿Por qué el copihue es especial?","ops":[{"e":"🇨🇱","t":"Es la flor nacional de Chile"},{"e":"🍎","t":"Es una fruta para comer"},{"e":"🌵","t":"Vive en el desierto"}],
+    "dato":"¡Exacto! El copihue es la flor nacional de Chile.","pista":"Es la flor que representa a nuestro país."},
+   {"e":"🗺️","q":"¿Dónde vive el copihue?","ops":[{"e":"🌲","t":"En el bosque del sur"},{"e":"🏜️","t":"En el desierto"},{"e":"🌊","t":"En el mar"}],
+    "dato":"¡Sí! El copihue vive en los bosques del sur de Chile. Se sube por los árboles como una enredadera.","pista":"Al copihue le gusta la sombra y la humedad de los árboles."}
+  ]},
+ {"id":"pudu","e":"🦌","nombre":"Mi animal: el pudú","tipo":"elige",
+  "intro":"Misión tres. Ahora vamos a conocer tu animal: el pudú.",
+  "items":[
+   {"e":"👀","q":"¿Cuál es el pudú? Tócalo.","ids":["pudu","guina","condor"],
+    "dato":"¡Ese es el pudú! Es un ciervo pequeñito.","pista":"Busca el animal que parece un ciervo chiquitito."},
+   {"e":"📏","q":"¿De qué tamaño es el pudú?","ops":[{"e":"🐕","t":"Como un perrito"},{"e":"🐴","t":"Como un caballo"},{"e":"🐘","t":"Como un elefante"}],
+    "dato":"¡Sí! El pudú es pequeñito, del tamaño de un perrito.","pista":"Es muy chiquito. ¿Cuál de estos animales es pequeño?"},
+   {"e":"🤔","q":"¿Qué tipo de animal es el pudú?","ops":[{"e":"🦌","t":"Un ciervo"},{"e":"🐈","t":"Un gato"},{"e":"🐦","t":"Un pájaro"}],
+    "dato":"¡Muy bien! El pudú es un ciervo. ¡El ciervo más pequeño del mundo!","pista":"Tiene patas largas y delgadas, y los machos tienen cuernos cortitos."},
+   {"e":"🗺️","q":"¿Dónde vive el pudú?","ops":[{"e":"🌲","t":"En el bosque del sur"},{"e":"🏜️","t":"En el desierto"},{"e":"🌊","t":"En el mar"}],
+    "dato":"¡Sí! El pudú vive en los bosques del sur de Chile, igual que el copihue.","pista":"Vive escondido entre los árboles."},
+   {"e":"🍃","q":"¿Qué come el pudú?","ops":[{"e":"🌿","t":"Hojas y frutos"},{"e":"🍖","t":"Carne"},{"e":"🐟","t":"Pescado"}],
+    "dato":"¡Exacto! El pudú come hojas, brotes y frutos del bosque.","pista":"Come plantas, como los otros ciervos."}
+  ]},
+ {"id":"cuido","e":"💚","nombre":"Cómo los cuido","tipo":"cuido",
+  "intro":"Misión cuatro. Escucha cada acción y decide: ¿cuida a las plantas y a los animales, o no los cuida?",
+  "dato":"Las dos que vas a decir en tu presentación son: no arrancar las flores, y no dejar basura en el bosque.",
+  "items":[
+   {"e":"🗑️","t":"Botar la basura en el basurero.","bien":true,"dato":"¡Sí! La basura en el bosque daña a las plantas y a los animales."},
+   {"e":"🌺","t":"Arrancar copihues para llevármelos.","bien":false,"dato":"Eso no los cuida. Las flores se quedan en el bosque, así todos las pueden ver."},
+   {"e":"👀","t":"Mirar a los animales sin tocarlos.","bien":true,"dato":"¡Sí! A los animales del bosque se les mira, sin tocarlos ni perseguirlos."},
+   {"e":"🥤","t":"Dejar botellas en el bosque.","bien":false,"dato":"Eso no los cuida. La basura ensucia la casa de los animales."},
+   {"e":"🐕","t":"Dejar que mi perro persiga al pudú.","bien":false,"dato":"Eso no lo cuida. Los perros asustan al pudú. Hay que llevarlos con correa."},
+   {"e":"🚶","t":"Caminar por el sendero.","bien":true,"dato":"¡Sí! Por el sendero no pisamos las plantitas."}
+  ]},
+ {"id":"orden","e":"🔢","nombre":"Ordeno mi presentación","tipo":"orden",
+  "intro":"Misión cinco. Ordena tu presentación. Toca las partes en orden: ¿qué dices primero?",
+  "dato":"Primero saludas, después la planta, después el animal, luego cómo los cuidamos, y al final das las gracias."},
+ {"id":"preguntas","e":"❓","nombre":"Preguntas de la profe","tipo":"preguntas",
+  "intro":"Misión seis. Imagina que la profe te hace preguntas. Escucha y responde en voz alta.",
+  "items":[
+   {"e":"🌺","q":"¿Cómo se llama tu planta?","r":"Mi planta es el copihue."},
+   {"e":"🔔","q":"¿Cómo es el copihue?","r":"Tiene flores rojas con forma de campanita."},
+   {"e":"🦌","q":"¿Cómo se llama tu animal?","r":"Mi animal es el pudú."},
+   {"e":"🐕","q":"¿Cómo es el pudú?","r":"Es pequeñito, del tamaño de un perrito."},
+   {"e":"💚","q":"¿Qué podemos hacer para cuidarlos?","r":"No arrancar las flores y no dejar basura en el bosque."}
+  ]},
+ {"id":"ensayo","e":"🎤","nombre":"Ensayo general","tipo":"ensayo","largo":true,
+  "intro":"Misión siete. ¡Ensayo general! Presenta cada parte en voz alta. Puedes escuchar el modelo y grabarte para escucharte."},
+ {"id":"rubrica","e":"✅","nombre":"Revisión con un adulto","tipo":"rubrica","largo":true,
+  "intro":"Esta misión es con papá o mamá. Presenta todo de corrido, y ellos marcan cómo te fue en cada parte.",
+  "items":[
+   {"e":"🌺","q":"Planta de Chile",
+    "_niveles":["Nombra el copihue y dice una característica, sola.","Nombra el copihue y dice una característica con poca ayuda.","Nombra la planta o su característica con bastante ayuda.","Todavía no logra nombrar la planta ni describirla."],
+    "_consejo":"Repasen «Mi planta: el copihue» y la pregunta «¿Cómo es el copihue?»."},
+   {"e":"🦌","q":"Animal de Chile",
+    "_niveles":["Nombra el pudú y dice una característica, sola.","Nombra el pudú y dice una característica con poca ayuda.","Nombra el animal o su característica con bastante ayuda.","Todavía no logra nombrar el animal ni describirlo."],
+    "_consejo":"Repasen «Mi animal: el pudú» y la pregunta «¿Cómo es el pudú?»."},
+   {"e":"💚","q":"Cómo protegerlos",
+    "_niveles":["Explica dos acciones para cuidar plantas y animales, sola.","Explica dos acciones con poca ayuda.","Menciona una acción, o necesita bastante ayuda.","Todavía no logra mencionar una acción de cuidado."],
+    "_consejo":"Repasen «Cómo los cuido». Truco: un dedo para las flores y dos dedos para la basura."},
+   {"e":"🗣️","q":"Expresión oral",
+    "_niveles":["Habla con voz que se escucha y explica sus ideas con claridad.","Se le escucha y explica casi todo con poca ayuda.","Habla muy bajito o necesita varias preguntas para explicar.","Necesita acompañamiento constante para expresarse."],
+    "_consejo":"Practiquen el ensayo general desde la otra punta de la pieza: que se escuche hasta allá. «Preguntas de la profe» ayuda a explicar sin texto memorizado."},
+   {"e":"🖼️","q":"Material de apoyo",
+    "_niveles":["Muestra su presentación y la usa para explicar: señala las fotos.","Muestra su material y lo usa con poca ayuda.","Muestra el material, pero necesita ayuda para explicarlo.","No logra usar el material, incluso con ayuda."],
+    "_consejo":"Ensayen con la presentación proyectada en el televisor o el computador: decir y señalar la foto al mismo tiempo."}
+  ]}
+],
+"animo":["¡Muy bien!","¡Excelente!","¡Así se hace!","¡Bacán!","¡Perfecto!","¡Súper!","¡Lo lograste!","¡Qué buena!","¡Eres una científica!","¡Bien pensado!"],
+"casi":["Casi… mira bien.","Uy, casi. Intenta de nuevo.","Mmm, no es esa. Tú puedes.","Casi, casi… ¡prueba otra!","Piénsalo otra vez."],
+"frases":{
+ "instr":"Vamos a preparar tu disertación de Ciencias: una planta y un animal de Chile. Tu planta es el copihue y tu animal es el pudú. Primero mira la presentación completa. Después haz las misiones. Cuando terminas una, se pone verde. ¡Complétalas todas!",
+ "cumplida":"¡Misión cumplida!",
+ "volver":"Vuelve a tus misiones para seguir.",
+ "todas":"¡Completaste todas las misiones! Estás lista para presentar.",
+ "pistaPlanta":"Mira bien: no tiene patas ni se mueve sola. Tiene hojas, tallo o flores.",
+ "pistaAnimal":"Mira bien: tiene patas o alas, y se mueve solo.",
+ "loCuida":"¿Esto cuida a las plantas y a los animales?",
+ "piensa":"Piensa: ¿eso ayuda o hace daño a las plantas y a los animales?",
+ "yaPaso":"Esa parte ya la dijiste.",
+ "despues":"Esa parte va después. ¿Qué va antes?",
+ "primero":"¿Qué dices primero?",
+ "yDespues":"¿Y después?",
+ "responde":"Responde en voz alta, con voz fuerte.",
+ "unaRespuesta":"Una buena respuesta es:",
+ "escuchate":"Muy bien. Toca escucharme para oírte.",
+ "revisionLista":"¡Revisión lista! Mira el puntaje."
+}
+}
+</script>
+
+<script>
+"use strict";
+/* ================== DATOS ================== */
+const DATOS=JSON.parse(document.getElementById("datos").textContent);
+const FR=DATOS.frases, MISIONES=DATOS.misiones, PASOS=DATOS.diapos;
+const SER={}; DATOS.seres.forEach(s=>SER[s.id]=s);
+
+/* ================== UTILIDADES ================== */
+const $=s=>document.querySelector(s);
+function el(tag,attrs,...hijos){
+  const n=document.createElement(tag);
+  for(const k in (attrs||{})){
+    if(k==="class") n.className=attrs[k];
+    else if(k.startsWith("on")) n.addEventListener(k.slice(2),attrs[k]);
+    else if(attrs[k]!==null&&attrs[k]!==undefined) n.setAttribute(k,attrs[k]);
+  }
+  for(const h of hijos){ if(h===null||h===undefined||h===false) continue; n.append(h.nodeType?h:document.createTextNode(h)); }
+  return n;
+}
+function baraja(a){a=a.slice();for(let i=a.length-1;i>0;i--){const j=Math.floor(Math.random()*(i+1));[a[i],a[j]]=[a[j],a[i]]}return a}
+const reducido=()=>window.matchMedia&&matchMedia("(prefers-reduced-motion: reduce)").matches;
+function anima(n,c){ if(!n||reducido()) return; n.classList.remove(c); void n.offsetWidth; n.classList.add(c); }
+const espera=ms=>new Promise(r=>setTimeout(r,ms));
+
+/* ================== IMÁGENES ================== */
+const CARPETA="img-flora-fauna/", EXT=[".jpg",".jpeg",".png",".webp"], rutas={};
+function ruta(id){
+  if(!rutas[id]) rutas[id]=new Promise(res=>{
+    (function prueba(k){
+      if(k>=EXT.length){ res(null); return; }
+      const im=new Image(); im.onload=()=>res(CARPETA+id+EXT[k]); im.onerror=()=>prueba(k+1); im.src=CARPETA+id+EXT[k];
+    })(0);
+  });
+  return rutas[id];
+}
+function ima(id,emoji,clase){
+  const caja=el("span",{class:"ima"+(clase?" "+clase:""),"aria-hidden":"true"},el("span",{class:"emo"},emoji));
+  ruta(id).then(u=>{ if(u) caja.append(el("img",{src:u,alt:""})); });
+  return caja;
+}
+
+/* ================== VOZ ==================
+   Cada frase se busca primero como audio grabado con voz natural
+   (audio/flora-fauna/<huella>.mp3, lo crea herramientas/generar-audios.py).
+   Si no está, habla la voz del dispositivo.
+   decir() devuelve "ok", "silencio" o "reemplazada". */
+const Voz=(()=>{
+  const DIR=DATOS.audio;
+  const au=new Audio(); au.preload="auto";
+  let on=true, turno=0, vozES=null;
+  const clips=new Map();
+  const SILENCIO="data:audio/wav;base64,UklGRiQAAABXQVZFZm10IBAAAAABAAEAQB8AAEAfAAABAAgAZGF0YQAAAAA=";
+  let listo=false;
+  function desbloquea(){
+    if(listo) return; listo=true;
+    try{ au.src=SILENCIO; const p=au.play(); if(p&&p.catch) p.catch(()=>{}); }catch(e){}
+  }
+  addEventListener("pointerdown",desbloquea,{capture:true});
+  addEventListener("keydown",desbloquea,{capture:true});
+
+  function limpia(t){
+    return String(t).normalize("NFC").replace(/[\u{1F000}-\u{1FAFF}\u{2600}-\u{27BF}\u{FE0F}\u{200D}«»]/gu,"").replace(/\s+/g," ").trim();
+  }
+  /* huella FNV-1a de 32 bits: la misma que calcula generar-audios.py */
+  function huella(t){
+    let h=0x811c9dc5;
+    for(const b of new TextEncoder().encode(t)){ h^=b; h=Math.imul(h,0x01000193)>>>0; }
+    return h.toString(16).padStart(8,"0");
+  }
+  function clip(t){
+    const h=huella(t);
+    if(!clips.has(h)){
+      clips.set(h,fetch(DIR+h+".mp3")
+        .then(r=>r.ok?r.blob():null)
+        .then(b=>b&&b.size>0?URL.createObjectURL(b):null)
+        .catch(()=>null));
+    }
+    return clips.get(h);
+  }
+  function parar(){
+    try{ au.pause(); }catch(e){}
+    try{ if("speechSynthesis" in window) speechSynthesis.cancel(); }catch(e){}
+  }
+  function toca(url,mio,lento){
+    return new Promise(res=>{
+      let fin=false;
+      const vel=lento?.8:1;
+      const acaba=r=>{ if(fin) return; fin=true; clearInterval(vig); au.onended=au.onerror=au.onplaying=null; res(r); };
+      au.onended=()=>acaba("ok"); au.onerror=()=>acaba("error");
+      au.onplaying=()=>{ try{ au.playbackRate=vel; }catch(e){} };
+      au.src=url;
+      try{ au.defaultPlaybackRate=vel; au.playbackRate=vel; au.preservesPitch=true; au.webkitPreservesPitch=true; }catch(e){}
+      try{ const p=au.play(); if(p&&p.catch) p.catch(()=>acaba("error")); }catch(e){ acaba("error"); }
+      const vig=setInterval(()=>{ if(mio!==turno){ try{au.pause()}catch(e){} acaba("reemplazada"); } },150);
+    });
+  }
+  function eligeVoz(){
+    if(!("speechSynthesis" in window)) return;
+    const vs=speechSynthesis.getVoices(), lang=v=>v.lang.replace("_","-").toLowerCase();
+    vozES=null;
+    for(const p of ["es-cl","es-419","es-mx","es-us","es-es"]){ const v=vs.find(v=>lang(v).startsWith(p)); if(v){vozES=v;break;} }
+    if(!vozES) vozES=vs.find(v=>lang(v).startsWith("es"))||null;
+  }
+  if("speechSynthesis" in window){ eligeVoz(); speechSynthesis.onvoiceschanged=eligeVoz; }
+  function sintetiza(t,mio,lento){
+    return new Promise(res=>{
+      if(!("speechSynthesis" in window)){ res("ok"); return; }
+      try{ speechSynthesis.cancel(); }catch(e){}
+      let fin=false, arranco=false; const t0=Date.now();
+      const estimado=Math.min(16000,1200+t.length*(lento?85:65));
+      const acaba=r=>{ if(fin) return; fin=true; clearInterval(vig); res(mio===turno?r:"reemplazada"); };
+      const u=new SpeechSynthesisUtterance(t);
+      u.lang=vozES?vozES.lang:"es-CL"; if(vozES) u.voice=vozES;
+      u.rate=lento?.7:.9; u.pitch=1.05;
+      u.onstart=()=>{arranco=true}; u.onend=()=>acaba("ok"); u.onerror=()=>acaba("ok");
+      speechSynthesis.speak(u);
+      const vig=setInterval(()=>{
+        if(mio!==turno){ acaba("reemplazada"); return; }
+        const habla=speechSynthesis.speaking||speechSynthesis.pending;
+        if(habla) arranco=true;
+        if(arranco&&!habla&&Date.now()-t0>500){ acaba("ok"); return; }
+        if(!arranco&&Date.now()-t0>1800){ clearInterval(vig); setTimeout(()=>acaba("ok"),Math.max(0,estimado-1800)); }
+      },220);
+    });
+  }
+  /* partes: "texto", {t:"texto", marca, lento}, {pausa:ms, marca} */
+  function normaliza(partes){
+    return [].concat(partes).map(p=>{
+      if(typeof p==="string") return {t:limpia(p)};
+      if(p.pausa) return Object.assign({},p);
+      return Object.assign({},p,{t:limpia(p.t)});
+    }).filter(p=>p.pausa||/[\p{L}\p{N}]/u.test(p.t));
+  }
+  async function decir(partes,opc){
+    opc=opc||{};
+    const mio=++turno; parar();
+    const lista=normaliza(partes);
+    if(!on||!lista.length){ if(opc.alParte) opc.alParte(-1,null); return "silencio"; }
+    lista.forEach(p=>{ if(p.t) clip(p.t); });
+    for(let i=0;i<lista.length;i++){
+      const p=lista[i];
+      if(opc.alParte) opc.alParte(i,p);
+      let r;
+      if(p.pausa){ await espera(p.pausa); r="ok"; }
+      else{
+        const lento=p.lento||opc.lento;
+        const url=await clip(p.t);
+        if(mio!==turno) return "reemplazada";
+        if(url){ r=await toca(url,mio,lento); if(r==="error") r=await sintetiza(p.t,mio,lento); }
+        else r=await sintetiza(p.t,mio,lento);
+      }
+      if(r!=="ok"||mio!==turno){ if(opc.alParte&&mio===turno) opc.alParte(-1,null); return r==="ok"?"reemplazada":r; }
+      if(i<lista.length-1) await espera(170);
+      if(mio!==turno) return "reemplazada";
+    }
+    if(opc.alParte) opc.alParte(-1,null);
+    return "ok";
+  }
+  async function blob(b){
+    const mio=++turno; parar();
+    const url=URL.createObjectURL(b);
+    const r=await toca(url,mio,false);
+    URL.revokeObjectURL(url);
+    return r;
+  }
+  return {
+    decir, blob,
+    calla(){ turno++; parar(); },
+    get on(){ return on; }, set on(v){ on=v; if(!v){ turno++; parar(); } }
+  };
+})();
+const dice=(p,o)=>Voz.decir(p,o);
+const calla=()=>Voz.calla();
+
+/* ================== SONIDO ================== */
+let ctx=null;
+function audio(){
+  if(!ctx){ try{ ctx=new (window.AudioContext||window.webkitAudioContext)(); }catch(e){ ctx=null; } }
+  if(ctx&&ctx.state==="suspended"){ try{ctx.resume()}catch(e){} }
+  return ctx;
+}
+function pito(f,dur,ret,tipo,vol){
+  const c=audio(); if(!c||!Voz.on) return;
+  const o=c.createOscillator(), g=c.createGain(); const t=c.currentTime+(ret||0);
+  o.type=tipo||"sine"; o.frequency.setValueAtTime(f,t);
+  g.gain.setValueAtTime(0.0001,t); g.gain.exponentialRampToValueAtTime(vol||.2,t+.02);
+  g.gain.exponentialRampToValueAtTime(0.0001,t+dur);
+  o.connect(g); g.connect(c.destination); o.start(t); o.stop(t+dur+.05);
+}
+const sAcierto=()=>{pito(523,.18,0,"triangle");pito(659,.18,.1,"triangle");pito(784,.3,.2,"triangle")};
+const sError=()=>{pito(330,.18,0,"sine",.15);pito(262,.28,.14,"sine",.15)};
+const sClic=()=>pito(880,.06,0,"sine",.08);
+const sFanfarria=()=>{[523,659,784,1047].forEach((f,i)=>pito(f,.25,i*.13,"triangle"));pito(1319,.5,.55,"triangle")};
+function confeti(){
+  if(reducido()) return;
+  const cosas=["⭐","🌺","✨","🦌","🌿"];
+  for(let i=0;i<14;i++){
+    const c=el("span",{class:"confeti","aria-hidden":"true"},cosas[i%cosas.length]);
+    c.style.left=(Math.random()*95)+"vw"; c.style.animationDelay=(Math.random()*.4)+"s";
+    document.body.append(c); setTimeout(()=>c.remove(),2200);
+  }
+}
+
+/* frases de ánimo sin repetir */
+function sinRepetir(lista,memo){
+  let x, n=0;
+  do{ x=lista[Math.floor(Math.random()*lista.length)]; n++; }while(memo.includes(x)&&n<20);
+  memo.push(x); if(memo.length>4) memo.shift(); return x;
+}
+const memA=[], memC=[];
+const animo=()=>sinRepetir(DATOS.animo,memA);
+const casi=()=>sinRepetir(DATOS.casi,memC);
+
+/* ================== PROGRESO ================== */
+const CLAVE="flora-fauna:v1";
+let prog={};
+try{ prog=JSON.parse(localStorage.getItem(CLAVE)||"{}")||{}; }catch(e){ prog={}; }
+function guarda(){ try{ localStorage.setItem(CLAVE,JSON.stringify(prog)); }catch(e){} }
+let totalEstrellas=0;
+function pintaCuenta(){ $("#cuenta").textContent="⭐ "+totalEstrellas; }
+function recalcula(){ totalEstrellas=0; for(const k in prog) totalEstrellas+=prog[k].est||0; pintaCuenta(); }
+
+/* nota chilena de 1,0 a 7,0 con exigencia de 60 % sobre 20 puntos (como la rúbrica) */
+function notaChile(p){
+  const n=p>=12?4+3*(p-12)/8:1+3*p/12;
+  return (Math.round(n*10)/10).toFixed(1).replace(".",",");
+}
+
+/* ================== PANTALLAS ================== */
+function pantalla(id){
+  for(const p of ["pInicio","pJuego","pFinal"]) $("#"+p).hidden=(p!==id);
+  window.scrollTo(0,0);
+}
+function cuantos(m){
+  if(m.tipo==="modelo"||m.tipo==="orden"||m.tipo==="ensayo") return PASOS.length;
+  if(m.tipo==="clasifica") return DATOS.seres.length;
+  return m.items.length;
+}
+const UNIDAD={modelo:"partes",clasifica:"seres vivos",elige:"preguntas",cuido:"acciones",orden:"partes",preguntas:"preguntas",ensayo:"partes para decir",rubrica:"criterios"};
+function pintaInicio(){
+  const f=$("#misiones"); f.textContent="";
+  MISIONES.forEach((m,i)=>{
+    const hecha=prog[m.id]&&prog[m.id].hecha;
+    f.append(el("button",{class:"cuadro"+(hecha?" hecha":"")+(m.largo?" largo":""),
+      "aria-label":m.nombre+(hecha?", terminada":""),onclick:()=>{sClic();abrir(i)}},
+      el("span",{class:"emo","aria-hidden":"true"},m.e),
+      el("span",{},el("span",{class:"nom"},m.nombre),
+        el("span",{class:"est"},hecha?(m.tipo==="rubrica"&&prog[m.id].nota!==undefined?"✔ "+prog[m.id].nota+" de 20 pts · nota "+notaChile(prog[m.id].nota):"✔ "+prog[m.id].est+" ⭐"):cuantos(m)+" "+UNIDAD[m.tipo]))));
+  });
+  $("#trofeo").hidden=!MISIONES.filter(m=>m.tipo!=="rubrica").every(m=>prog[m.id]&&prog[m.id].hecha);
+  recalcula();
+}
+/* lo que dice en cada diapositiva, con ___ donde va su nombre */
+const guionDe=p=>p.partes.map(x=>x.pausa?"___.":x.t).join(" ");
+function pintaGuia(){
+  const g=$("#guiaDentro"); g.textContent="";
+  g.append(el("p",{},"La rúbrica pide: nombrar una planta y un animal de Chile, decir una característica de cada uno y explicar dos acciones para cuidarlos, con voz que se escuche y mostrando el material. La profesora aclara que no hace falta memorizar un texto largo: importa que entienda lo que presenta."));
+  g.append(el("h3",{},"Guion (una diapositiva por parte)"));
+  PASOS.forEach(p=>g.append(el("div",{class:"guion-p"},el("b",{},p.e+" "+guionDe(p)),el("span",{},"💡 "+p.consejo))));
+  g.append(el("p",{},"Con decir una característica de cada uno ya cumple. «Flor nacional» y «el ciervo más pequeño del mundo» son extra, si se acuerda."));
+  const mp=MISIONES.find(m=>m.tipo==="preguntas");
+  g.append(el("h3",{},"Preguntas para practicar en la casa"));
+  g.append(el("p",{},"La rúbrica sugiere practicar con preguntas sencillas. Si se queda en blanco el día de la disertación, la profe puede ayudarla así:"));
+  const ul=el("ul",{});
+  mp.items.forEach(it=>ul.append(el("li",{},it.q+" → «"+it.r+"»")));
+  g.append(ul);
+  g.append(el("h3",{},"Datos extra, por si le preguntan"));
+  const ex=el("ul",{});
+  ["Copihue: es una enredadera que trepa por los árboles del bosque del sur. Florece en otoño. Está protegido: no se puede sacar del bosque.",
+   "Pudú: mide unos 40 cm de alto. Los machos tienen cuernos cortitos. Es tímido y se esconde entre los arbustos. Los perros sueltos son uno de sus mayores peligros.",
+   "Los dos viven en los bosques del sur de Chile: por eso se cuidan juntos."].forEach(t=>ex.append(el("li",{},t)));
+  g.append(ex);
+}
+
+/* ================== MOTOR DE MISIONES ================== */
+let M=null, mi=0, idx=0, estrellas=0, resuelto=false, avanceTimer=null, errores=0, ordenSeres=[];
+const zona=()=>$("#zona");
+
+function abrir(i){
+  audio(); M=MISIONES[i]; mi=i; idx=0; estrellas=0;
+  if(M.tipo==="clasifica") ordenSeres=baraja(DATOS.seres.map(s=>s.id));
+  if(M.tipo==="orden") ord={paso:0,orden:baraja(PASOS.map((_,k)=>k))};
+  if(M.tipo==="rubrica") notas=[];
+  $("#titMision").textContent=M.e+" "+M.nombre;
+  pantalla("pJuego");
+  render(true);
+}
+function puntos(){
+  const p=$("#puntos"); p.textContent="";
+  const n=cuantos(M), hechos=M.tipo==="orden"?ord.paso:idx;
+  for(let k=0;k<n;k++) p.append(el("i",{class:k<hechos?"ok":(k===hechos?"ya":"")}));
+}
+function render(conIntro){
+  clearTimeout(avanceTimer); resuelto=false; errores=0;
+  zona().textContent=""; puntos();
+  const pre=conIntro?[M.intro]:[];
+  ({modelo:rModelo,clasifica:rClasifica,elige:rElige,cuido:rCuido,orden:rOrden,preguntas:rPreguntas,ensayo:rEnsayo,rubrica:rRubrica})[M.tipo](pre);
+}
+function tarjetaPregunta(emoji,texto,voz){
+  return el("div",{class:"tarjeta"},
+    el("div",{class:"pregunta"},
+      el("span",{class:"grande","aria-hidden":"true"},emoji),
+      el("p",{id:"txtPreg"},texto),
+      el("button",{class:"oir","aria-label":"Escuchar otra vez",onclick:()=>dice(voz())},"🔊")));
+}
+function aviso(tipo,titulo,contenido){
+  const v=$("#aviso"); if(v) v.remove();
+  const a=el("div",{class:"aviso "+tipo,id:"aviso",role:"status"},titulo?el("b",{},titulo):null,contenido);
+  zona().querySelector(".tarjeta").append(a);
+  anima(a,"salta"); return a;
+}
+function sumaEstrella(){ estrellas++; totalEstrellas++; pintaCuenta(); }
+/* acierto: dato = lo que ella puede repetir en la disertación. auto=false para no avanzar solo */
+function gana(dato,opc){
+  opc=opc||{};
+  resuelto=true; sumaEstrella(); sAcierto(); confeti();
+  const a=animo();
+  aviso("dato",a,dato);
+  cierra([a].concat(opc.voz||[dato]),opc.auto!==false);
+}
+function falla(pista,nodo,despues){
+  errores++; sError(); if(nodo) anima(nodo,"sacude");
+  const c=casi();
+  aviso("casi",null,c+" "+pista);
+  dice([c,pista].concat(despues||[]));
+}
+function cierra(voz,auto){
+  const acc=el("div",{class:"acciones"},el("button",{class:"btn",id:"sig",onclick:siguiente},"Siguiente ▶️"));
+  zona().querySelector(".tarjeta").append(acc);
+  const yo=idx+"|"+M.id, t0=Date.now();
+  $("#sig").focus({preventScroll:true});
+  dice(voz).then(r=>{
+    if(r==="reemplazada"||!auto) return;
+    const falta=Math.max(0,2600-(Date.now()-t0));
+    avanceTimer=setTimeout(()=>{ if(resuelto&&yo===idx+"|"+(M&&M.id)&&!$("#pJuego").hidden) siguiente(); },falta+900);
+  });
+}
+function siguiente(){
+  clearTimeout(avanceTimer); calla(); detenGrabacion();
+  if(M.tipo==="orden"){ termina(); return; }
+  if(M.tipo==="modelo"&&idx+1>estrellas) sumaEstrella();
+  idx++;
+  if(idx>=cuantos(M)) termina(); else render(false);
+}
+function termina(){
+  clearTimeout(avanceTimer);
+  const antes=prog[M.id]?prog[M.id].est:0;
+  prog[M.id]=Object.assign({},prog[M.id],{hecha:true,est:Math.max(antes,estrellas)});
+  let nota=null;
+  if(M.tipo==="rubrica"){ nota=notas.reduce((s,n)=>s+n,0); prog[M.id].nota=nota; }
+  guarda(); recalcula();
+  $("#lamina").textContent=M.e; anima($("#lamina"),"salta");
+  $("#finTit").textContent=M.tipo==="rubrica"?"Revisión lista":FR.cumplida;
+  $("#finTxt").textContent=M.tipo==="rubrica"?"Según la rúbrica del colegio · nota "+notaChile(nota):"Terminaste «"+M.nombre+"».";
+  $("#finNota").hidden=nota===null; if(nota!==null) $("#finNota").textContent=nota+" / 20";
+  $("#finEst").textContent="⭐".repeat(estrellas);
+  pantalla("pFinal"); sFanfarria(); confeti();
+  const todas=MISIONES.filter(m=>m.tipo!=="rubrica").every(m=>prog[m.id]&&prog[m.id].hecha);
+  const extra=M.tipo==="cuido"?[M.dato]:[];
+  dice(M.tipo==="rubrica"?[FR.revisionLista]:[FR.cumplida].concat(extra,[todas?FR.todas:FR.volver]));
+  $("#btnVolver").focus({preventScroll:true});
+}
+
+/* ---- diapositiva de práctica: la misma estructura que la presentación ---- */
+function diapo(p){
+  const d=el("div",{class:"diapo"});
+  const frase=el("p",{class:"frase"});
+  p.partes.forEach((x,k)=>{
+    if(k) frase.append(" ");
+    frase.append(x.pausa?el("span",{class:"hueco","data-marca":x.marca},"(tu nombre)"):el("span",{"data-marca":x.marca},x.t));
+  });
+  if(p.tipo==="portada"){
+    d.append(ima(p.img,"🌿","portada"),el("p",{class:"titulo-d"},"Flora y fauna de Chile"),frase);
+  }else if(p.tipo==="ficha"){
+    const l=el("div",{class:"rasgos"});
+    p.filas.forEach(f=>l.append(el("div",{class:"rasgo","data-marca":f.marca},el("span",{class:"e","aria-hidden":"true"},f.e),el("span",{},f.rotulo))));
+    d.append(el("p",{class:"eyebrow"},p.grupo),
+      el("div",{class:"ficha"},el("div",{class:"foto","data-marca":"nombre"},ima(p.img,p.e)),el("b",{class:"nombre"},p.rotulo)),
+      l,frase);
+  }else if(p.tipo==="cuidado"){
+    const g=el("div",{class:"cuidados"});
+    p.acciones.forEach((a,k)=>g.append(el("div",{class:"accion","data-marca":a.marca},ima(a.img,a.e),el("b",{},(k+1)+". "+a.rotulo))));
+    d.append(el("p",{class:"titulo-d"},p.e+" "+p.rotulo),g,frase);
+  }else{
+    d.append(ima(p.img,p.e,"portada"),el("p",{class:"titulo-d","data-marca":"0"},p.rotulo));
+  }
+  return d;
+}
+/* dice la diapositiva y va iluminando lo que nombra (la manito del puntero) */
+function reproduce(p,card,opc){
+  opc=opc||{};
+  const partes=p.partes.map(x=>Object.assign({},x,{lento:opc.lento}));
+  const limpiaMarcas=()=>card.querySelectorAll(".senala").forEach(n=>n.classList.remove("senala"));
+  return dice((opc.antes||[]).concat(partes),{alParte:(i,parte)=>{
+    limpiaMarcas();
+    if(!parte||parte.marca===undefined||parte.marca===null) return;
+    card.querySelectorAll('[data-marca="'+parte.marca+'"]').forEach(n=>n.classList.add("senala"));
+  }});
+}
+
+/* ---- 🎧 modelo: mira la presentación ---- */
+function rModelo(pre){
+  const p=PASOS[idx], ultima=idx===PASOS.length-1;
+  const card=el("div",{class:"tarjeta"});
+  const d=diapo(p); card.append(d);
+  const bAtras=el("button",{class:"btn agua chico","aria-label":"Parte anterior",onclick:()=>{ if(idx>0){ calla(); idx--; render(false);} }},"◀️");
+  if(idx===0) bAtras.disabled=true;
+  const bOir=el("button",{class:"btn agua chico","aria-label":"Escuchar otra vez",onclick:()=>reproduce(p,d)},"🔊");
+  const bLento=el("button",{class:"btn agua chico","aria-label":"Escuchar lento",onclick:()=>reproduce(p,d,{lento:true})},"🐢");
+  card.append(el("div",{class:"acciones"},bAtras,bOir,bLento,el("button",{class:"btn",id:"sig",onclick:siguiente},ultima?"Terminar ✔️":"Siguiente ▶️")));
+  zona().append(card);
+  reproduce(p,d,{antes:pre});
+}
+
+/* ---- 🌿 ¿planta o animal? ---- */
+function rClasifica(pre){
+  const s=SER[ordenSeres[idx]];
+  const card=tarjetaPregunta("🤔","¿Planta o animal?",()=>[s.q]);
+  card.append(ima(s.id,s.e,"foto-ser"),el("p",{class:"nombre-ser"},s.rotulo));
+  const cont=el("div",{class:"opciones dos"});
+  [["planta","🌿","Planta"],["animal","🐾","Animal"]].forEach(([g,e,t])=>{
+    const b=el("button",{class:"op"},el("span",{class:"e","aria-hidden":"true"},e),el("span",{},t));
+    b.addEventListener("click",()=>{
+      if(resuelto||b.classList.contains("no")) return;
+      if(g===s.grupo){ b.classList.add("bien"); cont.querySelectorAll(".op").forEach(x=>x.disabled=true); gana(s.dato); }
+      else{ b.classList.add("no"); b.setAttribute("aria-disabled","true"); falla(s.grupo==="planta"?FR.pistaPlanta:FR.pistaAnimal,b); }
+    });
+    cont.append(b);
+  });
+  card.append(cont); zona().append(card);
+  dice(pre.concat([s.q]));
+}
+
+/* ---- 🌺🦌 elige: con fotos (¿cuál es?) o con opciones dichas en voz alta ---- */
+function rElige(pre){
+  const it=M.items[idx];
+  const conFotos=!!it.ids;
+  const ops=conFotos?baraja(it.ids.map((id,k)=>({id,ok:k===0}))):baraja(it.ops.map((o,k)=>Object.assign({ok:k===0},o)));
+  const vozPreg=()=>conFotos?[it.q]:[it.q].concat(ops.map(o=>o.t));
+  const card=tarjetaPregunta(it.e,it.q,vozPreg);
+  const cont=el("div",{class:"opciones"+(conFotos?" fotos":"")});
+  ops.forEach(o=>{
+    let b, rot=null;
+    if(conFotos){
+      const s=SER[o.id];
+      rot=el("span",{class:"rot"},"");
+      b=el("button",{class:"op","aria-label":s.rotulo},ima(s.id,s.e),rot);
+    }else{
+      b=el("button",{class:"op"},el("span",{class:"e","aria-hidden":"true"},o.e),el("span",{},o.t));
+    }
+    b.addEventListener("click",()=>{
+      if(resuelto||b.classList.contains("no")) return;
+      if(rot) rot.textContent=SER[o.id].rotulo;
+      if(o.ok){ b.classList.add("bien"); cont.querySelectorAll(".op").forEach(x=>x.disabled=true); gana(it.dato); }
+      else{
+        b.classList.add("no"); b.setAttribute("aria-disabled","true"); falla(it.pista,b);
+        if(errores>=2){ const bien=[...cont.children][ops.findIndex(x=>x.ok)]; if(bien) bien.classList.add("pistaluz"); }
+      }
+    });
+    cont.append(b);
+  });
+  card.append(cont); zona().append(card);
+  dice(pre.concat(vozPreg()));
+}
+
+/* ---- 💚 ¿lo cuida o no lo cuida? ---- */
+function rCuido(pre){
+  const it=M.items[idx];
+  const card=tarjetaPregunta(it.e,it.t,()=>[it.t,FR.loCuida]);
+  const cont=el("div",{class:"opciones dos"});
+  [[true,"👍","Sí, los cuida"],[false,"👎","No los cuida"]].forEach(([v,e,t])=>{
+    const b=el("button",{class:"op"},el("span",{class:"e","aria-hidden":"true"},e),el("span",{},t));
+    b.addEventListener("click",()=>{
+      if(resuelto||b.classList.contains("no")) return;
+      if(v===it.bien){ b.classList.add("bien"); cont.querySelectorAll(".op").forEach(x=>x.disabled=true); gana(it.dato); }
+      else{ b.classList.add("no"); b.setAttribute("aria-disabled","true"); falla(FR.piensa,b); }
+    });
+    cont.append(b);
+  });
+  card.append(cont); zona().append(card);
+  dice(pre.concat([it.t,FR.loCuida]));
+}
+
+/* ---- 🔢 ordeno mi presentación ---- */
+let ord={paso:0,orden:[]};
+function rOrden(pre){
+  const card=el("div",{class:"tarjeta"},
+    el("div",{class:"pregunta"},el("span",{class:"grande","aria-hidden":"true"},"📽️"),
+      el("p",{id:"txtPreg"},"Toca las partes en orden."),
+      el("button",{class:"oir","aria-label":"Escuchar otra vez",onclick:()=>dice([vozOrden()])},"🔊")));
+  const fila=el("div",{class:"fila","aria-hidden":"true"});
+  PASOS.forEach((_,k)=>fila.append(el("span",{},String(k+1))));
+  const grid=el("div",{class:"escenas"});
+  ord.orden.forEach(k=>{
+    const p=PASOS[k];
+    const b=el("button",{class:"op","data-k":String(k)},el("span",{class:"e","aria-hidden":"true"},p.e),el("span",{},p.orden_t));
+    const oreja=el("button",{class:"mini","aria-label":"Escuchar"},"👂");
+    oreja.addEventListener("click",ev=>{ev.stopPropagation();dice([p.orden_t])});
+    const caja=el("div",{class:"escena"},b,oreja);
+    b.addEventListener("click",()=>{
+      if(resuelto||caja.classList.contains("usada")) return;
+      if(k===ord.paso){
+        fila.children[ord.paso].textContent=p.e; fila.children[ord.paso].classList.add("lleno");
+        anima(fila.children[ord.paso],"salta");
+        caja.classList.add("usada"); b.disabled=true; oreja.disabled=true;
+        sumaEstrella(); sClic();
+        grid.querySelectorAll(".pistaluz").forEach(x=>x.classList.remove("pistaluz"));
+        ord.paso++; errores=0; puntos();
+        if(ord.paso>=PASOS.length){
+          resuelto=true; sAcierto(); confeti(); const a=animo();
+          aviso("dato",a,M.dato); cierra([a,M.dato],true);
+        }else dice([p.orden_t]);
+      }else{
+        falla(k>ord.paso?FR.despues:FR.yaPaso,b);
+        if(errores>=2){ const bien=grid.querySelector('.op[data-k="'+ord.paso+'"]'); if(bien) bien.classList.add("pistaluz"); }
+      }
+    });
+    grid.append(caja);
+  });
+  card.append(fila,grid); zona().append(card);
+  dice(pre.concat([vozOrden()]));
+}
+const vozOrden=()=>ord.paso===0?FR.primero:FR.yDespues;
+
+/* ---- ❓ preguntas de la profe: responde con sus palabras ---- */
+function rPreguntas(pre){
+  const it=M.items[idx];
+  const card=tarjetaPregunta(it.e,it.q,()=>[it.q]);
+  const resp=el("p",{class:"respuesta",hidden:""},"💡 "+it.r);
+  const bResp=el("button",{class:"btn agua"},"💡 Escuchar una respuesta");
+  bResp.addEventListener("click",()=>{ resp.hidden=false; dice([FR.unaRespuesta,it.r]); });
+  const bDije=el("button",{class:"btn"},"🎤 ¡Respondí!");
+  const acc=el("div",{class:"acciones"},bResp,bDije);
+  bDije.addEventListener("click",()=>{
+    if(resuelto) return;
+    acc.remove(); resp.remove();
+    gana(FR.unaRespuesta+" «"+it.r+"»",{voz:[it.r]});
+  });
+  card.append(resp,acc); zona().append(card);
+  dice(pre.concat([it.q,FR.responde]));
+}
+
+/* ---- 🎤 ensayo general, con grabadora ---- */
+let rec=null, flujo=null;
+function detenGrabacion(){
+  try{ if(rec&&rec.state!=="inactive") rec.stop(); }catch(e){}
+  rec=null;
+  if(flujo){ flujo.getTracks().forEach(t=>t.stop()); flujo=null; }
+}
+function rEnsayo(pre){
+  const p=PASOS[idx], ultima=idx===PASOS.length-1;
+  const card=el("div",{class:"tarjeta"});
+  const d=diapo(p); card.append(d);
+  card.append(el("p",{class:"consejo"},"💡 "+p.consejo));
+  let grabacion=null;
+  const estado=el("p",{class:"estado",role:"status"},"");
+  const bModelo=el("button",{class:"btn agua chico","aria-label":"Escuchar el modelo",onclick:()=>reproduce(p,d)},"🔊");
+  const bLento=el("button",{class:"btn agua chico","aria-label":"Escuchar lento",onclick:()=>reproduce(p,d,{lento:true})},"🐢");
+  const bGrabar=el("button",{class:"btn agua"},"🎙️ Grabarme");
+  const bOirme=el("button",{class:"btn agua",disabled:""},"▶️ Escucharme");
+  bGrabar.addEventListener("click",async()=>{
+    if(rec){ detenGrabacion(); return; }
+    if(!navigator.mediaDevices||!window.MediaRecorder){ estado.textContent="Este navegador no permite grabar. Prueba en Safari actualizado."; return; }
+    calla();
+    try{ flujo=await navigator.mediaDevices.getUserMedia({audio:true}); }
+    catch(e){ estado.textContent="No hay permiso para usar el micrófono."; return; }
+    const trozos=[];
+    rec=new MediaRecorder(flujo);
+    rec.ondataavailable=e=>{ if(e.data&&e.data.size) trozos.push(e.data); };
+    rec.onstop=()=>{
+      if(flujo){ flujo.getTracks().forEach(t=>t.stop()); flujo=null; }
+      grabacion=new Blob(trozos,{type:(rec&&rec.mimeType)||"audio/mp4"}); rec=null;
+      bGrabar.textContent="🎙️ Grabar otra vez"; bGrabar.classList.remove("grabando");
+      bOirme.disabled=false; estado.textContent="";
+      dice([FR.escuchate]);
+    };
+    rec.start();
+    bGrabar.textContent="⏹️ Parar"; bGrabar.classList.add("grabando");
+    estado.textContent="🔴 Grabando… habla ahora";
+  });
+  bOirme.addEventListener("click",()=>{ if(grabacion) Voz.blob(grabacion); });
+  const bDije=el("button",{class:"btn ancho",id:"sig",style:"margin-top:8px"},ultima?"✅ ¡Lo dije! Terminar":"✅ ¡Lo dije! Siguiente");
+  bDije.addEventListener("click",()=>{
+    detenGrabacion();
+    if(!resuelto){ resuelto=true; sumaEstrella(); sAcierto(); }
+    siguiente();
+  });
+  card.append(el("div",{class:"acciones"},bModelo,bLento,bGrabar,bOirme),estado,bDije);
+  zona().append(card);
+  reproduce(p,d,{antes:pre}).then(r=>{ if(r==="ok") dice([p.consejo]); });
+}
+
+/* ---- ✅ rúbrica del colegio, con un adulto ---- */
+let notas=[];
+function rRubrica(pre){
+  const it=M.items[idx];
+  const card=tarjetaPregunta(it.e,it.q,()=>[it.q]);
+  const cont=el("div",{class:"opciones"});
+  const ETQ=["Lo logra sola","Con poca ayuda","Con bastante ayuda","Aún necesita mucho apoyo"];
+  it._niveles.forEach((txt,k)=>{
+    const pts=4-k;
+    const b=el("button",{class:"op nivel"},el("span",{class:"pts"},pts+" pts · "+ETQ[k]),el("span",{class:"desc"},txt));
+    b.addEventListener("click",()=>{
+      if(resuelto) return;
+      resuelto=true; notas[idx]=pts; sumaEstrella(); sClic();
+      b.classList.add("bien"); cont.querySelectorAll(".op").forEach(x=>{ x.disabled=true; if(x!==b) x.classList.add("no"); });
+      aviso(pts===4?"dato":"casi",pts===4?"¡Excelente!":"Para mejorar",pts===4?"Este criterio está listo.":it._consejo);
+      const acc=el("div",{class:"acciones"},el("button",{class:"btn",id:"sig",onclick:siguiente},"Siguiente ▶️"));
+      card.append(acc); $("#sig").focus({preventScroll:true});
+    });
+    cont.append(b);
+  });
+  card.append(cont); zona().append(card);
+  dice(pre.concat([it.q]));
+}
+
+/* ================== ARRANQUE ================== */
+$("#sonido").addEventListener("click",()=>{
+  Voz.on=!Voz.on;
+  $("#sonido").textContent=Voz.on?"🔊":"🔇";
+  $("#sonido").setAttribute("aria-pressed",String(Voz.on));
+  $("#sonido").setAttribute("aria-label",Voz.on?"Silenciar voz y sonidos":"Activar voz y sonidos");
+});
+$("#btnInstr").addEventListener("click",()=>{ audio(); dice([FR.instr]); });
+$("#btnVolver").addEventListener("click",()=>{ calla(); pintaInicio(); pantalla("pInicio"); });
+$("#btnRepetir").addEventListener("click",()=>{ calla(); abrir(mi); });
+$("#borrar").addEventListener("click",()=>{ if(confirm("¿Borrar el avance y empezar de nuevo?")){ prog={}; guarda(); pintaInicio(); } });
+pintaGuia();
+pintaInicio();
+window.__prueba={MISIONES,PASOS,get M(){return M},get idx(){return idx},get ord(){return ord},Voz};
+</script>
+<!-- selva:js -->
+<script id="selva-js">
+/* ==========================================================================
+   SELVA v2 · comportamiento común
+   1. Guarda el progreso (veces jugada y mejor puntaje) para que la portada
+      muestre las estrellas ganadas. Solo en este dispositivo, sin internet.
+   2. Si ya hay estrellas en la ronda, "Inicio" pregunta antes de salir.
+   3. Hace saltar el contador cuando se gana una estrella.
+   4. Etiqueta los botones que solo tienen un ícono.
+   ========================================================================== */
+(function(){
+  var CLAVE = "aprendo:progreso";
+  var ruta = decodeURIComponent(location.pathname).replace(/^.*?(\d+-basico\/)/, "$1");
+  var $ = function(s){ return document.querySelector(s); };
+
+  function estrellas(){
+    var el = $("#puntaje, #cuenta");
+    var m = el && el.textContent.match(/\d+/);
+    return m ? +m[0] : 0;
+  }
+  function registrar(){
+    var d = {};
+    try{ d = JSON.parse(localStorage.getItem(CLAVE)) || {}; }catch(e){}
+    var r = d[ruta] || { veces:0, mejor:0 };
+    r.veces++;
+    r.mejor = Math.max(r.mejor || 0, estrellas());
+    r.ultima = new Date().toISOString().slice(0, 10);
+    d[ruta] = r;
+    try{ localStorage.setItem(CLAVE, JSON.stringify(d)); }catch(e){}
+  }
+
+  /* 1. fin de la actividad: pantalla #final (juegos) o #pFinal (misiones) */
+  var fin = $("#final, #pFinal");
+  if(fin){
+    var visto = false;
+    new MutationObserver(function(){
+      var ve = fin.classList.contains("activa") || (fin.id === "pFinal" && !fin.hidden);
+      if(ve && !visto){ visto = true; setTimeout(registrar, 400); }
+      if(!ve) visto = false;
+    }).observe(fin, { attributes:true, attributeFilter:["class", "hidden"] });
+  }
+  /* presentaciones: cuenta como vista al llegar a la última diapositiva */
+  var cont = $("#contador");
+  if(cont && !fin){
+    var vista = false;
+    new MutationObserver(function(){
+      var p = cont.textContent.match(/(\d+)\s*\/\s*(\d+)/);
+      if(p && p[1] === p[2] && !vista){ vista = true; registrar(); }
+    }).observe(cont, { childList:true, characterData:true, subtree:true });
+  }
+
+  /* 2. confirmar antes de salir a mitad de una ronda */
+  function enRonda(){
+    return !!$("#juego.activa, #ensayo.activa, #pJuego:not([hidden])") && estrellas() > 0;
+  }
+  var dlg = null;
+  function preguntarSalida(destino){
+    if(!window.HTMLDialogElement){ location.href = destino; return; }
+    if(!dlg){
+      dlg = document.createElement("dialog");
+      dlg.className = "selva-dialogo";
+      dlg.innerHTML =
+        '<div class="selva-dialogo-emo" aria-hidden="true">🏠</div>' +
+        '<h2>¿Quieres salir?</h2>' +
+        '<p>Si sales ahora, se pierden las estrellas de esta ronda.</p>' +
+        '<button class="selva-seguir" value="seguir">▶️ Seguir jugando</button>' +
+        '<button class="selva-salir" value="salir">Salir</button>';
+      dlg.addEventListener("click", function(e){
+        var b = e.target.closest("button");
+        if(!b) return;
+        dlg.close();
+        if(b.value === "salir") location.href = dlg.dataset.destino;
+      });
+      document.body.appendChild(dlg);
+    }
+    dlg.dataset.destino = destino;
+    dlg.showModal();
+    try{
+      if(window.speechSynthesis){
+        speechSynthesis.cancel();
+        var u = new SpeechSynthesisUtterance("¿Quieres salir? Si sales ahora, se pierden las estrellas de esta ronda.");
+        u.lang = "es-ES"; speechSynthesis.speak(u);
+      }
+    }catch(e){}
+    dlg.querySelector(".selva-seguir").focus();
+  }
+  document.addEventListener("click", function(e){
+    var a = e.target.closest && e.target.closest('a[href$="index.html"]');
+    if(!a || !enRonda()) return;
+    e.preventDefault();
+    preguntarSalida(a.href);
+  }, true);
+
+  /* 3. el contador salta al ganar una estrella */
+  var pts = $("#puntaje");
+  if(pts){
+    var antes = estrellas();
+    new MutationObserver(function(){
+      var ahora = estrellas();
+      if(ahora > antes){
+        pts.classList.remove("salta"); void pts.offsetWidth; pts.classList.add("salta");
+      }
+      antes = ahora;
+    }).observe(pts, { childList:true, characterData:true, subtree:true });
+  }
+
+  /* 4. etiquetas para lectores de pantalla */
+  var nombres = { btnGeneral:"Ver todas las diapositivas", btnPantalla:"Pantalla completa", btnVoz:"Voz", sonido:"Voz y sonidos" };
+  Object.keys(nombres).forEach(function(id){
+    var b = document.getElementById(id);
+    if(b && !b.getAttribute("aria-label") && !/[a-záéíóú]{3}/i.test(b.textContent)) b.setAttribute("aria-label", nombres[id]);
+  });
+  /* el iPhone no permite pantalla completa en páginas web: se oculta el botón */
+  var d = document.documentElement;
+  if(!(document.fullscreenEnabled || document.webkitFullscreenEnabled)) d.classList.add("selva-sin-pantalla-completa");
+})();
+</script>
+<!-- /selva:js -->
+</body>
+</html>

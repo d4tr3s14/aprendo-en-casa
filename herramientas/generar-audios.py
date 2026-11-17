@@ -45,9 +45,10 @@ RAIZ = Path(__file__).resolve().parent.parent
 DATOS_RE = re.compile(r'<script type="application/json" id="datos">(.*?)</script>', re.S)
 # emojis, selectores de variación y comillas angulares: no se leen (igual que limpia() en JS)
 FUERA_RE = re.compile("[\U0001F000-\U0001FAFF☀-➿️‍«»]")
-# campos que no son texto para decir: emojis, ids, abreviaturas, sílabas distractoras, atributos de dibujos
+# campos que no son texto para decir: emojis, ids, abreviaturas, sílabas distractoras, atributos de dibujos,
+# marcas para iluminar y rótulos que solo se leen en pantalla
 NO_SE_DICEN = {"e", "id", "tipo", "c", "d", "a", "otros", "audio", "unidad", "titulo", "nombre",
-               "img", "ids", "pron"}
+               "img", "ids", "pron", "marca", "rotulo", "grupo"}
 # además, las claves que empiezan con "_" son notas para el adulto: se muestran, no se dicen
 
 
