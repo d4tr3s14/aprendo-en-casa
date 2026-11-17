@@ -1,0 +1,686 @@
+<!DOCTYPE html>
+<html lang="es-CL">
+<!--
+  My Menu · Presentación para proyector
+  Aprendo en casa · 1° Básico · Inglés
+
+  Archivo único autocontenido: CSS y JS inline, sin librerías ni CDNs.
+  Dependencias locales: imágenes de img-menu/ y voz natural de audio/my-menu/.
+
+  CÓMO FUNCIONA
+  · Lienzo fijo de 1600x900 (16:9) que se escala completo, como una diapositiva.
+  · Se avanza tocando la mitad derecha (o ›, flechas, espacio). Atrás: mitad izquierda.
+  · ▦ todas las diapositivas · ⛶ pantalla completa · 📝 guion (apagado al presentar)
+  · 🔊 lee la diapositiva en inglés y marca cada alimento, como el puntero.
+  · ⬇️ PowerPoint descarga my-menu-presentacion.pptx (lo arma
+    herramientas/generar-pptx-menu.py con las mismas imágenes).
+
+  IMÁGENES: img-menu/ junto a este archivo (.jpg, .jpeg, .png o .webp).
+    portada breakfast lunch tea-time thank-you chocolate-milk bread ham
+    strawberries pasta chicken carrot-salad strawberry-juice salami
+-->
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<meta name="theme-color" content="#FCFCFC" media="(prefers-color-scheme: light)">
+<meta name="theme-color" content="#141414" media="(prefers-color-scheme: dark)">
+<title>My Menu · Presentación</title>
+<style>
+/* tokens y componentes comunes: bloque generado más abajo (diseno/) */
+:root{--W:1600; --H:900}
+*{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
+html,body{height:100%;overflow:hidden}
+body{margin:0;display:flex;flex-direction:column;font-family:var(--font-ui)}
+
+/* ============ barra superior ============ */
+.barra{display:flex;align-items:center;justify-content:space-between;gap:8px;flex:0 0 auto;z-index:20}
+.grupo{display:flex;gap:6px;align-items:center}
+.contador{font:500 var(--fs-meta)/1 var(--font-mono);color:var(--text-secondary);white-space:nowrap}
+
+/* ============ escenario y lienzo ============ */
+.escenario{flex:1 1 auto;position:relative;display:flex;align-items:center;justify-content:center;min-height:0;overflow:hidden;background:var(--bg-wash)}
+.zona{position:absolute;top:0;bottom:0;width:24%;border:none;background:transparent;cursor:pointer;z-index:15}
+.zona.izq{left:0}
+.zona.der{right:0}
+/* la diapositiva siempre es clara, como en el PowerPoint: se proyecta igual en modo oscuro */
+.lienzo{
+  width:1600px;height:900px;flex:0 0 auto;position:relative;overflow:hidden;
+  transform-origin:center center;background:#FFFFFF;color:#191919;
+  border:1px solid var(--border-primary);border-radius:var(--r-lg);box-shadow:var(--shadow-L3);
+}
+
+/* ============ diapositivas ============ */
+.diapo{position:absolute;inset:0;opacity:0;pointer-events:none;background:#FFFFFF;transition:opacity .16s ease-out}
+.diapo.activa{opacity:1;pointer-events:auto;z-index:2}
+.pagina{position:absolute;right:56px;bottom:26px;font:500 22px/1 var(--font-mono);color:rgba(25,25,25,.40);z-index:6}
+.marca{position:absolute;left:64px;bottom:28px;font-size:20px;color:rgba(25,25,25,.40);z-index:6}
+.progreso{position:absolute;left:0;bottom:0;height:4px;background:#317CFF;z-index:8;transition:width .16s ease-out}
+
+.cuadro{border-radius:16px;overflow:hidden;border:1px solid rgba(0,0,0,.08);background:#F8F8F8;position:relative;display:flex;align-items:center;justify-content:center}
+.cuadro .emo{font-size:150px;line-height:1}
+.cuadro img{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;display:block}
+
+/* --- portada y cierre: texto + imagen cuadrada --- */
+.d-duo{height:100%;display:grid;grid-template-columns:1fr 900px;gap:0}
+.d-duo .txt{display:flex;flex-direction:column;justify-content:center;padding:0 40px 0 104px}
+.d-duo .cuadro{border-radius:0;border:0;border-left:1px solid rgba(0,0,0,.08);height:100%}
+.d-duo .cuadro .emo{font-size:260px}
+.eyebrow{font:500 28px/1.2 var(--font-ui);color:rgba(25,25,25,.56);margin:0 0 18px}
+.d-duo h1{font:500 130px/1 var(--font-ui);letter-spacing:-.03em;color:#000;margin:0 0 28px}
+.d-duo h2{font:500 84px/1.06 var(--font-ui);letter-spacing:-.03em;color:#000;margin:0}
+.comidas-chip{display:flex;gap:10px;flex-wrap:wrap}
+.comidas-chip span{font:500 26px/1 var(--font-ui);padding:12px 16px;border:1px solid rgba(0,0,0,.08);border-radius:999px;color:#191919;background:#FFF}
+.autor{margin-top:40px;font:400 34px/1.2 var(--font-ui);color:rgba(25,25,25,.56)}
+.autor b{font-weight:500;color:#191919}
+
+/* --- comida: título + fila de alimentos grandes para señalar --- */
+.d-comida{height:100%;padding:52px 64px 84px;display:flex;flex-direction:column}
+.d-comida .cabeza{display:flex;align-items:center;gap:32px;margin:0 0 40px}
+.d-comida .cabeza .cuadro{width:150px;height:150px;border-radius:999px;flex:none}
+.d-comida .cabeza .cuadro .emo{font-size:84px}
+.d-comida h2{font:500 112px/1 var(--font-ui);letter-spacing:-.03em;color:#000;margin:0}
+.fila-ali{display:grid;gap:32px;flex:1;align-items:start}
+.fila-ali.n3{grid-template-columns:repeat(3,1fr);padding:0 80px}
+.fila-ali.n4{grid-template-columns:repeat(4,1fr)}
+.ali{border:1px solid rgba(0,0,0,.08);border-radius:20px;overflow:hidden;background:#FFF;box-shadow:0 1px 2px 0 rgba(0,0,0,.05);position:relative;transition:box-shadow .14s ease-out,border-color .14s ease-out}
+.ali .cuadro{border:0;border-radius:0;aspect-ratio:1/1;border-bottom:1px solid rgba(0,0,0,.08)}
+.ali b{display:flex;align-items:center;justify-content:center;height:96px;padding:0 12px;text-align:center;font:500 40px/1.05 var(--font-ui);color:#000}
+.fila-ali.n3 .ali b{font-size:44px}
+.ali.senala{border-color:#317CFF;box-shadow:0 0 0 8px rgba(51,125,244,.25)}
+.ali.senala::after{content:"👆";position:absolute;left:50%;bottom:104px;transform:translateX(-50%);font-size:90px;line-height:1}
+.marco-frase{margin-top:auto;font:400 40px/1.2 var(--font-ui);color:rgba(25,25,25,.56);text-align:center}
+
+/* ============ vista general ============ */
+.general{position:fixed;inset:0;background:var(--bg-page);z-index:60;display:none;flex-direction:column;padding:16px 20px}
+.general.abierta{display:flex}
+.general-tope{display:flex;align-items:center;justify-content:space-between;gap:12px;margin:0 0 14px;padding-bottom:12px;border-bottom:1px solid var(--border-primary)}
+.general h3{font:500 var(--fs-label)/1.3 var(--font-ui);color:var(--text-primary);margin:0;flex:1}
+.mini-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;overflow:auto;flex:1;align-content:start}
+.mini-diapo{
+  background:var(--bg-elevated);border:1px solid var(--border-primary);border-radius:var(--r-sm);overflow:hidden;
+  box-shadow:var(--shadow-L1);cursor:pointer;padding:0;display:flex;flex-direction:column;text-align:left;color:var(--text-primary);
+  transition:border-color var(--t-rapida);
+}
+.mini-diapo:hover{border-color:var(--border-hover)}
+.mini-diapo.ahora{border-color:var(--accent)}
+.mini-diapo .cuadro{border-radius:0;border:0;aspect-ratio:16/10}
+.mini-diapo .cuadro .emo{font-size:48px}
+.mini-diapo span.t{padding:8px 10px;font:500 var(--fs-meta)/1.3 var(--font-ui)}
+.mini-diapo span.t b{font-family:var(--font-mono);font-weight:500;color:var(--text-secondary);margin-right:6px}
+
+/* ============ guion y pie ============ */
+.guion{flex:0 0 auto;background:var(--bg-wash);border-top:1px solid var(--border-primary);padding:10px 16px;font-size:var(--fs-body);line-height:1.4;display:none;z-index:20;color:var(--text-primary)}
+.guion.visible{display:block}
+.guion .es,.guion .pr{display:block;font-size:var(--fs-meta);color:var(--text-secondary)}
+.guion .pr{font-family:var(--font-mono)}
+.pie{display:flex;align-items:center;justify-content:center;gap:14px;padding:10px 12px 14px;flex:0 0 auto;z-index:20}
+.nav{
+  width:72px;height:var(--toque-respuesta);border-radius:var(--r-sm);cursor:pointer;
+  background:var(--bg-elevated);color:var(--text-primary);border:1px solid var(--border-primary);box-shadow:var(--shadow-L1);
+  display:flex;align-items:center;justify-content:center;font:400 2rem/1 var(--font-ui);
+  transition:background var(--t-rapida),opacity var(--t-rapida);
+}
+.nav:hover{background:var(--tint-strong)}
+.nav.sol{background:var(--button-neutral);color:var(--button-neutral-text);border-color:transparent;box-shadow:none}
+.nav.sol:hover{opacity:.9}
+.nav[disabled]{opacity:.35;cursor:default}
+.puntos{display:flex;gap:8px;align-items:center}
+.puntos i{width:8px;height:8px;border-radius:9999px;background:var(--tint-strong);display:block;transition:background var(--t-rapida)}
+.puntos i.ahora{background:var(--accent)}
+
+.gira{display:none;position:absolute;top:10px;left:50%;transform:translateX(-50%);z-index:18;
+  background:var(--bg-elevated);color:var(--text-secondary);border:1px solid var(--border-primary);box-shadow:var(--shadow-L3);
+  font:500 var(--fs-meta)/1 var(--font-ui);border-radius:var(--r-pill);padding:10px 16px;white-space:nowrap}
+@media (orientation:portrait) and (max-width:820px){ .gira{display:block} }
+@media (max-width:700px){
+  .solo-ancho{display:none}
+  .nav{width:64px;height:var(--toque)}
+  .mini-grid{grid-template-columns:repeat(2,1fr)}
+}
+
+/* ============ impresión / PDF ============ */
+@media print{
+  @page{size:landscape;margin:0}
+  html,body{overflow:visible;height:auto;background:#fff}
+  .barra,.pie,.guion,.zona,.general,.gira{display:none !important}
+  .escenario{display:block;overflow:visible}
+  .lienzo{transform:none !important;border:0;border-radius:0;box-shadow:none;width:1600px;height:auto;overflow:visible;display:block}
+  .diapo{position:relative;inset:auto;opacity:1 !important;display:block;width:1600px;height:900px;overflow:hidden;page-break-after:always;break-after:page}
+  .diapo:last-of-type{page-break-after:auto;break-after:auto}
+  .progreso{display:none}
+}
+</style>
+<!-- selva:css modo=presentacion · generado por herramientas/sincronizar.py, no editar aquí -->
+<style id="selva">
+/* ==========================================================================
+   TOKENS · DESIGN.md §9 (fuente de verdad: DESIGN.md en la raíz)
+   Neutros casi blancos, un solo acento azul, bordes de 1px y color solo para
+   comunicar estado. Se incrusta primero en cada actividad con
+   python herramientas/sincronizar.py
+   ========================================================================== */
+:root{
+  color-scheme:light dark;
+  --bg-page:#FCFCFC; --bg-wash:#F8F8F8; --bg-elevated:#FFFFFF;
+  --text-primary:#191919; --text-strong:#000;
+  --text-secondary:rgba(25,25,25,.56); --text-tertiary:rgba(25,25,25,.40);
+  --border-primary:rgba(0,0,0,.08); --border-secondary:rgba(0,0,0,.06); --border-hover:rgba(0,0,0,.12);
+  --tint-strong:rgba(0,0,0,.08); --tint-soft:rgba(0,0,0,.06); --tint-faint:rgba(0,0,0,.04);
+  --accent:#317CFF; --accent-tint:rgba(51,125,244,.10); --button-neutral:#363636; --button-neutral-text:#FFF;
+  --green:#00A558; --green-tint:rgba(62,237,155,.20);
+  --red:#F53B3A; --red-tint:rgba(245,59,58,.12);
+  --orange:#F58E3A; --orange-tint:rgba(245,142,58,.12);
+  --purple:#956CDE; --purple-tint:rgba(149,108,222,.12);
+  --font-ui:Inter, -apple-system, system-ui, "Segoe UI", sans-serif;
+  --font-mono:'Geist Mono','IBM Plex Mono',ui-monospace,monospace;
+  --r-xs:6px; --r-sm:8px; --r-md:10px; --r-lg:12px; --r-pill:999px;
+  --shadow-L1:0 1px 2px 0 rgba(0,0,0,.05);
+  --shadow-L2:0 1px 3px 0 rgba(0,0,0,.06),0 1px 2px 0 rgba(0,0,0,.06);
+  --shadow-ring:0 0 3px 0 rgba(0,0,0,.06),0 0 0 .5px rgba(0,0,0,.08);
+  --shadow-L3:0 10px 15px -3px rgba(0,0,0,.06);
+  --shadow-L4:0 25px 50px -12px rgba(0,0,0,.25);
+  --t-rapida:140ms ease-out;
+
+  /* Adaptación a 1° básico (INSTRUCCIONES-PROYECTO.md): la app se usa con el dedo
+     y por una niña que aún no lee fluido. Se mantiene el lenguaje visual de
+     DESIGN.md pero el texto nunca baja de 15 px y los toques miden ≥ 48 px. */
+  --fs-meta:15px; --fs-body:17px; --fs-label:17px; --fs-title:clamp(1.25rem,4.6vw,1.6rem);
+  --fs-display:clamp(2rem,8vw,3rem);
+  --toque:48px; --toque-respuesta:56px;
+}
+@media (prefers-color-scheme: dark){
+  :root:not([data-theme="light"]){
+    --bg-page:#141414; --bg-wash:#191919; --bg-elevated:#1F1F1F;
+    --text-primary:rgba(255,255,255,.90); --text-strong:#FFF;
+    --text-secondary:rgba(255,255,255,.52); --text-tertiary:rgba(255,255,255,.40);
+    --border-primary:rgba(255,255,255,.08); --border-secondary:rgba(255,255,255,.04); --border-hover:rgba(255,255,255,.16);
+    --tint-strong:rgba(255,255,255,.08); --tint-soft:rgba(255,255,255,.05); --tint-faint:rgba(255,255,255,.03);
+    --accent:#49B0FF; --button-neutral:#F9F9F9; --button-neutral-text:#000;
+    --green:#00EC7E; --green-tint:rgba(0,236,126,.08); --orange-tint:rgba(245,142,58,.08);
+    --shadow-L1:0 1px 2px 0 rgba(0,0,0,.20);
+    --shadow-L3:0 10px 15px -3px rgba(0,0,0,.64);
+    --shadow-L4:0 25px 50px -12px rgba(0,0,0,.50);
+  }
+}
+:root[data-theme="dark"]{
+  --bg-page:#141414; --bg-wash:#191919; --bg-elevated:#1F1F1F;
+  --text-primary:rgba(255,255,255,.90); --text-strong:#FFF;
+  --text-secondary:rgba(255,255,255,.52); --text-tertiary:rgba(255,255,255,.40);
+  --border-primary:rgba(255,255,255,.08); --border-secondary:rgba(255,255,255,.04); --border-hover:rgba(255,255,255,.16);
+  --tint-strong:rgba(255,255,255,.08); --tint-soft:rgba(255,255,255,.05); --tint-faint:rgba(255,255,255,.03);
+  --accent:#49B0FF; --button-neutral:#F9F9F9; --button-neutral-text:#000;
+  --green:#00EC7E; --green-tint:rgba(0,236,126,.08); --orange-tint:rgba(245,142,58,.08);
+  --shadow-L1:0 1px 2px 0 rgba(0,0,0,.20);
+  --shadow-L3:0 10px 15px -3px rgba(0,0,0,.64);
+  --shadow-L4:0 25px 50px -12px rgba(0,0,0,.50);
+}
+/* ==========================================================================
+   BASE común (tipografía, superficie, accesibilidad) · ver DESIGN.md
+   Fuente de verdad: diseno/. No edites el bloque dentro de cada actividad:
+   edita aquí y corre  python herramientas/sincronizar.py
+   ========================================================================== */
+html{-webkit-text-size-adjust:100%;text-size-adjust:100%}
+/* iPad: se mira a más distancia, todo crece un 12 % */
+@media (min-width:700px) and (min-height:600px){ html{font-size:112.5%} }
+*{-webkit-tap-highlight-color:transparent}
+body{
+  background:var(--bg-page);color:var(--text-primary);
+  font:400 var(--fs-body)/1.45 var(--font-ui);
+  -webkit-font-smoothing:antialiased;
+}
+h1,h2,h3{font-family:var(--font-ui);font-weight:500;letter-spacing:-.01em}
+b,strong{font-weight:600}
+button,a{touch-action:manipulation}
+button{font-family:var(--font-ui)}
+:focus-visible{outline:2px solid var(--accent);outline-offset:2px}
+@media (prefers-reduced-motion: reduce){
+  *,*::before,*::after{animation:none !important;transition:none !important;scroll-behavior:auto !important}
+  .confeti{display:none !important}
+}
+
+/* diálogo "¿Quieres salir?" (lo crea selva.js) · modal: bg-elevated + sombra L4 */
+.selva-dialogo{
+  border:1px solid var(--border-primary);border-radius:var(--r-lg);padding:20px 20px 16px;
+  width:min(360px, calc(100vw - 32px));
+  background:var(--bg-elevated);color:var(--text-primary);text-align:center;box-shadow:var(--shadow-L4);
+  font-family:var(--font-ui);
+}
+.selva-dialogo::backdrop{background:rgba(0,0,0,.32)}
+.selva-dialogo-emo{font-size:2.6rem;line-height:1}
+.selva-dialogo h2{font:500 1.25rem/1.3 var(--font-ui);margin:10px 0 4px;color:var(--text-strong)}
+.selva-dialogo p{font-size:var(--fs-body);line-height:1.4;margin:0 0 16px;color:var(--text-secondary)}
+.selva-dialogo button{
+  display:flex;align-items:center;justify-content:center;width:100%;min-height:var(--toque);
+  border:1px solid transparent;border-radius:var(--r-xs);cursor:pointer;
+  font:500 var(--fs-label)/1 var(--font-ui);transition:background var(--t-rapida);
+}
+.selva-seguir{background:var(--button-neutral);color:var(--button-neutral-text);margin-bottom:8px}
+.selva-salir{background:transparent;color:var(--red)}
+.selva-salir:hover{background:var(--red-tint)}
+/* ==========================================================================
+   Capa para presentaciones (diapositivas) · barra y pie según DESIGN.md §4–5
+   ========================================================================== */
+.barra{
+  min-height:48px;padding:calc(env(safe-area-inset-top) + 6px) max(12px, env(safe-area-inset-right)) 6px max(12px, env(safe-area-inset-left));
+  background:var(--bg-page);border-bottom:1px solid var(--border-primary);
+}
+.barra .mini{
+  min-height:40px;min-width:40px;padding:0 12px;border:1px solid var(--border-primary);border-radius:var(--r-xs);
+  display:inline-flex;align-items:center;justify-content:center;gap:4px;
+  background:var(--bg-elevated);color:var(--text-primary);box-shadow:var(--shadow-L1);
+  font:500 var(--fs-meta)/1 var(--font-ui);text-decoration:none;cursor:pointer;
+  transition:background var(--t-rapida);
+}
+.barra .mini:hover{background:var(--tint-strong)}
+.barra .mini[aria-pressed="true"]{background:var(--tint-soft);color:var(--text-primary);box-shadow:none}
+.pie{background:var(--bg-page);border-top:1px solid var(--border-primary);padding-bottom:calc(10px + env(safe-area-inset-bottom)) !important}
+.selva-sin-pantalla-completa #btnPantalla{display:none}
+</style>
+<!-- /selva:css -->
+</head>
+<body>
+
+<header class="barra">
+  <div class="grupo">
+    <a class="mini" href="../../../index.html">🏠<span class="solo-ancho"> Inicio</span></a>
+    <a class="mini" href="my-menu-practica.html">🎯<span class="solo-ancho"> Practicar</span></a>
+  </div>
+  <div class="contador" id="contador">1 / 5</div>
+  <div class="grupo">
+    <a class="mini" id="btnPptx" href="my-menu-presentacion.pptx" download="My Menu.pptx">⬇️<span class="solo-ancho"> PowerPoint</span></a>
+    <button class="mini" id="btnGeneral">▦</button>
+    <button class="mini" id="btnGuion" aria-pressed="false">📝<span class="solo-ancho"> Guion</span></button>
+    <button class="mini" id="btnVoz" aria-pressed="false">🔇<span class="solo-ancho"> Leer</span></button>
+    <button class="mini" id="btnPantalla">⛶</button>
+  </div>
+</header>
+
+<main class="escenario" id="escenario">
+  <div class="gira">↻ Gira el teléfono para verla más grande</div>
+  <button class="zona izq" id="zonaIzq" aria-label="Diapositiva anterior"></button>
+  <button class="zona der" id="zonaDer" aria-label="Diapositiva siguiente"></button>
+  <div class="lienzo" id="lienzo" aria-live="polite"></div>
+</main>
+
+<div class="guion" id="guion"></div>
+
+<footer class="pie">
+  <button class="nav" id="btnAtras" aria-label="Anterior">‹</button>
+  <div class="puntos" id="puntos"></div>
+  <button class="nav sol" id="btnSig" aria-label="Siguiente">›</button>
+</footer>
+
+<div class="general" id="general">
+  <div class="general-tope">
+    <h3>Todas las diapositivas · toca una para ir</h3>
+    <button class="mini" id="btnCerrarGeneral">✕ Cerrar</button>
+  </div>
+  <div class="mini-grid" id="miniGrid"></div>
+</div>
+
+<!-- Lo mismo que dice la práctica: comparten la carpeta de audio. -->
+<script type="application/json" id="datos">
+{
+"audio":"audio/my-menu/",
+"y_en":"and",
+"alimentos":[
+ {"id":"chocolate-milk","e":"🥛","en":"chocolate milk","pron":"CHÓ-co-let milk"},
+ {"id":"bread","e":"🥖","en":"bread","pron":"BRED"},
+ {"id":"ham","e":"🥓","en":"ham","pron":"JAM"},
+ {"id":"strawberries","e":"🍓","en":"strawberries","pron":"STRÓ-be-ris"},
+ {"id":"pasta","e":"🍝","en":"pasta","pron":"PÁS-ta"},
+ {"id":"chicken","e":"🍗","en":"chicken","pron":"CHÍ-ken"},
+ {"id":"carrot-salad","e":"🥕","en":"carrot salad","pron":"KÉ-rot SÁ-lad"},
+ {"id":"strawberry-juice","e":"🧃","en":"strawberry juice","pron":"STRÓ-be-ri YUS"},
+ {"id":"salami","e":"🌭","en":"salami","pron":"sa-LÁ-mi"}
+],
+"diapos":[
+ {"tipo":"portada","id":"hello","e":"👋","img":"portada","en":"Hello!","partes_en":["Hello!","My name is","This is my menu."],
+  "_guion":"Hello! My name is ___. This is my menu.","_es":"¡Hola! Me llamo ___. Este es mi menú.","pron":"JE-lou · mai NEIM is · DIS is mai MÉ-niu"},
+ {"tipo":"comida","id":"breakfast","e":"🌅","en":"Breakfast","inicio_en":"For breakfast, I have","ids":["chocolate-milk","bread","ham","strawberries"],
+  "_guion":"For breakfast, I have chocolate milk, bread, ham and strawberries.","_es":"En el desayuno: leche con chocolate, pan, jamón y frutillas.","pron":"BRÉK-fast"},
+ {"tipo":"comida","id":"lunch","e":"☀️","en":"Lunch","inicio_en":"For lunch, I have","ids":["pasta","chicken","carrot-salad","strawberry-juice"],
+  "_guion":"For lunch, I have pasta, chicken, carrot salad and strawberry juice.","_es":"En el almuerzo: fideos, pollo, ensalada de zanahoria y jugo de frutilla.","pron":"LANCH"},
+ {"tipo":"comida","id":"tea-time","e":"🫖","en":"Tea time","inicio_en":"For tea time, I have","ids":["chocolate-milk","bread","salami"],
+  "_guion":"For tea time, I have chocolate milk, bread and salami.","_es":"En la once: leche con chocolate, pan y salame.","pron":"TÍ taim"},
+ {"tipo":"cierre","id":"thanks","e":"💛","img":"thank-you","en":"Thank you for your attention!","partes_en":["Thank you for your attention!"],
+  "_guion":"Thank you for your attention!","_es":"¡Gracias por su atención!","pron":"ZENK iu for ior a-TÉN-shon"}
+]
+}
+</script>
+
+<script>
+"use strict";
+const DATOS=JSON.parse(document.getElementById("datos").textContent);
+const DIAPOS=DATOS.diapos, ALI={};
+DATOS.alimentos.forEach(a=>ALI[a.id]=a);
+const $=id=>document.getElementById(id);
+function el(tag,attrs,...hijos){
+  const n=document.createElement(tag);
+  for(const k in (attrs||{})){
+    if(k==="class") n.className=attrs[k];
+    else if(attrs[k]!==null&&attrs[k]!==undefined) n.setAttribute(k,attrs[k]);
+  }
+  for(const h of hijos){ if(h===null||h===undefined) continue; n.append(h.nodeType?h:document.createTextNode(h)); }
+  return n;
+}
+const espera=ms=>new Promise(r=>setTimeout(r,ms));
+
+/* ============ imágenes: img-menu/ o emoji de respaldo ============ */
+const CARPETA="img-menu/", EXT=[".jpg",".jpeg",".png",".webp"], rutas={};
+function ruta(id){
+  if(!rutas[id]) rutas[id]=new Promise(res=>{
+    (function prueba(k){
+      if(k>=EXT.length){ res(null); return; }
+      const im=new Image(); im.onload=()=>res(CARPETA+id+EXT[k]); im.onerror=()=>prueba(k+1); im.src=CARPETA+id+EXT[k];
+    })(0);
+  });
+  return rutas[id];
+}
+function cuadro(id,emoji,clase){
+  const c=el("div",{class:"cuadro"+(clase?" "+clase:"")},el("span",{class:"emo","aria-hidden":"true"},emoji));
+  ruta(id).then(u=>{ if(u) c.append(el("img",{src:u,alt:""})); });
+  return c;
+}
+
+/* ============ voz natural en inglés (audio/my-menu/), con respaldo del dispositivo ============ */
+const Voz=(()=>{
+  const DIR=DATOS.audio, au=new Audio(); au.preload="auto";
+  let turno=0, vozEN=null; const clips=new Map();
+  function limpia(t){ return String(t).normalize("NFC").replace(/[\u{1F000}-\u{1FAFF}\u{2600}-\u{27BF}\u{FE0F}\u{200D}«»]/gu,"").replace(/\s+/g," ").trim(); }
+  function huella(t){ let h=0x811c9dc5; for(const b of new TextEncoder().encode(t)){ h^=b; h=Math.imul(h,0x01000193)>>>0; } return h.toString(16).padStart(8,"0"); }
+  function clip(t){
+    const h=huella(t);
+    if(!clips.has(h)) clips.set(h,fetch(DIR+h+".mp3").then(r=>r.ok?r.blob():null).then(b=>b&&b.size>0?URL.createObjectURL(b):null).catch(()=>null));
+    return clips.get(h);
+  }
+  function parar(){ try{au.pause()}catch(e){} try{ if("speechSynthesis" in window) speechSynthesis.cancel(); }catch(e){} }
+  function toca(url,mio){
+    return new Promise(res=>{
+      let fin=false;
+      const acaba=r=>{ if(fin) return; fin=true; clearInterval(vig); au.onended=au.onerror=null; res(r); };
+      au.onended=()=>acaba("ok"); au.onerror=()=>acaba("error"); au.src=url;
+      try{ const p=au.play(); if(p&&p.catch) p.catch(()=>acaba("error")); }catch(e){ acaba("error"); }
+      const vig=setInterval(()=>{ if(mio!==turno){ try{au.pause()}catch(e){} acaba("reemplazada"); } },150);
+    });
+  }
+  function eligeVoz(){
+    if(!("speechSynthesis" in window)) return;
+    const vs=speechSynthesis.getVoices();
+    for(const p of ["en-us","en-gb","en"]){ const v=vs.find(v=>v.lang.replace("_","-").toLowerCase().startsWith(p)); if(v){vozEN=v;return;} }
+  }
+  if("speechSynthesis" in window){ eligeVoz(); speechSynthesis.onvoiceschanged=eligeVoz; }
+  function sintetiza(t,mio){
+    return new Promise(res=>{
+      if(!("speechSynthesis" in window)){ res("ok"); return; }
+      const u=new SpeechSynthesisUtterance(t); u.lang=vozEN?vozEN.lang:"en-US"; if(vozEN) u.voice=vozEN; u.rate=.8;
+      let fin=false; const acaba=r=>{ if(fin) return; fin=true; clearInterval(vig); res(r); };
+      u.onend=()=>acaba("ok"); u.onerror=()=>acaba("ok");
+      speechSynthesis.speak(u);
+      const vig=setInterval(()=>{ if(mio!==turno) acaba("reemplazada"); },150);
+      setTimeout(()=>acaba("ok"),1500+t.length*90);
+    });
+  }
+  /* partes: [{en, marca} | {pausa, marca}] · alParte(marca) ilumina lo que se está diciendo */
+  async function decir(partes,alParte){
+    const mio=++turno; parar();
+    partes.forEach(p=>{ if(p.en) clip(limpia(p.en)); });
+    for(const p of partes){
+      if(mio!==turno) return;
+      alParte(p.marca);
+      if(p.pausa){ await espera(p.pausa); continue; }
+      const t=limpia(p.en), url=await clip(t);
+      if(mio!==turno) return;
+      let r=url?await toca(url,mio):"error";
+      if(r==="error") r=await sintetiza(t,mio);
+      if(r!=="ok") return;
+      await espera(150);
+    }
+    if(mio===turno) alParte(null);
+  }
+  return { decir, calla(){ turno++; parar(); } };
+})();
+
+/* ============ diapositivas ============ */
+let actual=0, vozOn=false, guionOn=false;
+function armar(d,n){
+  const s=el("section",{class:"diapo tipo-"+d.tipo,id:"diapo"+n});
+  if(d.tipo==="portada"){
+    s.append(el("div",{class:"d-duo"},
+      el("div",{class:"txt"},
+        el("p",{class:"eyebrow"},"English · 1° Básico"),
+        el("h1",{lang:"en"},"My Menu"),
+        el("div",{class:"comidas-chip",lang:"en"},el("span",{},"🌅 Breakfast"),el("span",{},"☀️ Lunch"),el("span",{},"🫖 Tea time"))),
+      cuadro(d.img,"🍽️")));
+  }else if(d.tipo==="cierre"){
+    s.append(el("div",{class:"d-duo"},
+      el("div",{class:"txt"},el("h2",{lang:"en","data-marca":"0"},"Thank you for your attention!")),
+      cuadro(d.img,"💛")));
+  }else{
+    const fila=el("div",{class:"fila-ali n"+d.ids.length});
+    d.ids.forEach(id=>{ const a=ALI[id]; fila.append(el("div",{class:"ali","data-marca":id},cuadro(id,a.e),el("b",{lang:"en"},a.en))); });
+    s.append(el("div",{class:"d-comida"},
+      el("div",{class:"cabeza"},cuadro(d.id,d.e),el("h2",{lang:"en"},d.en)),
+      fila,
+      el("p",{class:"marco-frase",lang:"en"},d.inicio_en+"…")));
+  }
+  s.append(el("div",{class:"pagina"},String(n+1)));
+  return s;
+}
+function partesDe(d){
+  if(d.tipo==="portada") return [{en:"Hello!"},{en:"My name is"},{pausa:1400},{en:"This is my menu."}];
+  if(d.tipo==="cierre") return [{en:d.partes_en[0]}];
+  const out=[{en:d.inicio_en}];
+  d.ids.forEach((id,k)=>{ if(k===d.ids.length-1) out.push({en:DATOS.y_en}); out.push({en:ALI[id].en,marca:id}); });
+  return out;
+}
+function leer(){
+  const sec=$("diapo"+actual);
+  Voz.decir(partesDe(DIAPOS[actual]),marca=>{
+    sec.querySelectorAll(".senala").forEach(n=>n.classList.remove("senala"));
+    if(marca) sec.querySelectorAll('[data-marca="'+marca+'"]').forEach(n=>n.classList.add("senala"));
+  });
+}
+function limpiaMarcas(){ document.querySelectorAll(".senala").forEach(n=>n.classList.remove("senala")); }
+
+function ajustar(){
+  const c=$("escenario"), l=$("lienzo");
+  const s=Math.min((c.clientWidth-16)/1600,(c.clientHeight-16)/900);
+  l.style.transform="scale("+Math.max(s,.05)+")";
+}
+addEventListener("resize",ajustar);
+addEventListener("orientationchange",()=>setTimeout(ajustar,250));
+
+function construir(){
+  const l=$("lienzo");
+  DIAPOS.forEach((d,i)=>l.append(armar(d,i)));
+  l.append(el("div",{class:"progreso",id:"progreso"}));
+}
+function mostrar(){
+  Voz.calla(); limpiaMarcas();
+  DIAPOS.forEach((_,i)=>$("diapo"+i).classList.toggle("activa",i===actual));
+  const d=DIAPOS[actual];
+  $("contador").textContent=(actual+1)+" / "+DIAPOS.length;
+  const g=$("guion"); g.textContent="";
+  g.append(el("b",{},"Digo: "),el("span",{lang:"en"},d._guion),el("span",{class:"es"},d._es),el("span",{class:"pr"},"Se pronuncia: "+d.pron));
+  $("progreso").style.width=((actual+1)/DIAPOS.length*100)+"%";
+  $("btnAtras").disabled=actual===0;
+  $("btnSig").disabled=actual===DIAPOS.length-1;
+  const p=$("puntos"); p.textContent="";
+  DIAPOS.forEach((_,k)=>p.append(el("i",{class:k===actual?"ahora":""})));
+  document.querySelectorAll(".mini-diapo").forEach((b,k)=>b.classList.toggle("ahora",k===actual));
+  if(vozOn) leer();
+}
+function ir(n){
+  const nuevo=Math.min(DIAPOS.length-1,Math.max(0,n));
+  if(nuevo===actual) return;
+  actual=nuevo; mostrar();
+}
+function armarGeneral(){
+  const g=$("miniGrid");
+  DIAPOS.forEach((d,i)=>{
+    const b=el("button",{class:"mini-diapo"},cuadro(d.img||d.id,d.e),el("span",{class:"t"},el("b",{},String(i+1)),d.tipo==="portada"?"My Menu":d.en));
+    b.addEventListener("click",()=>{ ir(i); $("general").classList.remove("abierta"); });
+    g.append(b);
+  });
+}
+
+$("btnSig").onclick=()=>ir(actual+1);
+$("btnAtras").onclick=()=>ir(actual-1);
+$("zonaDer").onclick=()=>ir(actual+1);
+$("zonaIzq").onclick=()=>ir(actual-1);
+$("btnGeneral").onclick=()=>$("general").classList.add("abierta");
+$("btnCerrarGeneral").onclick=()=>$("general").classList.remove("abierta");
+$("general").onclick=e=>{ if(e.target===$("general")) $("general").classList.remove("abierta"); };
+$("btnVoz").onclick=function(){
+  vozOn=!vozOn;
+  this.setAttribute("aria-pressed",String(vozOn));
+  this.textContent=""; this.append(vozOn?"🔊":"🔇",el("span",{class:"solo-ancho"}," Leer"));
+  if(vozOn) leer(); else{ Voz.calla(); limpiaMarcas(); }
+};
+$("btnGuion").onclick=function(){
+  guionOn=!guionOn; this.setAttribute("aria-pressed",String(guionOn));
+  $("guion").classList.toggle("visible",guionOn); setTimeout(ajustar,40);
+};
+$("btnPantalla").onclick=function(){
+  const r=document.documentElement;
+  try{
+    if(document.fullscreenElement||document.webkitFullscreenElement) (document.exitFullscreen||document.webkitExitFullscreen).call(document);
+    else (r.requestFullscreen||r.webkitRequestFullscreen).call(r);
+  }catch(e){}
+  setTimeout(ajustar,300);
+};
+document.addEventListener("fullscreenchange",()=>setTimeout(ajustar,120));
+document.addEventListener("keydown",e=>{
+  if(e.key==="Escape"){ $("general").classList.toggle("abierta"); e.preventDefault(); return; }
+  if($("general").classList.contains("abierta")) return;
+  if(e.key==="ArrowRight"||e.key===" "||e.key==="PageDown"){ e.preventDefault(); ir(actual+1); }
+  if(e.key==="ArrowLeft"||e.key==="PageUp"){ e.preventDefault(); ir(actual-1); }
+  if(e.key==="Home") ir(0);
+  if(e.key==="End") ir(DIAPOS.length-1);
+});
+
+construir();
+armarGeneral();
+ajustar();
+mostrar();
+</script>
+<!-- selva:js -->
+<script id="selva-js">
+/* ==========================================================================
+   SELVA v2 · comportamiento común
+   1. Guarda el progreso (veces jugada y mejor puntaje) para que la portada
+      muestre las estrellas ganadas. Solo en este dispositivo, sin internet.
+   2. Si ya hay estrellas en la ronda, "Inicio" pregunta antes de salir.
+   3. Hace saltar el contador cuando se gana una estrella.
+   4. Etiqueta los botones que solo tienen un ícono.
+   ========================================================================== */
+(function(){
+  var CLAVE = "aprendo:progreso";
+  var ruta = decodeURIComponent(location.pathname).replace(/^.*?(\d+-basico\/)/, "$1");
+  var $ = function(s){ return document.querySelector(s); };
+
+  function estrellas(){
+    var el = $("#puntaje, #cuenta");
+    var m = el && el.textContent.match(/\d+/);
+    return m ? +m[0] : 0;
+  }
+  function registrar(){
+    var d = {};
+    try{ d = JSON.parse(localStorage.getItem(CLAVE)) || {}; }catch(e){}
+    var r = d[ruta] || { veces:0, mejor:0 };
+    r.veces++;
+    r.mejor = Math.max(r.mejor || 0, estrellas());
+    r.ultima = new Date().toISOString().slice(0, 10);
+    d[ruta] = r;
+    try{ localStorage.setItem(CLAVE, JSON.stringify(d)); }catch(e){}
+  }
+
+  /* 1. fin de la actividad: pantalla #final (juegos) o #pFinal (misiones) */
+  var fin = $("#final, #pFinal");
+  if(fin){
+    var visto = false;
+    new MutationObserver(function(){
+      var ve = fin.classList.contains("activa") || (fin.id === "pFinal" && !fin.hidden);
+      if(ve && !visto){ visto = true; setTimeout(registrar, 400); }
+      if(!ve) visto = false;
+    }).observe(fin, { attributes:true, attributeFilter:["class", "hidden"] });
+  }
+  /* presentaciones: cuenta como vista al llegar a la última diapositiva */
+  var cont = $("#contador");
+  if(cont && !fin){
+    var vista = false;
+    new MutationObserver(function(){
+      var p = cont.textContent.match(/(\d+)\s*\/\s*(\d+)/);
+      if(p && p[1] === p[2] && !vista){ vista = true; registrar(); }
+    }).observe(cont, { childList:true, characterData:true, subtree:true });
+  }
+
+  /* 2. confirmar antes de salir a mitad de una ronda */
+  function enRonda(){
+    return !!$("#juego.activa, #ensayo.activa, #pJuego:not([hidden])") && estrellas() > 0;
+  }
+  var dlg = null;
+  function preguntarSalida(destino){
+    if(!window.HTMLDialogElement){ location.href = destino; return; }
+    if(!dlg){
+      dlg = document.createElement("dialog");
+      dlg.className = "selva-dialogo";
+      dlg.innerHTML =
+        '<div class="selva-dialogo-emo" aria-hidden="true">🏠</div>' +
+        '<h2>¿Quieres salir?</h2>' +
+        '<p>Si sales ahora, se pierden las estrellas de esta ronda.</p>' +
+        '<button class="selva-seguir" value="seguir">▶️ Seguir jugando</button>' +
+        '<button class="selva-salir" value="salir">Salir</button>';
+      dlg.addEventListener("click", function(e){
+        var b = e.target.closest("button");
+        if(!b) return;
+        dlg.close();
+        if(b.value === "salir") location.href = dlg.dataset.destino;
+      });
+      document.body.appendChild(dlg);
+    }
+    dlg.dataset.destino = destino;
+    dlg.showModal();
+    try{
+      if(window.speechSynthesis){
+        speechSynthesis.cancel();
+        var u = new SpeechSynthesisUtterance("¿Quieres salir? Si sales ahora, se pierden las estrellas de esta ronda.");
+        u.lang = "es-ES"; speechSynthesis.speak(u);
+      }
+    }catch(e){}
+    dlg.querySelector(".selva-seguir").focus();
+  }
+  document.addEventListener("click", function(e){
+    var a = e.target.closest && e.target.closest('a[href$="index.html"]');
+    if(!a || !enRonda()) return;
+    e.preventDefault();
+    preguntarSalida(a.href);
+  }, true);
+
+  /* 3. el contador salta al ganar una estrella */
+  var pts = $("#puntaje");
+  if(pts){
+    var antes = estrellas();
+    new MutationObserver(function(){
+      var ahora = estrellas();
+      if(ahora > antes){
+        pts.classList.remove("salta"); void pts.offsetWidth; pts.classList.add("salta");
+      }
+      antes = ahora;
+    }).observe(pts, { childList:true, characterData:true, subtree:true });
+  }
+
+  /* 4. etiquetas para lectores de pantalla */
+  var nombres = { btnGeneral:"Ver todas las diapositivas", btnPantalla:"Pantalla completa", btnVoz:"Voz", sonido:"Voz y sonidos" };
+  Object.keys(nombres).forEach(function(id){
+    var b = document.getElementById(id);
+    if(b && !b.getAttribute("aria-label") && !/[a-záéíóú]{3}/i.test(b.textContent)) b.setAttribute("aria-label", nombres[id]);
+  });
+  /* el iPhone no permite pantalla completa en páginas web: se oculta el botón */
+  var d = document.documentElement;
+  if(!(document.fullscreenEnabled || document.webkitFullscreenEnabled)) d.classList.add("selva-sin-pantalla-completa");
+})();
+</script>
+<!-- /selva:js -->
+</body>
+</html>
